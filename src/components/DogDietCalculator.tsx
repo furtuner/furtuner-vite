@@ -663,6 +663,8 @@ function IngredientsPage({
   initialSelected = [],
   onSelectionChange,
   serverError,
+  petType,
+  dietLabel,
 }: {
   onBack: () => void;
   onCalculate: (selected: string[]) => void;
@@ -671,6 +673,8 @@ function IngredientsPage({
   initialSelected?: string[];
   onSelectionChange?: (selected: string[]) => void;
   serverError?: string;
+  petType?: PetType;
+  dietLabel?: string;
 }) {
   const [categories, setCategories] = useState<Record<string, CategoryMeta>>({});
   const [order, setOrder] = useState<string[]>([]);
@@ -801,6 +805,15 @@ function IngredientsPage({
         desc="Choose ingredients for the diet. Mandatory categories must have at least one selection."
       />
       <div className="bg-white" style={{ padding: "32px" }}>
+        {(petType || dietLabel) && (
+          <div
+            className="inline-flex items-center gap-2 bg-[#E0F2FF] border-[1.5px] border-[#A6CCE8] rounded-[10px] text-[#143C6F] font-bold"
+            style={{ padding: "8px 16px", marginBottom: "20px", fontSize: "14px" }}
+          >
+            🐾 Building for: {petType === "cat" ? "Cat" : "Dog"}
+            {dietLabel ? ` — ${dietLabel.charAt(0).toUpperCase()}${dietLabel.slice(1)} Diet` : ""}
+          </div>
+        )}
         {error && (
           <div className="bg-[#FDEBEC] border-[1.5px] border-[#B02424] rounded-[12px] text-[#AD0B39] font-bold text-[14px]" style={{ padding: "18px 20px", marginTop: "8px", marginBottom: "24px" }}>
             ❌ {error}
@@ -1015,7 +1028,7 @@ function IngredientsPage({
                   borderRadius: "12px",
                 }}
               >
-                ← Back
+                ← Back to Profile
               </button>
               <button
                 onClick={submit}
@@ -2693,6 +2706,8 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   initialSelected={savedSelected}
                   onSelectionChange={(s) => { setSavedSelected(s); setCalcErrors(""); }}
                   serverError={calcErrors}
+                  petType={petType}
+                  dietLabel={dietLabel}
                 />
               )}
               {page === 6 && profile && (
