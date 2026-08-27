@@ -72,7 +72,14 @@ const API_BASES: Record<string, string> = {
 
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
 // are handled entirely by Stripe — this app never sees card data.
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/cNidR1gYd815e2l8jQ7Re00";
+//
+// TESTING: set STRIPE_TEST_MODE to true to use the test-mode Payment Link
+// (works only with Stripe's fake test cards, e.g. 4242 4242 4242 4242 — no
+// real money moves). Set back to false before real customers use the site.
+const STRIPE_TEST_MODE = true;
+const STRIPE_PAYMENT_LINK_LIVE = "https://buy.stripe.com/cNidR1gYd815e2l8jQ7Re00";
+const STRIPE_PAYMENT_LINK_TEST = "https://buy.stripe.com/test_cNidR1gYd815e2l8jQ7Re00";
+const STRIPE_PAYMENT_LINK = STRIPE_TEST_MODE ? STRIPE_PAYMENT_LINK_TEST : STRIPE_PAYMENT_LINK_LIVE;
 // Query param Stripe's "after payment" redirect appends back to this app so
 // we know to unlock the feeding plan when the user returns.
 const STRIPE_RETURN_PARAM = "paw_payment";
