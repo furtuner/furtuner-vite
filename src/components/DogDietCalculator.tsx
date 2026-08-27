@@ -2295,12 +2295,14 @@ function StripeCheckoutPanel({
   onBack,
   onContinue,
   onSkip,
+  onTestPayment,
   redirecting,
 }: {
   customer: CustomerInfo;
   onBack: () => void;
   onContinue: () => void;
   onSkip: () => void;
+  onTestPayment?: () => void;
   redirecting: boolean;
 }) {
   return (
@@ -2369,14 +2371,16 @@ function StripeCheckoutPanel({
             test-mode Payment Link, regardless of the STRIPE_TEST_MODE flag,
             so the real Stripe checkout flow can be verified with a fake card
             (4242 4242 4242 4242) without touching the live payment link. */}
-        <button
-          onClick={() => goToStripeCheckout(STRIPE_PAYMENT_LINK_TEST)}
-          disabled={redirecting}
-          className="w-full text-[#3C6293] font-semibold"
-          style={{ fontSize: "13px", padding: "10px", marginTop: "10px", border: "1.5px dashed #3C6293", borderRadius: "10px", background: "#E0F2FF", opacity: redirecting ? 0.5 : 1 }}
-        >
-          🧪 Test Payment (Stripe Test Mode)
-        </button>
+        {onTestPayment && (
+          <button
+            onClick={onTestPayment}
+            disabled={redirecting}
+            className="w-full text-[#3C6293] font-semibold"
+            style={{ fontSize: "13px", padding: "10px", marginTop: "10px", border: "1.5px dashed #3C6293", borderRadius: "10px", background: "#E0F2FF", opacity: redirecting ? 0.5 : 1 }}
+          >
+            🧪 Test Payment (Stripe Test Mode)
+          </button>
+        )}
       </div>
     </div>
   );
@@ -2471,6 +2475,7 @@ function CheckoutFlow({
       onBack={() => setStage("disclaimer")}
       onContinue={goToStripeCheckout}
       onSkip={() => { setStage("success"); onUnlock(); }}
+      onTestPayment={() => goToStripeCheckout(STRIPE_PAYMENT_LINK_TEST)}
       redirecting={redirecting}
     />
   );
