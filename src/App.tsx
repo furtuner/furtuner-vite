@@ -5,7 +5,18 @@ import './page.css'
 
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
-  const [view, setView] = useState<'home' | 'faq' | 'about' | 'calculator'>('home')
+  // Defaults to 'home' — except when the page is loading because Stripe just
+  // redirected the customer back here after a successful payment
+  // (?paw_payment=success). In that case we need DogDietCalculator to mount
+  // immediately so its own effect can read that query param, restore the
+  // saved wizard state, and unlock the Results page — none of that runs if
+  // the app is sitting on the Home view instead.
+  const [view, setView] = useState<'home' | 'faq' | 'about' | 'calculator'>(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('paw_payment=success')) {
+      return 'calculator'
+    }
+    return 'home'
+  })
   // Bumped every time "Build Your Diet" is opened, and passed as the
   // calculator's React `key` — this guarantees a completely fresh component
   // instance (no leftover pet type, diet type, profile, or ingredient
