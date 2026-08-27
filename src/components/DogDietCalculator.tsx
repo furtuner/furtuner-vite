@@ -281,9 +281,15 @@ const ACTIVITY_MULTIPLIER: Record<string, number> = {
 function ProfilePage({
   onNext,
   initialValues,
+  dietType,
+  onSelectPet,
+  onSelectDiet,
 }: {
   onNext: (raw: ProfileData, p: ReturnType<typeof buildProfile>) => void;
   initialValues?: ProfileData;
+  dietType?: DietType | null;
+  onSelectPet?: (t: PetType) => void;
+  onSelectDiet?: (t: DietType) => void;
 }) {
   const [form, setForm] = useState<ProfileData>(initialValues ?? {
     dogName: "", breed: "", age: "",
@@ -349,6 +355,50 @@ function ProfilePage({
         eyebrow="Step 1 of 3"
       />
       <div className="bg-white grid grid-cols-1 md:grid-cols-2" style={{ padding: "32px", columnGap: "0px" }}>
+        {(onSelectPet || onSelectDiet) && (
+          <div className="md:col-span-2" style={{ marginBottom: "24px" }}>
+            {onSelectPet && (
+              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: "10px" }}>
+                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Pet:</span>
+                {(["dog", "cat"] as const).map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => onSelectPet(t)}
+                    className={`font-bold rounded-full border-2 transition-all ${
+                      t === "dog"
+                        ? "bg-[#3C6293] border-[#3C6293] text-white shadow-[0_0_0_3px_#E0F2FF]"
+                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#3C6293]"
+                    }`}
+                    style={{ fontSize: "13px", padding: "6px 16px" }}
+                  >
+                    {t === "dog" ? "Dogs" : "Cats"}
+                  </button>
+                ))}
+              </div>
+            )}
+            {onSelectDiet && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Diet:</span>
+                {DOG_DIETS.map(d => (
+                  <button
+                    key={d.value}
+                    type="button"
+                    onClick={() => onSelectDiet(d.value)}
+                    className={`font-bold rounded-full border-2 transition-all ${
+                      dietType === d.value
+                        ? "bg-[#143C6F] border-[#143C6F] text-white"
+                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#143C6F]"
+                    }`}
+                    style={{ fontSize: "13px", padding: "6px 16px" }}
+                  >
+                    {d.emoji} {d.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div className="md:pr-8 md:border-r-[1.5px] md:border-[#3C6293]" style={{ paddingRight: "32px", borderRight: "1.5px solid #3C6293" }}>
           <SectionLabel>Basic Information</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -493,9 +543,15 @@ function buildCatProfile(form: CatProfileData) {
 function CatProfilePage({
   onNext,
   initialValues,
+  dietType,
+  onSelectPet,
+  onSelectDiet,
 }: {
   onNext: (raw: CatProfileData, p: ReturnType<typeof buildCatProfile>) => void;
   initialValues?: CatProfileData;
+  dietType?: DietType | null;
+  onSelectPet?: (t: PetType) => void;
+  onSelectDiet?: (t: DietType) => void;
 }) {
   const [form, setForm] = useState<CatProfileData>(initialValues ?? {
     catName: "", breed: "", age: "",
@@ -564,6 +620,50 @@ function CatProfilePage({
         eyebrow="Step 1 of 3"
       />
       <div className="bg-white grid grid-cols-1 md:grid-cols-2" style={{ padding: "32px", columnGap: "0px" }}>
+        {(onSelectPet || onSelectDiet) && (
+          <div className="md:col-span-2" style={{ marginBottom: "24px" }}>
+            {onSelectPet && (
+              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: "10px" }}>
+                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Pet:</span>
+                {(["dog", "cat"] as const).map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => onSelectPet(t)}
+                    className={`font-bold rounded-full border-2 transition-all ${
+                      t === "cat"
+                        ? "bg-[#3C6293] border-[#3C6293] text-white shadow-[0_0_0_3px_#E0F2FF]"
+                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#3C6293]"
+                    }`}
+                    style={{ fontSize: "13px", padding: "6px 16px" }}
+                  >
+                    {t === "dog" ? "Dogs" : "Cats"}
+                  </button>
+                ))}
+              </div>
+            )}
+            {onSelectDiet && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Diet:</span>
+                {CAT_DIETS.map(d => (
+                  <button
+                    key={d.value}
+                    type="button"
+                    onClick={() => onSelectDiet(d.value)}
+                    className={`font-bold rounded-full border-2 transition-all ${
+                      dietType === d.value
+                        ? "bg-[#143C6F] border-[#143C6F] text-white"
+                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#143C6F]"
+                    }`}
+                    style={{ fontSize: "13px", padding: "6px 16px" }}
+                  >
+                    {d.emoji} {d.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div className="md:pr-8 md:border-r-[1.5px] md:border-[#3C6293]" style={{ paddingRight: "32px", borderRight: "1.5px solid #3C6293" }}>
           <SectionLabel>Basic Information</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -663,8 +763,6 @@ function IngredientsPage({
   initialSelected = [],
   onSelectionChange,
   serverError,
-  petType,
-  dietLabel,
 }: {
   onBack: () => void;
   onCalculate: (selected: string[]) => void;
@@ -673,8 +771,6 @@ function IngredientsPage({
   initialSelected?: string[];
   onSelectionChange?: (selected: string[]) => void;
   serverError?: string;
-  petType?: PetType;
-  dietLabel?: string;
 }) {
   const [categories, setCategories] = useState<Record<string, CategoryMeta>>({});
   const [order, setOrder] = useState<string[]>([]);
@@ -805,15 +901,6 @@ function IngredientsPage({
         desc="Choose ingredients for the diet. Mandatory categories must have at least one selection."
       />
       <div className="bg-white" style={{ padding: "32px" }}>
-        {(petType || dietLabel) && (
-          <div
-            className="inline-flex items-center gap-2 bg-[#E0F2FF] border-[1.5px] border-[#A6CCE8] rounded-[10px] text-[#143C6F] font-bold"
-            style={{ padding: "8px 16px", marginBottom: "20px", fontSize: "14px" }}
-          >
-            🐾 Building for: {petType === "cat" ? "Cat" : "Dog"}
-            {dietLabel ? ` — ${dietLabel.charAt(0).toUpperCase()}${dietLabel.slice(1)} Diet` : ""}
-          </div>
-        )}
         {error && (
           <div className="bg-[#FDEBEC] border-[1.5px] border-[#B02424] rounded-[12px] text-[#AD0B39] font-bold text-[14px]" style={{ padding: "18px 20px", marginTop: "8px", marginBottom: "24px" }}>
             ❌ {error}
@@ -2678,6 +2765,9 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
               {page === 4 && petType === "dog" && (
                 <ProfilePage
                   initialValues={dogProfileDraft ?? undefined}
+                  dietType={dietType}
+                  onSelectPet={selectPet}
+                  onSelectDiet={selectDiet}
                   onNext={(raw, p) => {
                     setDogProfileDraft(raw);
                     setProfile(p);
@@ -2689,6 +2779,9 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
               {page === 4 && petType === "cat" && (
                 <CatProfilePage
                   initialValues={catProfileDraft ?? undefined}
+                  dietType={dietType}
+                  onSelectPet={selectPet}
+                  onSelectDiet={selectDiet}
                   onNext={(raw, p) => {
                     setCatProfileDraft(raw);
                     setProfile(p);
@@ -2706,8 +2799,6 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   initialSelected={savedSelected}
                   onSelectionChange={(s) => { setSavedSelected(s); setCalcErrors(""); }}
                   serverError={calcErrors}
-                  petType={petType}
-                  dietLabel={dietLabel}
                 />
               )}
               {page === 6 && profile && (
