@@ -2364,6 +2364,19 @@ function StripeCheckoutPanel({
         >
           ⚠️ Skip Payment (Testing Only)
         </button>
+
+        {/* TESTING ONLY — remove this before going live. Always uses Stripe's
+            test-mode Payment Link, regardless of the STRIPE_TEST_MODE flag,
+            so the real Stripe checkout flow can be verified with a fake card
+            (4242 4242 4242 4242) without touching the live payment link. */}
+        <button
+          onClick={() => goToStripeCheckout(STRIPE_PAYMENT_LINK_TEST)}
+          disabled={redirecting}
+          className="w-full text-[#3C6293] font-semibold"
+          style={{ fontSize: "13px", padding: "10px", marginTop: "10px", border: "1.5px dashed #3C6293", borderRadius: "10px", background: "#E0F2FF", opacity: redirecting ? 0.5 : 1 }}
+        >
+          🧪 Test Payment (Stripe Test Mode)
+        </button>
       </div>
     </div>
   );
@@ -2390,7 +2403,7 @@ function CheckoutFlow({
   const [customer, setCustomer] = useState<CustomerInfo | null>(null);
   const [redirecting, setRedirecting] = useState(false);
 
-  function goToStripeCheckout() {
+  function goToStripeCheckout(linkOverride?: string) {
     if (!customer) return;
     setRedirecting(true);
 
@@ -2407,7 +2420,7 @@ function CheckoutFlow({
       // works, the user just won't auto-return to an unlocked plan.
     }
 
-    const url = new URL(STRIPE_PAYMENT_LINK);
+    const url = new URL(linkOverride ?? STRIPE_PAYMENT_LINK);
     if (customer.email) url.searchParams.set("prefilled_email", customer.email);
     // Stripe's Payment Link "after payment" redirect (set in the Stripe
     // Dashboard for this link) should point back to this page with
