@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* ============================================================
+   PAW-BALANCER — GLOBAL STYLES for React project
+   Drop this in as src/index.css and import it once in main.tsx:
+     import './index.css'
+   ============================================================ */
+
+/* ── FONTS ──
+   Copy your existing /fonts folder (Parastoo.woff2, Parastoo-Bold.woff2)
+   into this project's /public/fonts folder so these paths resolve. */
+@font-face {
+  font-family: 'Parastoo';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/Parastoo.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Parastoo';
+  font-style: normal;
+  font-weight: 600 700;
+  src: url('/fonts/Parastoo-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* Kyiv*Type Titling — used on the hero badge ("SCIENCE-BASED PET NUTRITION").
+   Free font, CC BY-ND 4.0, by Dmitry Rastvortsev. */
+@font-face {
+  font-family: 'Kyiv Type Titling';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/KyivTypeTitling.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kyiv Type Titling';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/KyivTypeTitling-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* Marcellus / Manuale / Paprika load from Google Fonts.
+   Add this same link tag to index.html's <head>:
+   <link rel="preconnect" href="https://fonts.googleapis.com" />
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&family=Marcellus&family=Manuale:wght@800&family=Paprika&display=swap" rel="stylesheet" />
+*/
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Parastoo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #211915;
+  background: #fff;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a   { text-decoration: none; color: inherit; }
+
+/* ── COLOUR TOKENS (Paw-Balancer brand palette) ── */
+:root {
+  --white:        #FFFFFF;
+  --navy:         #143C6F;
+  --navy-mid:     #3C6293;
+  --orange:       #FA9A36;
+  --sky-light:    #E0F2FF;
+  --sky-mid:      #A6CCE8;
+  --sky-blue:     #BEE2FB;
+  --amber:        #FFB970;
+  --amber-mid:    #FFB160;
+  --amber-dark:   #FF9D36;
+  --peach:        #FFDCB7;
+  --gray-bg:      #F4F4F4;
+  --dark-brown:   #211915;
+  --red-dark:     #B02424;
+  --red-accent:   #AD0B39;
+  --blue-accent:  #3B4B8A;
+  --orange-bright:#FF6A38;
+
+  /* fonts */
+  --font-body:    'Parastoo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Marcellus', serif;
+  --font-brand:   'Manuale', serif;
+  --font-price:   'Paprika', Georgia, serif;
+  --font-badge:   'Kyiv Type Titling', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* page wrapper — reuse across pages/sections if needed */
+.page-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Handy utility classes if you want to apply brand fonts
+   via className instead of inline style in JSX/TSX: */
+.font-display { font-family: var(--font-display); }
+.font-brand   { font-family: var(--font-brand); }
+.font-price   { font-family: var(--font-price); }
+.font-body    { font-family: var(--font-body); }

@@ -1,0 +1,775 @@
+/* page wrapper */
+.page-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Disables the browser's automatic "scroll anchoring" for the whole page.
+   Scroll anchoring tries to keep content visually stable when something
+   above the viewport resizes — but that's exactly what our scroll-linked
+   shrinking navbar does on every scroll frame, so anchoring kept fighting
+   with it: it would nudge scrollY to compensate for the navbar's height
+   change, which triggered another shrink recalculation, which changed the
+   height again, in a feedback loop — that's the "stuck in a loop" bounce.
+   Turning it off lets the navbar's size track scroll position directly. */
+html {
+  overflow-anchor: none;
+}
+
+/* ══════════════════════════════════════════════
+   NAVBAR  — logo left, SUPPORT / FAQ links right
+   Shrinks continuously as a direct function of scroll position via the
+   --nav-shrink CSS variable (0 = top of page, 1 = fully scrolled/shrunk),
+   set in App.tsx. This tracks scroll 1:1 in real time rather than
+   snapping between two fixed states, so it can't look "stuck" or bouncy.
+══════════════════════════════════════════════ */
+:root {
+  --nav-shrink: 0;
+}
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: calc(20px - var(--nav-shrink) * 10px) 48px calc(20px - var(--nav-shrink) * 10px) 63px;
+  background: #fff;
+  border-bottom: 1px solid #eef0f4;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow-anchor: none;
+}
+.nav-logo { display: flex; align-items: center; }
+.nav-logo-img {
+  height: calc(190px - var(--nav-shrink) * 126px); width: auto; display: block; object-fit: contain;
+}
+
+/* Keeps the sticky navbar from covering the top of the calculator's
+   content whenever a step change calls scrollIntoView() — the browser
+   leaves this much room above the target instead of scrolling it flush
+   under the fixed header. Uses the navbar's full-size height (not the
+   shrunk-on-scroll height) since a step change can happen before the
+   navbar has had a chance to shrink — better to leave a little extra
+   space sometimes than risk content landing under the header. */
+#calculator {
+  scroll-margin-top: 231px;
+}
+
+/* SUPPORT / FAQ nav tabs */
+.nav-links {
+  display: flex; align-items: center; align-self: flex-end; gap: 40px;
+  padding-bottom: 8px;
+}
+.nav-link {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.nav-link:hover { opacity: 0.75; }
+.nav-link--support { color: #F0932B; }
+.nav-link--faq { color: #143C6F; }
+.nav-link--active { text-decoration: underline; text-underline-offset: 4px; }
+
+/* FAQ standalone page view */
+.faq-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 63px 0;
+  box-sizing: border-box;
+}
+.faq-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  color: #143C6F;
+  padding: 8px 0;
+}
+.faq-back-link:hover { color: #F0932B; }
+
+.calculator-page {
+  padding: 24px 63px 0;
+  box-sizing: border-box;
+}
+.calculator-page .faq-back-link { padding: 8px 0 0; }
+
+/* ══════════════════════════════════════════════
+   HERO  — two-column, left text + right image
+   Matches screenshot exactly
+══════════════════════════════════════════════ */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 60px 48px 60px 63px;
+  background: #fff;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* LEFT COLUMN — per Figma spec: headline box 593px, subtitle box 564px */
+.hero-left {
+  flex: 1 1 500px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Badge row: text + small yarn icon inline */
+.hero-badge-row {
+  display: flex; align-items: center; gap: 10px;
+}
+/* Badge text — per spec: 27px/32px line-height, weight 700, orange #D16C00 */
+.hero-badge {
+  font-family: 'Kyiv Type Titling', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 27px; font-weight: 700;
+  line-height: 32px;
+  color: #D16C00;
+  text-transform: uppercase;
+  max-width: 486px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* Yarn icon — per spec: 120x85 */
+.hero-badge-icon {
+  width: 120px; height: 85px; flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* Headline — per spec: Marcellus 40px, line-height 150%, color #3C6293, box 593px */
+.hero-headline {
+  font-family: 'Marcellus', serif;
+  font-size: 40px; font-weight: 700;
+  line-height: 1.5; letter-spacing: -0.01em;
+  color: #3C6293;
+  max-width: 593px;
+  margin-bottom: 0;
+}
+
+/* Subtitle — per spec: weight 800, 32px, line-height 130%, color #FF9A30, box 564px */
+.hero-subtitle {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 32px; font-weight: 800;
+  line-height: 1.3; color: #FF9A30;
+  max-width: 564px;
+}
+
+/* RIGHT COLUMN — per spec: square image, capped at 637px on wide screens,
+   but allowed to shrink so it never crowds out the text column */
+.hero-right {
+  flex: 1 1 500px;
+  max-width: 637px;
+  min-width: 220px;
+}
+.hero-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 19px;
+  display: block;
+}
+
+/* ══════════════════════════════════════════════
+   BACKGROUND / PRICE SCROLL SECTION  (y:924–1561)
+   bg img: covers entire section (1292×637)
+   OBJECTS SVGs: left x:-376, right x:777
+   Price scroll card: right half  516×426
+══════════════════════════════════════════════ */
+.hero-bg-section {
+  position: relative;
+  width: 100%;
+  height: 637px;
+  overflow: hidden;
+  display: flex; align-items: center;
+}
+.hero-bg-crop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.hero-bg-full {
+  /* all-bg.svg is 1280×11377; the banner is at y=951, height=637.
+     Position the full SVG so only the banner rows show through. */
+  width: 1280px;
+  height: auto;
+  position: absolute;
+  top: -951px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+/* Decorative OBJECTS */
+.obj { position: absolute; z-index: 1; pointer-events: none; }
+.obj-left   { left: -160px; top: -10px; width: 483px; height: 631px; object-fit: contain; opacity: 0.9; }
+.obj-right  { right: 0; top: -10px; width: 483px; height: 631px; object-fit: contain; opacity: 0.9; }
+.obj-center { left: 50%; transform: translateX(-80px); top: 363px; width: 160px; height: 214px; object-fit: contain; }
+
+/* Price scroll card  x:658 y:1035 → within section: left:658px top:111px  516×426 */
+.price-scroll-card {
+  position: absolute;
+  left: 658px; top: 111px;
+  width: 516px; height: 426px;
+  z-index: 5;
+}
+.price-scroll-outer {
+  width: 100%; height: 100%;
+  background: #000; border-radius: 24px;
+  padding: 7px;
+  display: flex; align-items: stretch;
+}
+.price-scroll-inner {
+  flex: 1;
+  background: #FAF1DD; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px 36px;
+}
+/* TEXT  Paprika 40px / 1.3em  fill:#000  $14.95 → color:#F88914 */
+.price-scroll-text {
+  font-family: 'Paprika', Georgia, serif;
+  font-size: 38px; font-weight: 400; line-height: 1.3; color: #000;
+}
+.price-scroll-amount { color: #F88914; }
+
+/* ══════════════════════════════════════════════
+   WHY CHOOSE FURTUNER
+   Exact match to screenshot
+══════════════════════════════════════════════ */
+.why-section {
+  padding: 60px 48px 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-family: 'Marcellus', serif;
+  font-size: 48px; font-weight: 400;
+  color: var(--navy-mid);
+  margin-bottom: 32px; line-height: 1.2;
+}
+
+/* Two independent flex rows — matches Figma layout exactly */
+.why-grid { display: flex; flex-direction: column; gap: 16px; }
+.why-row1  { display: flex; gap: 24px; align-items: stretch; }
+.why-row2  { display: flex; gap: 16px; align-items: stretch; }
+
+/* ── Why-Choose carousel ──
+   Both sets stacked in same grid cell so the container keeps its height */
+.why-carousel {
+  display: grid;
+  background: #fff;
+}
+.why-set {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  background: #fff;
+}
+
+@keyframes why-fade-a {
+  0%, 38%  { opacity: 1; }
+  48%, 90% { opacity: 0; }
+  100%     { opacity: 1; }
+}
+@keyframes why-fade-b {
+  0%, 38%  { opacity: 0; }
+  48%, 90% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+.why-set-a {
+  animation: why-fade-a 40s ease-in-out infinite;
+}
+.why-set-b {
+  animation: why-fade-b 40s ease-in-out infinite;
+}
+
+/* Base — Set A cards were clean from the start, no bleed needed */
+.why-full-img {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: fill;
+  display: block;
+}
+
+/* Set B uses SVGs with built-in rounded corners — no bleed needed */
+.why-set-b .why-full-img {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* ── Base card ── */
+.why-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+/* Full-bleed background image — used by cards 1 & 2 */
+.why-card-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+  z-index: 0;
+}
+
+/* ══════════════════════════════════
+   CARD 1  — 451×385  "Three tailored diet options"
+   Figma: title x:30 y:38  body x:167 y:141 w:268
+══════════════════════════════════ */
+.why-card-1 {
+  flex: 0 0 451px; height: 385px;
+  border-radius: 23px;
+  background: transparent;
+}
+.why-card-1 .why-overlay-title {
+  position: absolute; z-index: 1;
+  top: 38px; left: 30px; right: 16px;
+  font-family: 'Manuale', serif;
+  font-size: 26px; font-weight: 800;
+  color: #fff; line-height: 1.2;
+}
+.why-card-1 .why-overlay-body {
+  position: absolute; z-index: 1;
+  top: 141px; left: 167px; right: 16px;
+  font-size: 17px; font-weight: 600;
+  line-height: 1.45; color: #1a1a1a;
+}
+
+/* ══════════════════════════════════
+   CARD 2  — flex:1  height:385  "Beyond the label"
+   Figma: title x:324 y:73  body x:324 y:152 w:326
+   (card ~684px; 324/684 ≈ 47.4%)
+══════════════════════════════════ */
+.why-card-2 {
+  flex: 1; height: 385px;
+  border-radius: 26px;
+  background: transparent;
+}
+.why-card-2 .why-overlay-title {
+  position: absolute; z-index: 1;
+  top: 73px; left: 47%; right: 24px;
+  font-family: 'Manuale', serif;
+  font-size: 30px; font-weight: 800;
+  color: #3B4B8A; line-height: 1.2;
+}
+.why-card-2 .why-overlay-body {
+  position: absolute; z-index: 1;
+  top: 152px; left: 47%; right: 24px;
+  font-size: 17px; font-weight: 400;
+  line-height: 1.5; color: #222;
+}
+
+/* ══════════════════════════════════════════════
+   CARDS 3 / 4 / 5  — FIGMA EXACT
+   Full-bleed image (position:absolute) covers the entire card.
+   Lower ~48% of each image is solid colour (blue/pink/beige),
+   providing the visual background for the absolutely-positioned text.
+   Figma card size: ~370×438px for all three.
+   Title at y:229, body at y:329 (Figma coordinates, 1:1).
+══════════════════════════════════════════════ */
+.why-card-3,
+.why-card-4,
+.why-card-5 {
+  flex: 1; height: 438px;
+}
+.why-card-3 { border-radius: 33px; background: transparent; }
+.why-card-4 { border-radius: 36px; background: transparent; }
+.why-card-5 { border-radius: 42px; background: transparent; }
+
+/* Cards 3/4/5 keep their original background colours as a safe fallback
+   behind the full-bleed <img> so any sub-pixel anti-aliasing at the
+   border-radius edge blends with the image colour instead of showing black */
+
+/* ── Shared overlay text base (font sizes and positions from Figma) ── */
+.why-overlay-title {
+  position: absolute; z-index: 1;
+  font-family: 'Manuale', serif;
+  font-size: 36px; font-weight: 800;
+  line-height: 1.2em;
+  color: #fff;
+}
+.why-overlay-body {
+  position: absolute; z-index: 1;
+  font-family: 'Parastoo', 'Inter', sans-serif;
+  font-size: 30px; font-weight: 600;
+  line-height: 1.02em;
+  color: #000;
+}
+
+/* Text positions — exact Figma coordinates (x=left, y=top, card=370×438) */
+
+
+/* Inline text colour helpers */
+.t-navy   { font-weight: 700; color: #143C6F; }
+.t-green  { font-weight: 700; color: #4a7c2f; }
+.t-red    { font-weight: 700; color: #AD0B39; }
+.t-reddrk { color: #B02424; font-weight: 700; }
+
+/* ══════════════════════════════════════════════
+   EXPERT SECTION  (y:2661–3013)
+   fill:#F4F4F4  height:352
+   Professor 165×238  x:81
+   Text Parastoo Bold 36px color:#143C6F  x:270  945×219
+══════════════════════════════════════════════ */
+.expert-section {
+  background: #F4F4F4; padding: 48px 63px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.expert-inner {
+  display: flex; align-items: center; gap: 24px;
+}
+.expert-avatar {
+  flex: 0 0 165px; width: 165px; height: 238px; object-fit: contain;
+}
+/* Text  Parastoo Bold 36px / 1.55 (approx)  color:#143C6F */
+.expert-text {
+  font-size: 22px; font-weight: 700; line-height: 1.55; color: var(--navy);
+  max-width: 945px;
+}
+
+/* ══════════════════════════════════════════════
+   THREE TAILORED DIET PLANS  (y:3102–3990)
+   Title  Marcellus 55px  color:#3C6293
+   Plan cards: 351×246  fill:#3C6293  r:25
+     Conventional x:77, Grain-Free x:464, Meat-Based x:853
+   Comparison table  1126×482  stroke:#3C6293  r:14
+     Header fill:#A6CCE8  r:14 14 0 0
+     Body rows fill:#E0F2FF (stripe)
+   "Build Your Diet" btn  312×59  fill:#F0932B  r:18
+══════════════════════════════════════════════ */
+.plans-section {
+  padding: 80px 63px 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ── Three plan cards — fill full section width equally ── */
+.plan-cards {
+  display: flex; gap: 24px; margin-bottom: 40px;
+}
+.plan-card {
+  flex: 1;
+  height: 246px;
+  background: var(--navy-mid); border-radius: 25px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 20px;
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.plan-card:hover,
+.plan-card.diet-active {
+  transform: scale(1.06);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+}
+.plan-icon { object-fit: contain; max-height: 140px; }
+.plan-label {
+  font-family: 'Marcellus', serif;
+  font-size: 28px; font-weight: 400; letter-spacing: 0.02em;
+  color: #fff; text-align: center; margin: 0;
+}
+
+/* ── Comparison table — column-based layout so each column can zoom as one unit ── */
+.comparison-wrap {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(8, minmax(0, auto));
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  align-items: stretch;
+  border: 2px solid #A6CCE8;
+  border-radius: 14px;
+  overflow: visible; /* allow columns to pop outside the border */
+}
+.cmp-column {
+  display: contents;
+}
+.cmp-column--feature { }
+.cmp-column:last-child { }
+
+.cmp-col-head {
+  background: #A6CCE8;
+  padding: 14px 20px;
+  font-size: 18px; font-weight: 700; color: #1a1a1a;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, color 0.3s ease;
+  border-radius: 0;
+  border-right: 1px solid #7AAECF;
+}
+.cmp-column:first-child .cmp-col-head { border-radius: 12px 0 0 0; }
+.cmp-column:last-child  .cmp-col-head { border-radius: 0 12px 0 0; border-right: none; }
+
+.cmp-col-cell {
+  padding: 14px 20px;
+  font-size: 16px; font-weight: 500; line-height: 1.5;
+  color: #1a1a1a;
+  border-top: 1px solid #C9E4F5;
+  border-right: 1px solid #7AAECF;
+  display: flex; align-items: center;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, color 0.3s ease;
+}
+.cmp-column:last-child .cmp-col-cell { border-right: none; }
+.cmp-stripe { background: #E0F2FF; }
+.cmp-column--feature .cmp-col-cell { font-weight: 700; }
+
+/* Active state — each cell in the column zooms individually (the column
+   wrapper itself is display:contents and can't be transformed, so we
+   scale every cell in it instead — visually reads as the whole column
+   popping forward, same as the original single-box zoom) */
+.cmp-column.diet-active .cmp-col-head,
+.cmp-column.diet-active .cmp-col-cell {
+  transform: scale(1.07);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  position: relative;
+  z-index: 10;
+  color: #F0932B;
+}
+.cmp-column.diet-active .cmp-col-cell { font-weight: 600; }
+
+/* "Build Your Diet" CTA  312×59  r:18  centered */
+.build-cta-wrap { display: flex; justify-content: center; margin-top: 48px; }
+.btn-build-diet {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #F0932B; color: #fff;
+  font-size: 26px; font-weight: 800;
+  border-radius: 40px;
+  padding: 16px 60px;
+  letter-spacing: 0.01em;
+  transition: background 0.2s;
+}
+.btn-build-diet:hover { background: #D9791A; }
+
+/* ══════════════════════════════════════════════
+   STEP 1 OF 3  (y:4135+)
+   Step label  Marcellus 55px  color:#3C6293
+   Form card border  #3C6293 2px  r:12
+   Header bar  fill:#143C6F  r:10 10 0 0  height:116
+   Two-col form body
+   Proceed bar  fill:#F0932B  height:66
+   Next Step row  Marcellus 55px
+══════════════════════════════════════════════ */
+.form-section {
+  padding: 60px 63px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.step2-section { padding-top: 0; }
+
+/* Step label  "Step 1 Of 3"  Marcellus 55px  color:#3C6293  #81:49 */
+.step-label {
+  font-family: 'Marcellus', serif;
+  font-size: 55px; font-weight: 400; color: var(--navy-mid);
+  margin-bottom: 24px;
+}
+
+/* Form card  stroke:#3C6293 2px  r:12 */
+.form-card {
+  border: 2px solid var(--navy-mid); border-radius: 12px; overflow: hidden;
+}
+
+/* Header bar  fill:#143C6F  h:116  r:10 10 0 0 */
+.form-card-header {
+  background: var(--navy);
+  padding: 20px 37px 28px; border-radius: 10px 10px 0 0;
+  min-height: 116px;
+}
+/* Title  SemiBold 42px  color:#fff  → #81:50 */
+.form-card-title {
+  font-size: 42px; font-weight: 600; color: #fff; margin-bottom: 4px;
+}
+/* Desc  SemiBold 25px  color:#FFC588  → #81:51 */
+.form-card-desc {
+  font-size: 20px; font-weight: 600; color: #FFC588;
+}
+
+/* Two-column form body */
+.form-body {
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: #fff; padding: 28px 37px; gap: 0;
+}
+.form-col { padding: 0 24px; }
+.form-col:first-child { padding-left: 0; border-right: 1.5px solid var(--navy-mid); }
+.form-col:last-child  { padding-right: 0; }
+
+/* Section label  "BASIC INFORMATION"  Bold 26px */
+.form-section-label {
+  font-size: 18px; font-weight: 700; color: #F0932B; margin-bottom: 6px;
+}
+.form-divider { height: 1.5px; background: var(--navy-mid); margin-bottom: 16px; }
+
+.field { margin-bottom: 18px; }
+/* Field labels  Bold 25px  color:#3C6293 */
+.field-label { display: block; font-size: 18px; font-weight: 700; color: var(--navy-mid); margin-bottom: 6px; }
+
+/* Input fields  fill:#E0F2FF  r:10  h:50 */
+.field-input {
+  width: 100%; height: 50px;
+  background: var(--sky-light); border: none; border-radius: 10px;
+  padding: 12px 16px; font-size: 18px; font-weight: 700; color: var(--dark-brown);
+  outline: none; appearance: none;
+}
+.field-input::placeholder { color: #aaa; font-weight: 400; }
+.field-input:focus { outline: 2px solid var(--navy-mid); }
+
+/* Radio pills  226×50  fill:#E0F2FF  r:10  gap:10 */
+.radio-group { display: flex; gap: 10px; }
+.radio-pill {
+  flex: 1; height: 50px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--sky-light); border-radius: 10px;
+  font-size: 17px; font-weight: 700; color: var(--dark-brown);
+  cursor: pointer; user-select: none; transition: background 0.15s;
+}
+.radio-pill input { display: none; }
+.radio-pill.active { background: var(--navy); color: #fff; }
+.radio-icon { font-size: 20px; }
+
+/* Twin inputs for weight */
+.twin-inputs { display: flex; gap: 10px; }
+.twin-inputs .field-input { flex: 1; }
+
+/* Proceed bar  h:66 */
+.proceed-bar {
+  background: #F0932B;
+  display: flex; align-items: center; justify-content: center;
+  padding: 8px; min-height: 66px;
+}
+.btn-proceed {
+  background: transparent; border: none; cursor: pointer;
+  font-size: 22px; font-weight: 700; color: #fff;
+  letter-spacing: 0.02em; text-align: center;
+}
+.btn-proceed:hover { text-decoration: underline; }
+
+/* Next Step  Marcellus 55px  #108:102 */
+.next-step-row {
+  display: flex; align-items: center; justify-content: center; gap: 16px; padding: 20px;
+}
+.next-step-text  { font-family: 'Marcellus', serif; font-size: 55px; font-weight: 400; color: #000; }
+.next-step-arrow { font-size: 55px; color: #000; }
+
+/* ══════════════════════════════════════════════
+   STEP 2: INGREDIENT SELECTION
+══════════════════════════════════════════════ */
+.ing-category {
+  padding: 0 37px;
+  background: #fff;
+  border-top: 1px solid #dce8f0;
+}
+/* Category title  Parastoo SemiBold 55px  color:#143C6F */
+.ing-cat-title {
+  font-size: 40px; font-weight: 600; color: var(--navy);
+  padding: 16px 0 8px;
+}
+.ing-cat-body {
+  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; padding-bottom: 24px;
+}
+/* Group header block */
+.ing-group-header {
+  display: flex; flex-direction: column; align-items: center; width: 200px; flex-shrink: 0; gap: 2px;
+}
+.ing-group-svg { width: 200px; height: 80px; border-radius: 8px; overflow: hidden; display: block; }
+.ing-group-badge { font-size: 20px; font-weight: 700; text-align: center; margin-top: 4px; }
+.mandatory-badge { color: var(--navy); }
+.optional-badge  { color: #F0932B; }
+.ing-group-name  { font-size: 18px; font-weight: 600; text-align: center; color: #555; }
+.ing-group-rule  { font-size: 13px; font-weight: 600; text-align: center; color: #777; }
+
+/* Ingredient chips  r:10  h:43 */
+.chips-grid {
+  display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; flex: 1; min-width: 0;
+}
+.chip {
+  border-radius: 10px; padding: 0 16px;
+  font-size: 15px; font-weight: 700; color: #000;
+  cursor: pointer; user-select: none; height: 43px;
+  display: flex; align-items: center;
+  transition: background 0.15s, transform 0.1s; white-space: nowrap;
+}
+.chip-blue  { background: var(--sky-blue); }
+.chip-peach { background: var(--peach); }
+.chip:hover { transform: translateY(-1px); }
+.chip.selected { outline: 2px solid var(--navy); }
+.chip.active   { background: var(--navy); color: #fff; }
+
+/* Reset button  r:18 */
+.form-actions { display: flex; justify-content: center; padding: 28px; }
+.btn-reset {
+  background: #F0932B; border: none; border-radius: 18px;
+  padding: 14px 60px; font-size: 28px; font-weight: 700; color: #fff;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-reset:hover { background: #D9791A; }
+
+/* ══════════════════════════════════════════════  FOOTER  */
+.site-footer { background: var(--navy); padding: 32px 63px; }
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.footer-brand { display: flex; align-items: center; gap: 12px; font-family: 'Manuale', serif; font-weight: 800; font-size: 20px; color: #F0932B; }
+.footer-logo-img {
+  height: 150px; width: auto; object-fit: contain;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 18px;
+}
+.footer-copy  { font-size: 14px; color: #F0932B; }
+
+/* ══════════════════════════════════════════════  RESPONSIVE  */
+@media (max-width: 600px) {
+  .navbar { padding: calc(16px - var(--nav-shrink) * 8px) 20px; }
+  .nav-logo-img { height: calc(100px - var(--nav-shrink) * 52px); }
+  .nav-links { gap: 16px; }
+  .nav-link { font-size: 16px; }
+  #calculator { scroll-margin-top: 133px; }
+}
+@media (max-width: 1100px) {
+  .hero { flex-direction: column; padding: 32px 24px 40px; gap: 32px; }
+  .hero-left { max-width: 100%; }
+  .hero-headline { font-size: 28px; }
+  .hero-subtitle  { font-size: 16px; }
+  .hero-right { width: 100%; }
+  .hero-img   { width: 100%; height: auto; }
+  .hero-bg-section { height: auto; min-height: 320px; }
+  .price-scroll-card { position: relative; left: auto; top: auto; width: 90%; max-width: 480px; height: auto; margin: 40px auto; }
+  .price-scroll-outer { height: auto; }
+  .price-scroll-inner { height: auto; }
+  .price-scroll-text { font-size: 24px; }
+  .obj { display: none; }
+  .why-section, .expert-section, .plans-section, .form-section { padding-left: 24px; padding-right: 24px; }
+  .why-row1, .why-row2 { flex-direction: column; }
+  .why-card-1, .why-card-2 { width: 100% !important; flex: none; height: 340px; }
+  .why-card-3, .why-card-4, .why-card-5 { width: 100% !important; flex: none; height: 340px; }
+  .why-overlay-title { font-size: 20px; }
+  .why-overlay-body  { font-size: 13px; }
+  .why-card-3 .why-overlay-title { top: 170px; }
+  .why-card-3 .why-overlay-body  { top: 240px; }
+  .why-card-4 .why-overlay-title { top: 24px; }
+  .why-card-4 .why-overlay-body  { top: 90px;  }
+  .why-card-5 .why-overlay-title { top: 18px;  right: 35%; }
+  .why-card-5 .why-overlay-body  { top: 80px;  right: 35%; }
+  .section-title { font-size: 32px; }
+  .plan-cards { flex-direction: column; align-items: center; }
+  .plan-card { width: 100%; max-width: 351px; }
+  .comparison-wrap { grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: none; }
+  .cmp-col-head, .cmp-col-cell { border-right: none; border-bottom: 1px solid #dce8f0; line-height: 2; padding: 8px 16px; }
+  .form-body  { grid-template-columns: 1fr; }
+  .form-col:first-child { border-right: none; border-bottom: 1.5px solid var(--navy-mid); padding-bottom: 20px; }
+  .expert-inner { flex-direction: column; text-align: center; }
+  .step-label, .next-step-text, .next-step-arrow { font-size: 36px; }
+}
