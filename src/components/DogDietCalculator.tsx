@@ -143,7 +143,6 @@ const MAX_MAP: Record<string, number> = {
   "07 Vegetable A (Mandatory - Select at least one and up to three maximum)": 3,
   "08 Vegetable B (Optional - Pick up to three maximum)": 3,
   "09 Fruit (Mandatory - Select at least one and up to three maximum)": 3,
-  "10 Oil (Mandatory - Select at least one and a maximum of three)": 3,
   "11 Fiber/Seeds (Optional - Pick up to two maximum)": 2,
   // ── Cat Raw ──
   "06 Grains & Potato (Optional - Select up to two maximum)": 2,
@@ -928,7 +927,7 @@ function IngredientsPage({
                                 className="text-[16px] font-bold"
                                 style={{ color: cat.mandatory ? "#FF9D36" : "#143C6F", textAlign: "center", marginTop: "auto" }}
                               >
-                                {cat.mandatory ? `Min: ${cat.min}, Max: ${maxLabel}` : `Max: ${maxLabel}`}
+                                {cat.mandatory ? `Min: 1, Max: ${maxLabel}` : `Max: ${maxLabel}`}
                               </p>
                             )}
                           </div>
@@ -1062,7 +1061,7 @@ function ResultsPage({
   dietType,
   initialFeedPlanUnlocked,
 }: {
-  profile: ReturnType<typeof buildProfile>;
+  profile: ReturnType<typeof buildProfile> | ReturnType<typeof buildCatProfile>;
   result: CalcResult | null;
   selectedIngredients: string[];
   allIngredients: IngredientItem[];
@@ -1585,7 +1584,7 @@ function ResultsPage({
                       {section.rows
                         .filter(row => row.val != null)
                         .map(row => {
-                        const minVal = (row.min != null && row.min !== "" && row.min !== 0) ? row.min : null;
+                        const minVal = (row.min != null && row.min !== 0) ? row.min : null;
                         // Use backend aafco_percent_of_minimum if available, else calculate
                         const aafcoPctRaw = (row as any).aafcoPct;
                         const pct = aafcoPctRaw != null
@@ -2547,7 +2546,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
       `}</style>
       <div className="mx-auto max-w-[1280px] px-[63px]" style={{ maxWidth: "1280px", margin: "0 auto", paddingLeft: "63px", paddingRight: "63px", width: "100%" }}>
         {/* Step indicator for the 5 numbered steps; the Results page has none */}
-        {page <= 5 && <StepIndicator step={page} />}
+        {page <= 5 && <StepIndicator step={page as 1 | 2 | 3 | 4 | 5} />}
 
         {/* Step 1: Start — kicks off the wizard */}
         {page === 1 && (
