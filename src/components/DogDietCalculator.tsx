@@ -1774,10 +1774,10 @@ function ResultsPage({
                         if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                           ingFresh = ingFresh * (10.0 / 14.9);
                         }
-                        // EXCEPTION: Oyster and Liver ingredients are shown at 80% of the
+                        // EXCEPTION: Liver ingredients are shown at 80% of the
                         // computed fresh-weight value in this final report table.
                         const ingLower = r.ingredient.trim().toLowerCase();
-                        if (ingLower.includes("oyster") || ingLower.includes("liver")) {
+                        if (ingLower.includes("liver")) {
                           ingFresh = ingFresh * 0.8;
                         }
                         return (
@@ -1804,10 +1804,10 @@ function ResultsPage({
                             if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                               ingFresh = ingFresh * (10.0 / 14.9);
                             }
-                            // EXCEPTION: Oyster and Liver ingredients are shown at 80% of the
+                            // EXCEPTION: Liver ingredients are shown at 80% of the
                             // computed fresh-weight value in this final report table.
                             const ingLowerTot = r.ingredient.trim().toLowerCase();
-                            if (ingLowerTot.includes("oyster") || ingLowerTot.includes("liver")) {
+                            if (ingLowerTot.includes("liver")) {
                               ingFresh = ingFresh * 0.8;
                             }
                             return s + ingFresh * d;
