@@ -362,50 +362,6 @@ function ProfilePage({
         eyebrow="Step 1 of 3"
       />
       <div className="bg-white grid grid-cols-1 md:grid-cols-2" style={{ padding: "32px", columnGap: "0px" }}>
-        {(onSelectPet || onSelectDiet) && (
-          <div className="md:col-span-2" style={{ marginBottom: "24px" }}>
-            {onSelectPet && (
-              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: "10px" }}>
-                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Pet:</span>
-                {(["dog", "cat"] as const).map(t => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => onSelectPet(t)}
-                    className={`font-bold rounded-full border-2 transition-all ${
-                      t === "dog"
-                        ? "bg-[#3C6293] border-[#3C6293] text-white shadow-[0_0_0_3px_#E0F2FF]"
-                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#3C6293]"
-                    }`}
-                    style={{ fontSize: "13px", padding: "6px 16px" }}
-                  >
-                    {t === "dog" ? "Dogs" : "Cats"}
-                  </button>
-                ))}
-              </div>
-            )}
-            {onSelectDiet && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Diet:</span>
-                {DOG_DIETS.map(d => (
-                  <button
-                    key={d.value}
-                    type="button"
-                    onClick={() => onSelectDiet(d.value)}
-                    className={`font-bold rounded-full border-2 transition-all ${
-                      dietType === d.value
-                        ? "bg-[#143C6F] border-[#143C6F] text-white"
-                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#143C6F]"
-                    }`}
-                    style={{ fontSize: "13px", padding: "6px 16px" }}
-                  >
-                    {d.emoji} {d.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
         <div className="md:pr-8 md:border-r-[1.5px] md:border-[#3C6293]" style={{ paddingRight: "32px", borderRight: "1.5px solid #3C6293" }}>
           <SectionLabel>Basic Information</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -627,50 +583,6 @@ function CatProfilePage({
         eyebrow="Step 1 of 3"
       />
       <div className="bg-white grid grid-cols-1 md:grid-cols-2" style={{ padding: "32px", columnGap: "0px" }}>
-        {(onSelectPet || onSelectDiet) && (
-          <div className="md:col-span-2" style={{ marginBottom: "24px" }}>
-            {onSelectPet && (
-              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: "10px" }}>
-                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Pet:</span>
-                {(["dog", "cat"] as const).map(t => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => onSelectPet(t)}
-                    className={`font-bold rounded-full border-2 transition-all ${
-                      t === "cat"
-                        ? "bg-[#3C6293] border-[#3C6293] text-white shadow-[0_0_0_3px_#E0F2FF]"
-                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#3C6293]"
-                    }`}
-                    style={{ fontSize: "13px", padding: "6px 16px" }}
-                  >
-                    {t === "dog" ? "Dogs" : "Cats"}
-                  </button>
-                ))}
-              </div>
-            )}
-            {onSelectDiet && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[#3C6293] font-bold" style={{ fontSize: "13px" }}>Diet:</span>
-                {CAT_DIETS.map(d => (
-                  <button
-                    key={d.value}
-                    type="button"
-                    onClick={() => onSelectDiet(d.value)}
-                    className={`font-bold rounded-full border-2 transition-all ${
-                      dietType === d.value
-                        ? "bg-[#143C6F] border-[#143C6F] text-white"
-                        : "border-[#A6CCE8] text-[#211915] bg-white hover:border-[#143C6F]"
-                    }`}
-                    style={{ fontSize: "13px", padding: "6px 16px" }}
-                  >
-                    {d.emoji} {d.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
         <div className="md:pr-8 md:border-r-[1.5px] md:border-[#3C6293]" style={{ paddingRight: "32px", borderRight: "1.5px solid #3C6293" }}>
           <SectionLabel>Basic Information</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -1673,7 +1585,10 @@ function ResultsPage({
                   <tr className="bg-[#143C6F] text-white">
                     <th className="uppercase tracking-wider" style={{ width: "26%", padding: "16px 16px", textAlign: "left", fontSize: "22px", fontWeight: 800 }}>Nutrient</th>
                     <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Unit</th>
-                    <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Value</th>
+                    <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800, lineHeight: 1.15 }}>
+                      <div>Diet</div>
+                      <div>Value</div>
+                    </th>
                     <th className="uppercase tracking-wider" style={{ width: "20%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>AAFCO Minimum</th>
                     <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Status</th>
                   </tr>
