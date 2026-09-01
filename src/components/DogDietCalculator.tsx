@@ -1774,6 +1774,12 @@ function ResultsPage({
                         if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                           ingFresh = ingFresh * (10.0 / 14.9);
                         }
+                        // EXCEPTION: Oyster and Liver ingredients are shown at 80% of the
+                        // computed fresh-weight value in this final report table.
+                        const ingLower = r.ingredient.trim().toLowerCase();
+                        if (ingLower.includes("oyster") || ingLower.includes("liver")) {
+                          ingFresh = ingFresh * 0.8;
+                        }
                         return (
                           <tr key={i} style={{ background: "#E0F2FF", borderBottom: "2px solid #3C6293" }}>
                             <td style={{ padding: "12px 16px", fontSize: "16px", fontWeight: 600, color: "#211915" }}>{cleanIngredientName(r.ingredient)}</td>
@@ -1797,6 +1803,12 @@ function ResultsPage({
                             // per-row calc above and the server-side correction in diet_router.py.
                             if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                               ingFresh = ingFresh * (10.0 / 14.9);
+                            }
+                            // EXCEPTION: Oyster and Liver ingredients are shown at 80% of the
+                            // computed fresh-weight value in this final report table.
+                            const ingLowerTot = r.ingredient.trim().toLowerCase();
+                            if (ingLowerTot.includes("oyster") || ingLowerTot.includes("liver")) {
+                              ingFresh = ingFresh * 0.8;
                             }
                             return s + ingFresh * d;
                           }, 0);
