@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fixed to the desktop layout width (matches the site's 1280px container).
+         This means phones, tablets, and rotated monitors always compute CSS media
+         queries against 1280px, so the layout never switches to a "mobile" version —
+         the browser just scales the whole page to fit the physical screen instead. -->
+    <meta name="viewport" content="width=1280" />
     <title>FurTuner — Science-Based Pet Nutrition</title>
 
     <!-- Google Fonts: Marcellus (headline), Manuale (brand), Paprika (price), Inter -->
