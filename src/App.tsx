@@ -127,8 +127,10 @@ function App() {
           </h1>
           <p className="hero-subtitle">
             FurTuner is an advanced diet formulation platform for dogs and cats that creates
-            personalized, AAFCO-compliant recipes using real food ingredients without synthetic
-            vitamin or mineral supplements.
+            personalized, nutritionally balanced recipes using real food ingredients. Each
+            recipe is formulated to meet AAFCO (Association of American Feed Control
+            Officials) minimum nutrient requirements without relying on synthetic vitamin
+            or mineral supplements.
           </p>
         </div>
         <div className="hero-right">
