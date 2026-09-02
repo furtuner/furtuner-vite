@@ -146,60 +146,6 @@ function App() {
         <img src="/images/objects-center.svg" alt="" className="obj obj-center" aria-hidden="true" />
       </section>
 
-      {/* WHY CHOOSE FURTUNER */}
-      <section className="why-section">
-        <h2 className="section-title">Why Choose FurTuner?</h2>
-        <div className="why-carousel">
-          <div className="why-set why-set-a">
-            <div className="why-grid">
-              <div className="why-row1">
-                <div className="why-card why-card-1">
-                  <img className="why-full-img" src="/images/seta-card1.svg" alt="Three tailored diet options" />
-                </div>
-                <div className="why-card why-card-2">
-                  <img className="why-full-img" src="/images/seta-card2.svg" alt="Beyond the label" />
-                </div>
-              </div>
-              <div className="why-row2">
-                <div className="why-card why-card-3">
-                  <img className="why-full-img" src="/images/seta-card3.svg" alt="100+ human-grade ingredients" />
-                </div>
-                <div className="why-card why-card-4">
-                  <img className="why-full-img" src="/images/seta-card4.svg" alt="Science-based formulation" />
-                </div>
-                <div className="why-card why-card-5">
-                  <img className="why-full-img" src="/images/seta-card5.svg" alt="Full ingredient control" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="why-set why-set-b">
-            <div className="why-grid">
-              <div className="why-row1">
-                <div className="why-card why-card-1">
-                  <img className="why-full-img" src="/images/setb-card1.svg" alt="" />
-                </div>
-                <div className="why-card why-card-2">
-                  <img className="why-full-img" src="/images/setb-card2.svg" alt="" />
-                </div>
-              </div>
-              <div className="why-row2">
-                <div className="why-card why-card-3">
-                  <img className="why-full-img" src="/images/setb-card3.svg" alt="" />
-                </div>
-                <div className="why-card why-card-4">
-                  <img className="why-full-img" src="/images/setb-card4.svg" alt="" />
-                </div>
-                <div className="why-card why-card-5">
-                  <img className="why-full-img" src="/images/setb-card5.svg" alt="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* EXPERT SECTION */}
       <section className="expert-section">
         <div className="expert-inner">
