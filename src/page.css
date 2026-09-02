@@ -261,50 +261,45 @@ html {
 .why-row1  { display: flex; gap: 24px; align-items: stretch; }
 .why-row2  { display: flex; gap: 16px; align-items: stretch; }
 
-/* ── Why-Choose carousel ──
-   Both sets stacked in same grid cell so the container keeps its height */
-.why-carousel {
-  display: grid;
-  background: #fff;
-}
-.why-set {
-  grid-column: 1;
-  grid-row: 1;
+/* ── Why-Choose flip cards ──
+   Each card has a Set A face and a Set B face. The `.is-flipped` class is
+   toggled by React: a shared timer flips all cards together every 25s
+   (WHY_CARDS_AUTO_FLIP_MS in App.tsx), and hovering an individual card
+   flips just that one to Set B until the mouse leaves it. */
+.why-flip {
+  position: relative;
   width: 100%;
-  background: #fff;
+  height: 100%;
+  perspective: 1600px;
+}
+.why-flip-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+.why-flip-front {
+  transform: rotateY(0deg);
+}
+.why-flip-back {
+  transform: rotateY(180deg);
+}
+.why-flip.is-flipped .why-flip-front {
+  transform: rotateY(-180deg);
+}
+.why-flip.is-flipped .why-flip-back {
+  transform: rotateY(0deg);
 }
 
-@keyframes why-fade-a {
-  0%, 38%  { opacity: 1; }
-  48%, 90% { opacity: 0; }
-  100%     { opacity: 1; }
-}
-@keyframes why-fade-b {
-  0%, 38%  { opacity: 0; }
-  48%, 90% { opacity: 1; }
-  100%     { opacity: 0; }
-}
-.why-set-a {
-  animation: why-fade-a 40s ease-in-out infinite;
-}
-.why-set-b {
-  animation: why-fade-b 40s ease-in-out infinite;
-}
-
-/* Base — Set A cards were clean from the start, no bleed needed */
 .why-full-img {
   width: 100%;
   height: 100%;
   margin: 0;
   object-fit: fill;
   display: block;
-}
-
-/* Set B uses SVGs with built-in rounded corners — no bleed needed */
-.why-set-b .why-full-img {
-  width: 100%;
-  height: 100%;
-  margin: 0;
 }
 
 /* ── Base card ── */

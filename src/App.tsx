@@ -3,8 +3,19 @@ import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
 
+// How often all five "Why Choose" cards auto-flip from Set A to Set B and back.
+const WHY_CARDS_AUTO_FLIP_MS = 25000
+
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
+  // "Why Choose FurTuner" cards: all flip together on a timer, and hovering
+  // an individual card flips just that one to Set B until the mouse leaves.
+  const [whyAutoFlipped, setWhyAutoFlipped] = useState(false)
+  const [whyHoveredCard, setWhyHoveredCard] = useState<number | null>(null)
+  useEffect(() => {
+    const id = setInterval(() => setWhyAutoFlipped((f) => !f), WHY_CARDS_AUTO_FLIP_MS)
+    return () => clearInterval(id)
+  }, [])
   // Defaults to 'home' — except when the page is loading because Stripe just
   // redirected the customer back here after a successful payment
   // (?paw_payment=success). In that case we need DogDietCalculator to mount
@@ -151,53 +162,57 @@ function App() {
       {/* WHY CHOOSE FURTUNER */}
       <section className="why-section">
         <h2 className="section-title">Why Choose FurTuner?</h2>
-        <div className="why-carousel">
-          <div className="why-set why-set-a">
-            <div className="why-grid">
-              <div className="why-row1">
-                <div className="why-card why-card-1">
-                  <img className="why-full-img" src="/images/seta-card1.svg" alt="Three tailored diet options" />
+        <div className="why-grid">
+          <div className="why-row1">
+            {[
+              { n: 1, alt: 'Three tailored diet options' },
+              { n: 2, alt: 'Beyond the label' },
+            ].map(({ n, alt }) => {
+              const isFlipped = whyHoveredCard === n ? true : whyAutoFlipped
+              return (
+                <div
+                  className={`why-card why-card-${n}`}
+                  key={n}
+                  onMouseEnter={() => setWhyHoveredCard(n)}
+                  onMouseLeave={() => setWhyHoveredCard(null)}
+                >
+                  <div className={`why-flip ${isFlipped ? 'is-flipped' : ''}`}>
+                    <div className="why-flip-face why-flip-front">
+                      <img className="why-full-img" src={`/images/seta-card${n}.svg`} alt={alt} />
+                    </div>
+                    <div className="why-flip-face why-flip-back">
+                      <img className="why-full-img" src={`/images/setb-card${n}.svg`} alt="" />
+                    </div>
+                  </div>
                 </div>
-                <div className="why-card why-card-2">
-                  <img className="why-full-img" src="/images/seta-card2.svg" alt="Beyond the label" />
-                </div>
-              </div>
-              <div className="why-row2">
-                <div className="why-card why-card-3">
-                  <img className="why-full-img" src="/images/seta-card3.svg" alt="100+ human-grade ingredients" />
-                </div>
-                <div className="why-card why-card-4">
-                  <img className="why-full-img" src="/images/seta-card4.svg" alt="Science-based formulation" />
-                </div>
-                <div className="why-card why-card-5">
-                  <img className="why-full-img" src="/images/seta-card5.svg" alt="Full ingredient control" />
-                </div>
-              </div>
-            </div>
+              )
+            })}
           </div>
-
-          <div className="why-set why-set-b">
-            <div className="why-grid">
-              <div className="why-row1">
-                <div className="why-card why-card-1">
-                  <img className="why-full-img" src="/images/setb-card1.svg" alt="" />
+          <div className="why-row2">
+            {[
+              { n: 3, alt: '100+ human-grade ingredients' },
+              { n: 4, alt: 'Science-based formulation' },
+              { n: 5, alt: 'Full ingredient control' },
+            ].map(({ n, alt }) => {
+              const isFlipped = whyHoveredCard === n ? true : whyAutoFlipped
+              return (
+                <div
+                  className={`why-card why-card-${n}`}
+                  key={n}
+                  onMouseEnter={() => setWhyHoveredCard(n)}
+                  onMouseLeave={() => setWhyHoveredCard(null)}
+                >
+                  <div className={`why-flip ${isFlipped ? 'is-flipped' : ''}`}>
+                    <div className="why-flip-face why-flip-front">
+                      <img className="why-full-img" src={`/images/seta-card${n}.svg`} alt={alt} />
+                    </div>
+                    <div className="why-flip-face why-flip-back">
+                      <img className="why-full-img" src={`/images/setb-card${n}.svg`} alt="" />
+                    </div>
+                  </div>
                 </div>
-                <div className="why-card why-card-2">
-                  <img className="why-full-img" src="/images/setb-card2.svg" alt="" />
-                </div>
-              </div>
-              <div className="why-row2">
-                <div className="why-card why-card-3">
-                  <img className="why-full-img" src="/images/setb-card3.svg" alt="" />
-                </div>
-                <div className="why-card why-card-4">
-                  <img className="why-full-img" src="/images/setb-card4.svg" alt="" />
-                </div>
-                <div className="why-card why-card-5">
-                  <img className="why-full-img" src="/images/setb-card5.svg" alt="" />
-                </div>
-              </div>
-            </div>
+              )
+            })}
           </div>
         </div>
       </section>
