@@ -731,14 +731,20 @@ html {
 .footer-copy  { font-size: 14px; color: #F0932B; }
 
 /* ══════════════════════════════════════════════  RESPONSIVE  */
-@media (max-width: 600px) {
+/* Disabled site-wide: the "and (min-width: 99999px)" clause can never be
+   true, so none of these rules can ever match — the desktop layout is
+   locked in for every device, orientation, and browser "Desktop site"
+   toggle, since it no longer depends on any reported viewport width at
+   all. Restore the old behavior by deleting the "and (min-width: 99999px)"
+   clause from both queries below. */
+@media (max-width: 600px) and (min-width: 99999px) {
   .navbar { padding: calc(16px - var(--nav-shrink) * 8px) 20px; }
   .nav-logo-img { height: calc(100px - var(--nav-shrink) * 52px); }
   .nav-links { gap: 16px; }
   .nav-link { font-size: 16px; }
   #calculator { scroll-margin-top: 133px; }
 }
-@media (max-width: 1100px) {
+@media (max-width: 1100px) and (min-width: 99999px) {
   .hero { flex-direction: column; padding: 32px 24px 40px; gap: 32px; }
   .hero-left { max-width: 100%; }
   .hero-headline { font-size: 28px; }

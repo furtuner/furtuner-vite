@@ -116,11 +116,12 @@
   margin-bottom: 6px;
 }
 
-@media (max-width: 1024px) {
+/* Disabled — see the note in page.css's RESPONSIVE section for why. */
+@media (max-width: 1024px) and (min-width: 99999px) {
   .faq-section { padding: 48px 24px 60px; }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (min-width: 99999px) {
   .faq-category-title { font-size: 18px; }
   .faq-question { font-size: 15px; padding: 14px 16px; }
   .faq-answer { padding: 0 16px 16px; font-size: 14px; }
