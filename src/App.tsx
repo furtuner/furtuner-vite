@@ -1,127 +1,22 @@
 import { useState } from 'react'
 import DogDietCalculator from './components/DogDietCalculator'
-import FAQSection from './components/FAQSection'
 import './page.css'
 
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
-  // "Why Choose FurTuner" cards: the ambient Set A / Set B crossfade below
-  // runs purely on a 40s CSS animation, untouched by hovering. Hovering an
-  // individual card shows a separate flip overlay on top of it (Set A front,
-  // Set B back) independent of whatever the ambient crossfade is doing.
-  const [whyHoveredCard, setWhyHoveredCard] = useState<number | null>(null)
-  // Defaults to 'home' — except when the page is loading because Stripe just
-  // redirected the customer back here after a successful payment
-  // (?paw_payment=success). In that case we need DogDietCalculator to mount
-  // immediately so its own effect can read that query param, restore the
-  // saved wizard state, and unlock the Results page — none of that runs if
-  // the app is sitting on the Home view instead.
-  const [view, setView] = useState<'home' | 'faq' | 'about' | 'calculator'>(() => {
-    if (typeof window !== 'undefined' && window.location.search.includes('paw_payment=success')) {
-      return 'calculator'
-    }
-    return 'home'
-  })
-  // Bumped every time "Build Your Diet" is opened, and passed as the
-  // calculator's React `key` — this guarantees a completely fresh component
-  // instance (no leftover pet type, diet type, profile, or ingredient
-  // selections from a previous visit) every single time, regardless of any
-  // edge case in how the previous instance unmounted.
-  const [calculatorInstance, setCalculatorInstance] = useState(0)
-
-  // Continuous scroll-linked navbar sizing — the logo shrinks in exact, real-time
-  // proportion to how far the page has scrolled (0 to 150px), via a CSS variable
-  // read by page.css. No on/off state, no fixed-duration transition fighting the
-  // scroll — it just tracks scroll position directly, so it can't feel "stuck" or
-  // bouncy the way a threshold + animated transition can.
-  useEffect(() => {
-    const SHRINK_DISTANCE = 150
-    let ticking = false
-    const apply = () => {
-      const progress = Math.min(1, Math.max(0, window.scrollY / SHRINK_DISTANCE))
-      document.documentElement.style.setProperty('--nav-shrink', String(progress))
-      ticking = false
-    }
-    const onScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(apply)
-    }
-    apply()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  const jumpToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'auto' })
-    document.documentElement.style.setProperty('--nav-shrink', '0')
-  }
-
-  const goHome = () => {
-    setView('home')
-    jumpToTop()
-  }
-
-  const goFAQ = () => {
-    setView('faq')
-    jumpToTop()
-  }
-
-  const goAbout = () => {
-    setView('about')
-    jumpToTop()
-  }
-
-  const goCalculator = () => {
-    setCalculatorInstance(n => n + 1)
-    setView('calculator')
-    jumpToTop()
-  }
+  const [showCalculator, setShowCalculator] = useState(false)
 
   return (
     <>
       {/* NAVBAR */}
       <header className="navbar">
         <div className="nav-logo">
-          <a
-            href="#home"
-            onClick={(e) => {
-              e.preventDefault()
-              goHome()
-            }}
-          >
-            <img src="/images/logo.svg" alt="FurTuner" className="nav-logo-img" />
-          </a>
+          <img src="/images/logo.svg" alt="FurTuner" className="nav-logo-img" />
         </div>
-        <nav className="nav-links" style={{ marginLeft: '56px', display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <a href="#support" className="nav-link nav-link--support">SUPPORT</a>
-          <a
-            href="#faq"
-            className={`nav-link nav-link--faq ${view === 'faq' ? 'nav-link--active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault()
-              goFAQ()
-            }}
-          >
-            FAQ
-          </a>
-          <a
-            href="#about"
-            className={`nav-link nav-link--about ${view === 'about' ? 'nav-link--active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault()
-              goAbout()
-            }}
-            style={{ color: '#DE7100', textTransform: 'none', fontWeight: 700 }}
-          >
-            ABOUT FurTuner
-          </a>
-        </nav>
       </header>
 
-      {view === 'home' && (
-        <>
-        <section className="hero">
+      {/* HERO */}
+      <section className="hero">
         <div className="hero-left">
           <div className="hero-badge-row">
             <span className="hero-badge">SCIENCE-BASED PET NUTRITION</span>
@@ -131,11 +26,9 @@ function App() {
             Create Complete and Balanced Homemade Diets with Our Dog &amp; Cat Diet Formulator
           </h1>
           <p className="hero-subtitle">
-            FurTuner is an advanced diet formulation platform for dogs and cats that creates
-            personalized, nutritionally balanced recipes using real food ingredients. Each
-            recipe is formulated to meet AAFCO (Association of American Feed Control
-            Officials) minimum nutrient requirements without relying on synthetic vitamin
-            or mineral supplements.
+            Paw-Balancer is an advanced diet formulation platform for dogs and cats that creates
+            personalized, AAFCO-compliant recipes using real food ingredients without synthetic
+            vitamin or mineral supplements.
           </p>
         </div>
         <div className="hero-right">
@@ -153,12 +46,10 @@ function App() {
         <img src="/images/objects-center.svg" alt="" className="obj obj-center" aria-hidden="true" />
       </section>
 
-      {/* WHY CHOOSE FURTUNER */}
+      {/* WHY CHOOSE PAW-BALANCER */}
       <section className="why-section">
         <h2 className="section-title">Why Choose FurTuner?</h2>
         <div className="why-carousel">
-          {/* Ambient auto-crossfade — pure CSS, runs on its own 40s cycle,
-              completely unaffected by hovering. */}
           <div className="why-set why-set-a">
             <div className="why-grid">
               <div className="why-row1">
@@ -203,52 +94,6 @@ function App() {
                 <div className="why-card why-card-5">
                   <img className="why-full-img" src="/images/setb-card5.svg" alt="" />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Hover overlay — invisible hit-area per card, sits on top of the
-              ambient layers above. Hovering flips it in (Set A front, Set B
-              back); moving away flips it back out, revealing the ambient
-              crossfade underneath again. */}
-          <div className="why-set why-hover-layer">
-            <div className="why-grid">
-              <div className="why-row1">
-                {[
-                  { n: 1, alt: 'Three tailored diet options' },
-                  { n: 2, alt: 'Beyond the label' },
-                ].map(({ n, alt }) => (
-                  <div
-                    className={`why-card why-card-${n} why-hover-card ${whyHoveredCard === n ? 'is-active' : ''}`}
-                    key={n}
-                    onMouseEnter={() => setWhyHoveredCard(n)}
-                    onMouseLeave={() => setWhyHoveredCard(null)}
-                  >
-                    <div className="why-flip-inner">
-                      <img className="why-full-img why-flip-front" src={`/images/seta-card${n}.svg`} alt={alt} />
-                      <img className="why-full-img why-flip-back" src={`/images/setb-card${n}.svg`} alt="" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="why-row2">
-                {[
-                  { n: 3, alt: '100+ human-grade ingredients' },
-                  { n: 4, alt: 'Science-based formulation' },
-                  { n: 5, alt: 'Full ingredient control' },
-                ].map(({ n, alt }) => (
-                  <div
-                    className={`why-card why-card-${n} why-hover-card ${whyHoveredCard === n ? 'is-active' : ''}`}
-                    key={n}
-                    onMouseEnter={() => setWhyHoveredCard(n)}
-                    onMouseLeave={() => setWhyHoveredCard(null)}
-                  >
-                    <div className="why-flip-inner">
-                      <img className="why-full-img why-flip-front" src={`/images/seta-card${n}.svg`} alt={alt} />
-                      <img className="why-full-img why-flip-back" src={`/images/setb-card${n}.svg`} alt="" />
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
@@ -358,77 +203,14 @@ function App() {
         </div>
 
         <div className="build-cta-wrap">
-          <a
-            href="#calculator"
-            className="btn-build-diet"
-            onClick={(e) => {
-              e.preventDefault()
-              goCalculator()
-            }}
-          >
-            Build Your Diet
-          </a>
+          <a href="#calculator" className="btn-build-diet" onClick={() => setShowCalculator(true)}>Build Your Diet</a>
         </div>
       </section>
-        </>
-      )}
 
-      {view === 'about' && (
-        <main className="faq-page" style={{ textAlign: 'center' }}>
-          <button className="faq-back-link" onClick={goHome}>
-            &larr; Back to Home
-          </button>
-          <h2
-            style={{
-              fontFamily: "'Marcellus', serif",
-              fontWeight: 700,
-              fontSize: 'clamp(28px, 3.5vw, 40px)',
-              marginBottom: '28px',
-              textAlign: 'center',
-            }}
-          >
-            <span style={{ color: '#DE7100' }}>About</span>{' '}
-            <span style={{ color: '#143C6F' }}>FurTuner</span>
-          </h2>
-          <div style={{ maxWidth: '820px', margin: '0 auto', fontSize: '18px', lineHeight: 1.7, color: '#143C6F', textAlign: 'center' }}>
-            <p style={{ marginBottom: '20px' }}>
-              <strong>FurTuner</strong> was developed by Dr. Amer AbuGhazaleh, Professor of Animal
-              Science, Food and Nutrition at Southern Illinois University Carbondale (SIUC) and founder
-              and Director of SIU&rsquo;s Canine &amp; Feline Nutrition Certificate Program. With more
-              than two decades of experience in animal nutrition, research, teaching, and diet
-              formulation, Dr. AbuGhazaleh created <strong>FurTuner</strong> to bring science,
-              flexibility, and personalization to home-prepared pet nutrition.
-            </p>
-            <p>
-              What makes <strong>FurTuner</strong> different is choice. Instead of following a fixed
-              recipe, users can select the ingredients they want to feed their dog or cat, and{' '}
-              <strong>FurTuner</strong> determines the appropriate amounts needed to create a
-              nutritionally balanced diet based on established canine and feline nutrient
-              recommendations, without the need for a separate nutritional supplement. The result is
-              greater freedom, transparency, and control over what goes into your pet&rsquo;s bowl,
-              without sacrificing nutritional balance.
-            </p>
-          </div>
-        </main>
-      )}
-
-      {view === 'faq' && (
-        <main className="faq-page">
-          <button className="faq-back-link" onClick={goHome}>
-            &larr; Back to Home
-          </button>
-          <FAQSection visible={true} />
-        </main>
-      )}
-
-      {view === 'calculator' && (
-        <main className="calculator-page">
-          <button className="faq-back-link" onClick={goHome}>
-            &larr; Back to Home
-          </button>
-          <DogDietCalculator key={calculatorInstance} visible={true} onGoHome={goHome} />
-        </main>
-      )}
+      {/* CALCULATOR (replaces the old static Step 1 mockup) */}
+      <div id="calculator">
+        <DogDietCalculator visible={showCalculator} />
+      </div>
 
       {/* FOOTER */}
       <footer className="site-footer">
