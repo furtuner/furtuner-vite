@@ -261,37 +261,82 @@ html {
 .why-row1  { display: flex; gap: 24px; align-items: stretch; }
 .why-row2  { display: flex; gap: 16px; align-items: stretch; }
 
-/* ── Why-Choose flip cards ──
-   Each card has a Set A face and a Set B face. The `.is-flipped` class is
-   toggled by React: a shared timer flips all cards together every 25s
-   (WHY_CARDS_AUTO_FLIP_MS in App.tsx), and hovering an individual card
-   flips just that one to Set B until the mouse leaves it. */
-.why-flip {
+/* ── Why-Choose carousel ──
+   Set A / Set B stacked in the same grid cell, ambiently crossfading via
+   CSS on their own 40s cycle. A third layer (.why-hover-layer) sits on top,
+   invisible at rest, and reveals a per-card flip on hover — independent of
+   whatever the ambient crossfade below is currently showing. */
+.why-carousel {
+  display: grid;
+  background: #fff;
+}
+.why-set {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  background: #fff;
+}
+.why-set-a,
+.why-set-b {
+  pointer-events: none;
+}
+
+@keyframes why-fade-a {
+  0%, 38%  { opacity: 1; }
+  48%, 90% { opacity: 0; }
+  100%     { opacity: 1; }
+}
+@keyframes why-fade-b {
+  0%, 38%  { opacity: 0; }
+  48%, 90% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+.why-set-a {
+  animation: why-fade-a 40s ease-in-out infinite;
+}
+.why-set-b {
+  animation: why-fade-b 40s ease-in-out infinite;
+  background: transparent;
+}
+
+/* ── Hover overlay layer ──
+   Invisible hit-boxes, same size/position as the real cards, sitting on top
+   of the ambient crossfade. Hovering one fades + flips it in (Set A front,
+   Set B back); leaving fades + flips it back out. */
+.why-hover-layer {
+  background: transparent;
+  pointer-events: none;
+}
+.why-hover-card {
+  position: relative;
+  opacity: 0;
+  pointer-events: auto;
+  perspective: 1600px;
+  transition: opacity 0.35s ease;
+}
+.why-hover-card.is-active {
+  opacity: 1;
+}
+.why-flip-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  perspective: 1600px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
-.why-flip-face {
+.why-hover-card.is-active .why-flip-inner {
+  transform: rotateY(180deg);
+}
+.why-flip-front,
+.why-flip-back {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-}
-.why-flip-front {
-  transform: rotateY(0deg);
 }
 .why-flip-back {
   transform: rotateY(180deg);
-}
-.why-flip.is-flipped .why-flip-front {
-  transform: rotateY(-180deg);
-}
-.why-flip.is-flipped .why-flip-back {
-  transform: rotateY(0deg);
 }
 
 .why-full-img {

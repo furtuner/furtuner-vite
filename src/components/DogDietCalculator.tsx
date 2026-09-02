@@ -91,13 +91,13 @@ const CHECKOUT_STORAGE_KEY = "pawBalancerCheckout";
 const CAT_DIETS: { value: DietType; label: string; emoji: string }[] = [
   { value: "conventional", label: "Conventional", emoji: "🥩" },
   { value: "grainfree",    label: "Grain-Free",   emoji: "🥦" },
-  { value: "raw",          label: "Meat Based",   emoji: "🦴" },
+  { value: "raw",          label: "Meat—Based",   emoji: "🦴" },
 ];
 
 const DOG_DIETS: { value: DietType; label: string; emoji: string }[] = [
   { value: "conventional", label: "Conventional", emoji: "🥩" },
   { value: "grainfree",    label: "Grain-Free",   emoji: "🥦" },
-  { value: "raw",          label: "Meat Based",   emoji: "🦴" },
+  { value: "raw",          label: "Meat—Based",   emoji: "🦴" },
 ];
 
 // Display-name overrides — shows a nicer/corrected label without changing
@@ -287,12 +287,14 @@ const ACTIVITY_MULTIPLIER: Record<string, number> = {
 
 function ProfilePage({
   onNext,
+  onBack,
   initialValues,
   dietType,
   onSelectPet,
   onSelectDiet,
 }: {
   onNext: (raw: ProfileData, p: ReturnType<typeof buildProfile>) => void;
+  onBack: () => void;
   initialValues?: ProfileData;
   dietType?: DietType | null;
   onSelectPet?: (t: PetType) => void;
@@ -304,6 +306,14 @@ function ProfilePage({
     weightKg: "", weightLb: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [ageYears, setAgeYears] = useState("");
+  const [ageMonths, setAgeMonths] = useState("");
+
+  function updateAgeFromParts(years: string, months: string) {
+    setAgeYears(years);
+    setAgeMonths(months);
+    set("age", formatAgeFromParts(years, months));
+  }
 
   function set(k: keyof ProfileData, v: string) {
     setForm(f => ({ ...f, [k]: v }));
@@ -377,6 +387,12 @@ function ProfilePage({
               <input className={inputCls(!!errors.age)} value={form.age}
                 onChange={e => set("age", e.target.value)} placeholder="e.g. 3 years / 8 months" />
             </Field>
+            <AgeYearMonthPicker
+              years={ageYears}
+              months={ageMonths}
+              onYearsChange={v => updateAgeFromParts(v, ageMonths)}
+              onMonthsChange={v => updateAgeFromParts(ageYears, v)}
+            />
             <Field label="Sex *" error={errors.sex}>
               <PillGroup
                 name="sex" value={form.sex}
@@ -445,9 +461,21 @@ function ProfilePage({
           </div>
         </div>
 
-        <div className="md:col-span-2" style={{ marginTop: "36px" }}>
+        <div className="md:col-span-2 flex gap-3" style={{ marginTop: "36px" }}>
+          <button onClick={onBack} type="button"
+            className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
+            style={{
+              fontFamily: "'Parastoo', sans-serif",
+              fontWeight: 700,
+              fontSize: "18px",
+              padding: "18px 28px",
+              borderRadius: "12px",
+            }}
+          >
+            ← Back
+          </button>
           <button onClick={submit}
-            className="w-full bg-[#143C6F] hover:bg-[#FF9D36] text-white transition-all hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center"
+            className="flex-1 bg-[#143C6F] hover:bg-[#FF9D36] text-white transition-all hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center"
             style={{
               fontFamily: "'Parastoo', sans-serif",
               fontWeight: 700,
@@ -505,12 +533,14 @@ function buildCatProfile(form: CatProfileData) {
 
 function CatProfilePage({
   onNext,
+  onBack,
   initialValues,
   dietType,
   onSelectPet,
   onSelectDiet,
 }: {
   onNext: (raw: CatProfileData, p: ReturnType<typeof buildCatProfile>) => void;
+  onBack: () => void;
   initialValues?: CatProfileData;
   dietType?: DietType | null;
   onSelectPet?: (t: PetType) => void;
@@ -522,6 +552,14 @@ function CatProfilePage({
     weightKg: "", weightLb: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [ageYears, setAgeYears] = useState("");
+  const [ageMonths, setAgeMonths] = useState("");
+
+  function updateAgeFromParts(years: string, months: string) {
+    setAgeYears(years);
+    setAgeMonths(months);
+    set("age", formatAgeFromParts(years, months));
+  }
 
   function set(k: keyof CatProfileData, v: string) {
     setForm(f => ({ ...f, [k]: v }));
@@ -598,6 +636,12 @@ function CatProfilePage({
               <input className={inputCls(!!errors.age)} value={form.age}
                 onChange={e => set("age", e.target.value)} placeholder="e.g. 3 years / 8 months" />
             </Field>
+            <AgeYearMonthPicker
+              years={ageYears}
+              months={ageMonths}
+              onYearsChange={v => updateAgeFromParts(v, ageMonths)}
+              onMonthsChange={v => updateAgeFromParts(ageYears, v)}
+            />
             <Field label="Sex *" error={errors.sex}>
               <PillGroup
                 name="cat-sex" value={form.sex}
@@ -652,9 +696,21 @@ function CatProfilePage({
           </div>
         </div>
 
-        <div className="md:col-span-2" style={{ marginTop: "36px" }}>
+        <div className="md:col-span-2 flex gap-3" style={{ marginTop: "36px" }}>
+          <button onClick={onBack} type="button"
+            className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
+            style={{
+              fontFamily: "'Parastoo', sans-serif",
+              fontWeight: 700,
+              fontSize: "18px",
+              padding: "18px 28px",
+              borderRadius: "12px",
+            }}
+          >
+            ← Back
+          </button>
           <button onClick={submit}
-            className="w-full bg-[#143C6F] hover:bg-[#FF9D36] text-white transition-all hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center"
+            className="flex-1 bg-[#143C6F] hover:bg-[#FF9D36] text-white transition-all hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center"
             style={{
               fontFamily: "'Parastoo', sans-serif",
               fontWeight: 700,
@@ -1691,7 +1747,7 @@ function ResultsPage({
                     document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
                   });
                 }}
-                petType={petType}
+                petType={petType as PetType}
                 dietType={dietType as DietType}
                 profile={profile}
                 selectedIngredients={selectedIngredients}
@@ -2013,6 +2069,58 @@ function inputCls(error: boolean) {
     error ? "shadow-[0_0_0_2px_#B02424]" : "focus:shadow-[0_0_0_2px_#3C6293]"
   }`;
 }
+
+// Two dropdowns (Years 1–30, Months 1–12) that sit under an Age text field
+// and auto-fill it whenever either selection changes.
+function AgeYearMonthPicker({
+  years, months, onYearsChange, onMonthsChange,
+}: {
+  years: string; months: string;
+  onYearsChange: (v: string) => void;
+  onMonthsChange: (v: string) => void;
+}) {
+  const selectCls = `${inputCls(false)} appearance-none cursor-pointer`;
+  const optionStyle = { fontWeight: 700, fontSize: "21px", color: "#211915" };
+  return (
+    <div className="grid grid-cols-2" style={{ gap: "16px", marginTop: "4px" }}>
+      <Field label="Years">
+        <select
+          value={years}
+          onChange={e => onYearsChange(e.target.value)}
+          className={selectCls}
+          style={{ fontWeight: 700, fontSize: "21px" }}
+        >
+          <option value="" style={{ ...optionStyle, color: "#3C6293" }}>— Years —</option>
+          {Array.from({ length: 30 }, (_, i) => i + 1).map(y => (
+            <option key={y} value={y} style={optionStyle}>{y}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label="Months">
+        <select
+          value={months}
+          onChange={e => onMonthsChange(e.target.value)}
+          className={selectCls}
+          style={{ fontWeight: 700, fontSize: "21px" }}
+        >
+          <option value="" style={{ ...optionStyle, color: "#3C6293" }}>— Months —</option>
+          {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+            <option key={m} value={m} style={optionStyle}>{m}</option>
+          ))}
+        </select>
+      </Field>
+    </div>
+  );
+}
+
+// Builds the "3 years 8 months" style string from the two dropdown values.
+function formatAgeFromParts(years: string, months: string) {
+  const parts: string[] = [];
+  if (years) parts.push(`${years} year${years === "1" ? "" : "s"}`);
+  if (months) parts.push(`${months} month${months === "1" ? "" : "s"}`);
+  return parts.join(" ");
+}
+
 
 // ─── Checkout: Unlock Daily Feeding Plan ──────────────────────────────────────
 // Flow: pay-gate → customer profile → liability disclaimer (must scroll + accept)
@@ -2432,7 +2540,7 @@ function buildProfile(form: ProfileData) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onGoHome?: () => void }) {
-  const [petType, setPetType] = useState<PetType>("dog");
+  const [petType, setPetType] = useState<PetType | null>(null);
   const [dietType, setDietType] = useState<DietType | null>(null);
   // page 1 = Start, 2 = Choose Pet Type, 3 = Choose Diet Type,
   // 4 = Profile, 5 = Ingredients, 6 = Results
@@ -2658,6 +2766,22 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                 </button>
               ))}
             </div>
+            <div style={{ marginTop: "28px" }}>
+              <button
+                type="button"
+                onClick={() => { setPage(1); scrollToTop(); }}
+                className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
+                style={{
+                  fontFamily: "'Parastoo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "18px",
+                  padding: "14px 26px",
+                  borderRadius: "12px",
+                }}
+              >
+                ← Back
+              </button>
+            </div>
           </div>
         )}
 
@@ -2696,6 +2820,22 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                 </button>
               ))}
             </div>
+            <div style={{ marginTop: "28px" }}>
+              <button
+                type="button"
+                onClick={() => { setPage(2); scrollToTop(); }}
+                className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
+                style={{
+                  fontFamily: "'Parastoo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "18px",
+                  padding: "14px 26px",
+                  borderRadius: "12px",
+                }}
+              >
+                ← Back
+              </button>
+            </div>
           </div>
         )}
 
@@ -2720,6 +2860,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   dietType={dietType}
                   onSelectPet={selectPet}
                   onSelectDiet={selectDiet}
+                  onBack={() => { setPage(3); scrollToTop(); }}
                   onNext={(raw, p) => {
                     setDogProfileDraft(raw);
                     setProfile(p);
@@ -2734,6 +2875,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   dietType={dietType}
                   onSelectPet={selectPet}
                   onSelectDiet={selectDiet}
+                  onBack={() => { setPage(3); scrollToTop(); }}
                   onNext={(raw, p) => {
                     setCatProfileDraft(raw);
                     setProfile(p);
@@ -2762,7 +2904,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   onBack={() => { setPage(5); scrollToTop(); }}
                   onGoHome={onGoHome}
                   onReset={reset}
-                  petType={petType}
+                  petType={petType as PetType}
                   dietType={dietType as DietType}
                   initialFeedPlanUnlocked={restoredFeedPlanUnlocked}
                 />
