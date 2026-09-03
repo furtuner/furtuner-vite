@@ -18,10 +18,15 @@ html {
 
 /* ══════════════════════════════════════════════
    NAVBAR  — logo left, SUPPORT / FAQ links right
-   Shrinks continuously as a direct function of scroll position via the
-   --nav-shrink CSS variable (0 = top of page, 1 = fully scrolled/shrunk),
-   set in App.tsx. This tracks scroll 1:1 in real time rather than
-   snapping between two fixed states, so it can't look "stuck" or bouncy.
+   The logo itself is always rendered at full size (190px) — it never
+   scales down or gets distorted. What shrinks on scroll is the visible
+   "window" (.nav-logo)'s height, tied 1:1 to scroll position via the
+   --nav-shrink CSS variable (0 = top of page, 1 = fully scrolled), set
+   in App.tsx. Since the logo is bottom-anchored inside that shrinking
+   window with overflow hidden, the top of the logo (the icon) is what
+   gets progressively covered as you scroll — and a soft mask-image
+   gradient fades that edge to transparent instead of hard-clipping it,
+   so it dissolves away smoothly rather than being sliced off.
 ══════════════════════════════════════════════ */
 :root {
   --nav-shrink: 0;
@@ -37,9 +42,16 @@ html {
   box-sizing: border-box;
   overflow-anchor: none;
 }
-.nav-logo { display: flex; align-items: center; }
+.nav-logo {
+  display: flex;
+  align-items: flex-end;
+  height: calc(190px - var(--nav-shrink) * 126px);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
+}
 .nav-logo-img {
-  height: calc(190px - var(--nav-shrink) * 126px); width: auto; display: block; object-fit: contain;
+  height: 190px; width: auto; display: block; object-fit: contain; flex-shrink: 0;
 }
 
 /* Keeps the sticky navbar from covering the top of the calculator's
@@ -103,7 +115,7 @@ html {
 ══════════════════════════════════════════════ */
 .hero {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: space-between;
   gap: 24px;
   padding: 60px 48px 60px 63px;
@@ -161,17 +173,20 @@ html {
   max-width: 564px;
 }
 
-/* RIGHT COLUMN — per spec: square image, capped at 637px on wide screens,
-   but allowed to shrink so it never crowds out the text column */
+/* RIGHT COLUMN — per spec: capped at 637px wide on wide screens, but allowed
+   to shrink so it never crowds out the text column. Stretches to match the
+   left column's full height (see .hero's align-items: stretch) instead of
+   being locked to a fixed square, so it never falls short of the text. */
 .hero-right {
   flex: 1 1 500px;
   max-width: 637px;
   min-width: 220px;
+  display: flex;
 }
 .hero-img {
   width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
+  height: 100%;
+  min-height: 100%;
   object-fit: cover;
   border-radius: 19px;
   display: block;

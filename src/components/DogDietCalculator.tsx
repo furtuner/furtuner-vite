@@ -500,7 +500,7 @@ interface CatProfileData {
   breed: string;
   age: string;
   sex: "M" | "F" | "";
-  repro: "Intact" | "Neutered" | "Obese" | "";
+  repro: string[];
   weightKg: string;
   weightLb: string;
 }
@@ -513,10 +513,21 @@ const CAT_DEN_MULTIPLIER: Record<string, number> = {
   "Obese":    1.0,
 };
 
+// Reproductive status now allows multiple selections (e.g. "Neutered" + "Obese").
+// Whenever more than one status is selected — whether or not "Obese" is one of
+// them — the calculation always uses the Obese multiplier. A single selection
+// uses that status's own multiplier.
+function getCatDenMultiplier(repro: string[]): number {
+  if (repro.length >= 2 || repro.includes("Obese")) return CAT_DEN_MULTIPLIER["Obese"];
+  if (repro.includes("Intact")) return CAT_DEN_MULTIPLIER["Intact"];
+  if (repro.includes("Neutered")) return CAT_DEN_MULTIPLIER["Neutered"];
+  return 1.2;
+}
+
 function buildCatProfile(form: CatProfileData) {
   const wkg = parseFloat(form.weightKg);
   const rer = 70 * Math.pow(wkg, 0.75);
-  const mult = CAT_DEN_MULTIPLIER[form.repro] ?? 1.2;
+  const mult = getCatDenMultiplier(form.repro);
   const den = Math.round(rer * mult);
   return {
     dogName:       form.catName.trim(),
@@ -550,7 +561,7 @@ function CatProfilePage({
 }) {
   const [form, setForm] = useState<CatProfileData>(initialValues ?? {
     catName: "", breed: "", age: "",
-    sex: "", repro: "",
+    sex: "", repro: [],
     weightKg: "", weightLb: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -566,6 +577,14 @@ function CatProfilePage({
   function set(k: keyof CatProfileData, v: string) {
     setForm(f => ({ ...f, [k]: v }));
     setErrors(e => ({ ...e, [k]: "" }));
+  }
+
+  function toggleRepro(v: string) {
+    setForm(f => ({
+      ...f,
+      repro: f.repro.includes(v) ? f.repro.filter(x => x !== v) : [...f.repro, v],
+    }));
+    setErrors(e => ({ ...e, repro: "" }));
   }
 
   function handleKgChange(v: string) {
@@ -595,17 +614,15 @@ function CatProfilePage({
   const denNeutered = rer ? Math.round(rer * 1.2) : null;
   const denObese    = rer ? Math.round(rer * 1.0) : null;
 
-  const activeDen = form.repro === "Intact" ? denIntact
-    : form.repro === "Neutered" ? denNeutered
-    : form.repro === "Obese" ? denObese
-    : null;
+  // Obese always wins when multiple statuses are selected together.
+  const activeDen = rer && form.repro.length > 0 ? Math.round(rer * getCatDenMultiplier(form.repro)) : null;
 
   function validate() {
     const e: Record<string, string> = {};
     if (!form.catName.trim()) e.catName = "Please enter your cat's name.";
     if (!form.age.trim()) e.age = "Please enter your cat's age.";
     if (!form.sex) e.sex = "Please select a sex.";
-    if (!form.repro) e.repro = "Please select reproductive status.";
+    if (!form.repro || form.repro.length === 0) e.repro = "Please select reproductive status.";
     if (!form.weightKg || parseFloat(form.weightKg) <= 0) e.weightKg = "Please enter a valid body weight.";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -657,14 +674,14 @@ function CatProfilePage({
         <div className="md:pl-8 mt-8 md:mt-0" style={{ paddingLeft: "32px", marginTop: "0" }}>
           <SectionLabel>Reproductive Status</SectionLabel>
           <Field label="Reproductive Status *" error={errors.repro}>
-            <PillGroup
+            <MultiPillGroup
               name="cat-repro" value={form.repro}
               options={[
                 { value: "Intact", label: "Intact" },
                 { value: "Neutered", label: "Neutered" },
                 { value: "Obese", label: "Obese" },
               ]}
-              onChange={v => set("repro", v)}
+              onToggle={toggleRepro}
             />
           </Field>
 
@@ -683,11 +700,11 @@ function CatProfilePage({
               </Field>
             </div>
 
-            {rer && form.repro && activeDen && (
+            {rer && form.repro.length > 0 && activeDen && (
               <div className="flex items-center justify-between gap-4" style={{ marginTop: "28px", background: "#E0F2FF", borderRadius: "14px", padding: "20px 24px" }}>
                 <div>
                   <p className="font-bold uppercase tracking-wider" style={{ color: "#DE7100", fontSize: "18px" }}>Daily Energy Need</p>
-                  <p className="font-semibold" style={{ color: "#DE7100", fontSize: "13px", marginTop: "4px" }}>{form.repro} adult</p>
+                  <p className="font-semibold" style={{ color: "#DE7100", fontSize: "13px", marginTop: "4px" }}>{form.repro.join(" + ")} adult</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-[40px] font-bold leading-none" style={{ color: "#143C6F" }}>{activeDen.toLocaleString()}</p>
@@ -2066,6 +2083,35 @@ function PillGroup({
   );
 }
 
+// Same visual style as PillGroup, but allows multiple options to be
+// selected/highlighted at once (e.g. "Neutered" + "Obese" together).
+function MultiPillGroup({
+  name, value, options, onToggle,
+}: {
+  name: string; value: string[];
+  options: { value: string; label: string }[];
+  onToggle: (v: string) => void;
+}) {
+  return (
+    <div className="flex gap-2.5">
+      {options.map(o => (
+        <button
+          key={o.value} type="button"
+          aria-pressed={value.includes(o.value)}
+          onClick={() => onToggle(o.value)}
+          className={`flex-1 h-[64px] rounded-[10px] text-[21px] font-bold transition-all ${
+            value.includes(o.value)
+              ? "bg-[#143C6F] text-white"
+              : "bg-[#E0F2FF] text-[#211915]"
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function inputCls(error: boolean) {
   return `w-full h-[64px] px-4 rounded-[10px] text-[21px] font-bold text-[#211915] bg-[#E0F2FF] outline-none transition-all ${
     error ? "shadow-[0_0_0_2px_#B02424]" : "focus:shadow-[0_0_0_2px_#3C6293]"
@@ -2670,6 +2716,9 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   function selectPet(type: PetType) {
     setPetType(type);
     setDietType(null);
+  }
+
+  function goToDietStep() {
     setPage(3);
     setProfile(null);
     setDogProfileDraft(null);
@@ -2682,6 +2731,9 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
 
   function selectDiet(type: DietType) {
     setDietType(type);
+  }
+
+  function goToProfileStep() {
     setPage(4);
     setProfile(null);
     setDogProfileDraft(null);
@@ -2768,7 +2820,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                 </button>
               ))}
             </div>
-            <div style={{ marginTop: "28px" }}>
+            <div className="flex justify-center items-center gap-3" style={{ marginTop: "28px" }}>
               <button
                 type="button"
                 onClick={() => { setPage(1); scrollToTop(); }}
@@ -2776,12 +2828,31 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                 style={{
                   fontFamily: "'Parastoo', sans-serif",
                   fontWeight: 700,
-                  fontSize: "18px",
-                  padding: "14px 26px",
-                  borderRadius: "12px",
+                  fontSize: "14px",
+                  padding: "10px 20px",
+                  borderRadius: "10px",
                 }}
               >
                 ← Back
+              </button>
+              <button
+                type="button"
+                onClick={goToDietStep}
+                disabled={!petType}
+                className={`transition ${
+                  petType
+                    ? "bg-[#143C6F] hover:bg-[#FF9D36] text-white"
+                    : "bg-[#E5E5E5] text-[#9A9A9A] cursor-not-allowed"
+                }`}
+                style={{
+                  fontFamily: "'Parastoo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  padding: "10px 20px",
+                  borderRadius: "10px",
+                }}
+              >
+                Next →
               </button>
             </div>
           </div>
@@ -2822,7 +2893,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                 </button>
               ))}
             </div>
-            <div style={{ marginTop: "28px" }}>
+            <div className="flex justify-center items-center gap-3" style={{ marginTop: "28px" }}>
               <button
                 type="button"
                 onClick={() => { setPage(2); scrollToTop(); }}
@@ -2830,12 +2901,31 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                 style={{
                   fontFamily: "'Parastoo', sans-serif",
                   fontWeight: 700,
-                  fontSize: "18px",
-                  padding: "14px 26px",
-                  borderRadius: "12px",
+                  fontSize: "14px",
+                  padding: "10px 20px",
+                  borderRadius: "10px",
                 }}
               >
                 ← Back
+              </button>
+              <button
+                type="button"
+                onClick={goToProfileStep}
+                disabled={!dietType}
+                className={`transition ${
+                  dietType
+                    ? "bg-[#143C6F] hover:bg-[#FF9D36] text-white"
+                    : "bg-[#E5E5E5] text-[#9A9A9A] cursor-not-allowed"
+                }`}
+                style={{
+                  fontFamily: "'Parastoo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  padding: "10px 20px",
+                  borderRadius: "10px",
+                }}
+              >
+                Next →
               </button>
             </div>
           </div>
