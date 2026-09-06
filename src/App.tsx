@@ -103,18 +103,21 @@ function App() {
             <img src="/images/hero-pet.svg" alt="" className="hero-badge-icon" aria-hidden="true" />
           </div>
           <h1 className="hero-headline">
-            Create Balanced Homemade Meals for Your Dog or Cat
+            Homemade Pet Food. Balanced for Them. Built by You.
           </h1>
           <div className="hero-subtitle-group">
             <p className="hero-subtitle">
-              Choose the real-food ingredients you want to feed, and FurTuner creates a
-              personalized recipe with the right amounts to provide complete and balanced
-              nutrition.
+              Choose the real-food ingredients you want to feed your dog or cat, and
+              FurTuner turns them into a personalized, complete and balanced recipe
+              with the right amount of each ingredient.
             </p>
             <p className="hero-subtitle">
-              Each recipe is formulated to meet the minimum nutrient requirements established
-              by AAFCO (Association of American Feed Control Officials)&mdash;without requiring
-              a vitamin or mineral premix.
+              Real foods you choose. Nutrition FurTuner balances. No vitamin or
+              mineral premix required.
+            </p>
+            <p className="hero-subtitle">
+              Each recipe is formulated to meet the minimum nutrient requirements
+              established by AAFCO (Association of American Feed Control Officials).
             </p>
           </div>
         </div>
