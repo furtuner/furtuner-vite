@@ -383,16 +383,18 @@ function ProfilePage({
               <input className={inputCls(false)} value={form.breed}
                 onChange={e => set("breed", e.target.value)} placeholder="e.g. Golden Retriever" />
             </Field>
-            <Field label="Age *" error={errors.age}>
-              <input className={inputCls(!!errors.age)} value={form.age}
-                onChange={e => set("age", e.target.value)} placeholder="e.g. 3 years / 8 months" />
-            </Field>
             <AgeYearMonthPicker
               years={ageYears}
               months={ageMonths}
               onYearsChange={v => updateAgeFromParts(v, ageMonths)}
               onMonthsChange={v => updateAgeFromParts(ageYears, v)}
             />
+            <Field label="Age *" error={errors.age}>
+              <input className={inputCls(!!errors.age)} value={form.age}
+                readOnly
+                style={{ cursor: "not-allowed", opacity: 0.75 }}
+                placeholder="e.g. 3 years / 8 months" />
+            </Field>
             <Field label="Sex *" error={errors.sex}>
               <PillGroup
                 name="sex" value={form.sex}

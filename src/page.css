@@ -762,16 +762,16 @@ html {
 /* ══════════════════════════════════════════════  FOOTER  */
 .site-footer { background: #E8F5FF; padding: 44px 63px; }
 .footer-inner {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: flex-end; justify-content: space-between;
   max-width: 1280px;
   margin: 0 auto;
   box-sizing: border-box;
 }
-.footer-brand { display: flex; align-items: center; gap: 12px; font-family: 'Manuale', serif; font-weight: 800; font-size: 20px; color: #F0932B; }
+.footer-brand { display: flex; align-items: flex-end; gap: 12px; font-family: 'Manuale', serif; font-weight: 800; font-size: 20px; color: #F0932B; }
 .footer-logo-img {
   height: 100px; width: auto; object-fit: contain;
 }
-.footer-copy  { font-size: 14px; color: #F0932B; }
+.footer-copy  { font-size: 14px; color: #DE7100; }
 
 /* ══════════════════════════════════════════════  RESPONSIVE  */
 /* Disabled site-wide: the "and (min-width: 99999px)" clause can never be
