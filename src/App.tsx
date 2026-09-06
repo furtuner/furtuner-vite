@@ -404,15 +404,17 @@ function App() {
         </main>
       )}
 
-      {/* FOOTER */}
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <img src="/images/logo.svg" alt="FurTuner" className="footer-logo-img" />
+      {/* FOOTER — home page only */}
+      {view === 'home' && (
+        <footer className="site-footer">
+          <div className="footer-inner">
+            <div className="footer-brand">
+              <img src="/images/logo.svg" alt="FurTuner" className="footer-logo-img" />
+            </div>
+            <p className="footer-copy">&copy; 2026 FurTuner &nbsp;·&nbsp; Science-Based Pet Nutrition</p>
           </div>
-          <p className="footer-copy">&copy; 2026 FurTuner &nbsp;·&nbsp; Science-Based Pet Nutrition</p>
-        </div>
-      </footer>
+        </footer>
+      )}
     </>
   )
 }
