@@ -587,6 +587,26 @@ function CatProfilePage({
     setErrors(e => ({ ...e, repro: "" }));
   }
 
+  // Reproductive Status (Intact/Neutered) and Body Condition (Normal/Obese)
+  // are now two separate single-select rows, but both still write into the
+  // same form.repro array so the existing "Obese always wins" multiplier
+  // logic (getCatDenMultiplier) keeps working without any changes.
+  function setReproStatus(v: "Intact" | "Neutered") {
+    setForm(f => ({
+      ...f,
+      repro: [v, ...f.repro.filter(x => x === "Obese")],
+    }));
+    setErrors(e => ({ ...e, repro: "" }));
+  }
+
+  function setBodyCondition(v: "Normal" | "Obese") {
+    setForm(f => {
+      const withoutObese = f.repro.filter(x => x !== "Obese");
+      return { ...f, repro: v === "Obese" ? [...withoutObese, "Obese"] : withoutObese };
+    });
+    setErrors(e => ({ ...e, repro: "" }));
+  }
+
   function handleKgChange(v: string) {
     const kg = parseFloat(v);
     setForm(f => ({
@@ -651,16 +671,18 @@ function CatProfilePage({
               <input className={inputCls(false)} value={form.breed}
                 onChange={e => set("breed", e.target.value)} placeholder="e.g. Persian" />
             </Field>
-            <Field label="Age *" error={errors.age}>
-              <input className={inputCls(!!errors.age)} value={form.age}
-                onChange={e => set("age", e.target.value)} placeholder="e.g. 3 years / 8 months" />
-            </Field>
             <AgeYearMonthPicker
               years={ageYears}
               months={ageMonths}
               onYearsChange={v => updateAgeFromParts(v, ageMonths)}
               onMonthsChange={v => updateAgeFromParts(ageYears, v)}
             />
+            <Field label="Age *" error={errors.age}>
+              <input className={inputCls(!!errors.age)} value={form.age}
+                readOnly
+                style={{ cursor: "not-allowed", opacity: 0.75 }}
+                placeholder="e.g. 3 years / 8 months" />
+            </Field>
             <Field label="Sex *" error={errors.sex}>
               <PillGroup
                 name="cat-sex" value={form.sex}
@@ -674,20 +696,33 @@ function CatProfilePage({
         <div className="md:pl-8 mt-8 md:mt-0" style={{ paddingLeft: "32px", marginTop: "0" }}>
           <SectionLabel>Reproductive Status</SectionLabel>
           <Field label="Reproductive Status *" error={errors.repro}>
-            <MultiPillGroup
-              name="cat-repro" value={form.repro}
+            <PillGroup
+              name="cat-repro-status"
+              value={form.repro.find(x => x === "Intact" || x === "Neutered") ?? ""}
               options={[
                 { value: "Intact", label: "Intact" },
                 { value: "Neutered", label: "Neutered" },
-                { value: "Obese", label: "Obese" },
               ]}
-              onToggle={toggleRepro}
+              onChange={v => setReproStatus(v as "Intact" | "Neutered")}
             />
           </Field>
 
           <div className="mt-6" style={{ marginTop: "24px" }}>
             <SectionLabel>Body Weight</SectionLabel>
-            <div className="grid grid-cols-2" style={{ gap: "16px" }}>
+
+            <Field label="Body Condition *">
+              <PillGroup
+                name="cat-body-condition"
+                value={form.repro.includes("Obese") ? "Obese" : "Normal"}
+                options={[
+                  { value: "Normal", label: "Normal" },
+                  { value: "Obese", label: "Obese" },
+                ]}
+                onChange={v => setBodyCondition(v as "Normal" | "Obese")}
+              />
+            </Field>
+
+            <div className="grid grid-cols-2" style={{ gap: "16px", marginTop: "16px" }}>
               <Field label="Weight (kg) *" error={errors.weightKg}>
                 <input type="number" min="0.1" step="0.1"
                   className={inputCls(!!errors.weightKg)} value={form.weightKg}

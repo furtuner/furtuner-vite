@@ -164,7 +164,7 @@ html {
 }
 .hero-subtitle {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 21px; font-weight: 600;
+  font-size: 21px; font-weight: 700;
   line-height: 1.7; color: #E2790A;
   margin: 0;
 }
@@ -260,7 +260,7 @@ html {
 
 .section-title {
   font-family: 'Marcellus', serif;
-  font-size: 48px; font-weight: 400;
+  font-size: 48px; font-weight: 700;
   color: var(--navy-mid);
   margin-bottom: 32px; line-height: 1.2;
 }
