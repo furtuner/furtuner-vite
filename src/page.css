@@ -115,7 +115,7 @@ html {
 ══════════════════════════════════════════════ */
 .hero {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
   padding: 60px 48px 60px 63px;
@@ -136,7 +136,7 @@ html {
 
 /* Badge row: text + small yarn icon inline */
 .hero-badge-row {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 0px;
 }
 /* Badge text — per spec: 27px/32px line-height, weight 700, orange #D16C00 */
 .hero-badge {
@@ -190,8 +190,6 @@ html {
   max-width: 637px;
   min-width: 220px;
   display: flex;
-  align-self: flex-start;
-  margin-top: -32px;
   border-radius: 19px;
   overflow: hidden;
 }
@@ -200,11 +198,9 @@ html {
   aspect-ratio: 1 / 1;
   height: auto;
   object-fit: cover;
-  /* Slight overscan crops out a faint shadow/margin baked into the source
-     photo's edges, which was previously hidden by the old height:100%
-     stretch-crop and became visible once we switched to a true aspect
-     ratio instead of stretching. */
-  transform: scale(1.07);
+  /* Stronger overscan to crop out a persistent grey margin/shadow baked
+     into the source photo's edge — 1.07x wasn't enough, pushing to 1.18x. */
+  transform: scale(1.18);
   border-radius: 19px;
   display: block;
 }
