@@ -136,7 +136,7 @@ html {
 
 /* Badge row: text + small yarn icon inline */
 .hero-badge-row {
-  display: flex; align-items: center; gap: 4px;
+  display: flex; align-items: center; gap: 6px;
 }
 /* Badge text — per spec: 27px/32px line-height, weight 700, orange #D16C00 */
 .hero-badge {
@@ -151,7 +151,7 @@ html {
 }
 /* Yarn icon — per spec: 120x85 */
 .hero-badge-icon {
-  width: 48px; height: 40px; flex-shrink: 0;
+  width: 104px; height: 74px; flex-shrink: 0;
   object-fit: contain;
 }
 
@@ -191,12 +191,20 @@ html {
   min-width: 220px;
   display: flex;
   align-self: flex-start;
+  margin-top: -32px;
+  border-radius: 19px;
+  overflow: hidden;
 }
 .hero-img {
   width: 100%;
   aspect-ratio: 1 / 1;
   height: auto;
   object-fit: cover;
+  /* Slight overscan crops out a faint shadow/margin baked into the source
+     photo's edges, which was previously hidden by the old height:100%
+     stretch-crop and became visible once we switched to a true aspect
+     ratio instead of stretching. */
+  transform: scale(1.07);
   border-radius: 19px;
   display: block;
 }
