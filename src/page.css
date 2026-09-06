@@ -115,7 +115,7 @@ html {
 ══════════════════════════════════════════════ */
 .hero {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   padding: 60px 48px 60px 63px;
@@ -131,7 +131,7 @@ html {
   max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
 /* Badge row: text + small yarn icon inline */
@@ -158,7 +158,7 @@ html {
 /* Headline — per spec: Marcellus 40px, line-height 150%, color #3C6293, box 593px */
 .hero-headline {
   font-family: 'Marcellus', serif;
-  font-size: 40px; font-weight: 700;
+  font-size: 46px; font-weight: 700;
   line-height: 1.5; letter-spacing: -0.01em;
   color: #3C6293;
   max-width: 593px;
@@ -171,13 +171,13 @@ html {
 .hero-subtitle-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   max-width: 564px;
 }
 .hero-subtitle {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 18px; font-weight: 600;
-  line-height: 1.6; color: #E2790A;
+  font-size: 21px; font-weight: 600;
+  line-height: 1.65; color: #E2790A;
   margin: 0;
 }
 
@@ -190,6 +190,8 @@ html {
   max-width: 637px;
   min-width: 220px;
   display: flex;
+  align-self: flex-start;
+  margin-top: -32px;
   border-radius: 19px;
   overflow: hidden;
 }
