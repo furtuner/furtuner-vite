@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
 
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
-  // "Why Choose FurTuner" cards: the ambient Set A / Set B crossfade below
-  // runs purely on a 40s CSS animation, untouched by hovering. Hovering an
-  // individual card shows a separate flip overlay on top of it (Set A front,
-  // Set B back) independent of whatever the ambient crossfade is doing.
+  // "Why Choose FurTuner" cards: Set A displays statically at rest. Hovering
+  // an individual card shows a flip overlay on top of it (Set A front,
+  // Set B back).
   const [whyHoveredCard, setWhyHoveredCard] = useState<number | null>(null)
   // Defaults to 'home' — except when the page is loading because Stripe just
   // redirected the customer back here after a successful payment
@@ -29,32 +28,8 @@ function App() {
   // edge case in how the previous instance unmounted.
   const [calculatorInstance, setCalculatorInstance] = useState(0)
 
-  // Continuous scroll-linked navbar sizing — the logo shrinks in exact, real-time
-  // proportion to how far the page has scrolled (0 to 150px), via a CSS variable
-  // read by page.css. No on/off state, no fixed-duration transition fighting the
-  // scroll — it just tracks scroll position directly, so it can't feel "stuck" or
-  // bouncy the way a threshold + animated transition can.
-  useEffect(() => {
-    const SHRINK_DISTANCE = 150
-    let ticking = false
-    const apply = () => {
-      const progress = Math.min(1, Math.max(0, window.scrollY / SHRINK_DISTANCE))
-      document.documentElement.style.setProperty('--nav-shrink', String(progress))
-      ticking = false
-    }
-    const onScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(apply)
-    }
-    apply()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   const jumpToTop = () => {
     window.scrollTo({ top: 0, behavior: 'auto' })
-    document.documentElement.style.setProperty('--nav-shrink', '0')
   }
 
   const goHome = () => {
@@ -157,8 +132,7 @@ function App() {
       <section className="why-section">
         <h2 className="section-title">Why Choose FurTuner?</h2>
         <div className="why-carousel">
-          {/* Ambient auto-crossfade — pure CSS, runs on its own 40s cycle,
-              completely unaffected by hovering. */}
+          {/* Set A — displays statically at rest. */}
           <div className="why-set why-set-a">
             <div className="why-grid">
               <div className="why-row1">

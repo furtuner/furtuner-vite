@@ -18,23 +18,12 @@ html {
 
 /* ══════════════════════════════════════════════
    NAVBAR  — logo left, SUPPORT / FAQ links right
-   The logo itself is always rendered at full size (190px) — it never
-   scales down or gets distorted. What shrinks on scroll is the visible
-   "window" (.nav-logo)'s height, tied 1:1 to scroll position via the
-   --nav-shrink CSS variable (0 = top of page, 1 = fully scrolled), set
-   in App.tsx. Since the logo is bottom-anchored inside that shrinking
-   window with overflow hidden, the top of the logo (the icon) is what
-   gets progressively covered as you scroll — and a soft mask-image
-   gradient fades that edge to transparent instead of hard-clipping it,
-   so it dissolves away smoothly rather than being sliced off.
+   Static fixed-size navbar — no longer shrinks or fades on scroll.
 ══════════════════════════════════════════════ */
-:root {
-  --nav-shrink: 0;
-}
 .navbar {
   position: sticky; top: 0; z-index: 200;
   display: flex; align-items: flex-end; justify-content: space-between;
-  padding: calc(34px - var(--nav-shrink) * 17px) 48px calc(34px - var(--nav-shrink) * 17px) 63px;
+  padding: 34px 48px 34px 63px;
   background: #E8F5FF;
   border-bottom: 1px solid #eef0f4;
   max-width: 1280px;
@@ -45,10 +34,8 @@ html {
 .nav-logo {
   display: flex;
   align-items: flex-end;
-  height: calc(100px - var(--nav-shrink) * 66px);
+  height: 100px;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
 }
 .nav-logo-img {
   height: 100px; width: auto; display: block; object-fit: contain; flex-shrink: 0;
@@ -128,15 +115,15 @@ html {
 /* LEFT COLUMN — per Figma spec: headline box 593px, subtitle box 564px */
 .hero-left {
   flex: 1 1 500px;
-  max-width: 600px;
+  max-width: 620px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 26px;
 }
 
 /* Badge row: text + small yarn icon inline */
 .hero-badge-row {
-  display: flex; align-items: center; gap: 0px;
+  display: flex; align-items: flex-start; gap: 0px;
 }
 /* Badge text — per spec: 27px/32px line-height, weight 700, orange #D16C00 */
 .hero-badge {
@@ -151,17 +138,18 @@ html {
 }
 /* Yarn icon — per spec: 120x85 */
 .hero-badge-icon {
-  width: 104px; height: 74px; flex-shrink: 0;
+  width: 78px; height: 55px; flex-shrink: 0;
   object-fit: contain;
+  margin-left: -18px;
 }
 
 /* Headline — per spec: Marcellus 40px, line-height 150%, color #3C6293, box 593px */
 .hero-headline {
   font-family: 'Marcellus', serif;
-  font-size: 46px; font-weight: 700;
+  font-size: 42px; font-weight: 700;
   line-height: 1.5; letter-spacing: -0.01em;
   color: #3C6293;
-  max-width: 593px;
+  max-width: 615px;
   margin-bottom: 0;
 }
 
@@ -171,13 +159,13 @@ html {
 .hero-subtitle-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   max-width: 564px;
 }
 .hero-subtitle {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 21px; font-weight: 600;
-  line-height: 1.65; color: #E2790A;
+  font-size: 19px; font-weight: 600;
+  line-height: 1.6; color: #E2790A;
   margin: 0;
 }
 
@@ -283,10 +271,8 @@ html {
 .why-row2  { display: flex; gap: 16px; align-items: stretch; }
 
 /* ── Why-Choose carousel ──
-   Set A / Set B stacked in the same grid cell, ambiently crossfading via
-   CSS on their own 40s cycle. A third layer (.why-hover-layer) sits on top,
-   invisible at rest, and reveals a per-card flip on hover — independent of
-   whatever the ambient crossfade below is currently showing. */
+   Set A displays statically at rest. A hover layer (.why-hover-layer) sits
+   on top, invisible at rest, and reveals a per-card flip on hover. */
 .why-carousel {
   display: grid;
   background: #fff;
@@ -301,23 +287,8 @@ html {
 .why-set-b {
   pointer-events: none;
 }
-
-@keyframes why-fade-a {
-  0%, 38%  { opacity: 1; }
-  48%, 90% { opacity: 0; }
-  100%     { opacity: 1; }
-}
-@keyframes why-fade-b {
-  0%, 38%  { opacity: 0; }
-  48%, 90% { opacity: 1; }
-  100%     { opacity: 0; }
-}
-.why-set-a {
-  animation: why-fade-a 40s ease-in-out infinite;
-}
 .why-set-b {
-  animation: why-fade-b 40s ease-in-out infinite;
-  background: transparent;
+  opacity: 0;
 }
 
 /* ── Hover overlay layer ──
@@ -775,7 +746,7 @@ html {
 .btn-reset:hover { background: #D9791A; }
 
 /* ══════════════════════════════════════════════  FOOTER  */
-.site-footer { background: var(--navy); padding: 32px 63px; }
+.site-footer { background: #E8F5FF; padding: 44px 63px; }
 .footer-inner {
   display: flex; align-items: center; justify-content: space-between;
   max-width: 1280px;
@@ -789,7 +760,7 @@ html {
   border-radius: 12px;
   padding: 10px 18px;
 }
-.footer-copy  { font-size: 14px; color: #F0932B; }
+.footer-copy  { font-size: 14px; color: #143C6F; }
 
 /* ══════════════════════════════════════════════  RESPONSIVE  */
 /* Disabled site-wide: the "and (min-width: 99999px)" clause can never be
@@ -799,8 +770,8 @@ html {
    all. Restore the old behavior by deleting the "and (min-width: 99999px)"
    clause from both queries below. */
 @media (max-width: 600px) and (min-width: 99999px) {
-  .navbar { padding: calc(16px - var(--nav-shrink) * 8px) 20px; }
-  .nav-logo-img { height: calc(64px - var(--nav-shrink) * 30px); }
+  .navbar { padding: 16px 20px; }
+  .nav-logo-img { height: 64px; }
   .nav-links { gap: 16px; }
   .nav-link { font-size: 16px; }
   #calculator { scroll-margin-top: 133px; }
