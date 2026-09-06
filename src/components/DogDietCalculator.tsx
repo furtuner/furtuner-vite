@@ -390,7 +390,7 @@ function ProfilePage({
               onMonthsChange={v => updateAgeFromParts(ageYears, v)}
             />
             <Field label="Age *" error={errors.age}>
-              <input className={inputCls(!!errors.age)} value={form.age}
+              <input className={inputCls(!!errors.age, true)} value={form.age}
                 readOnly
                 style={{ cursor: "not-allowed", opacity: 0.75 }}
                 placeholder="e.g. 3 years / 8 months" />
@@ -680,7 +680,7 @@ function CatProfilePage({
               onMonthsChange={v => updateAgeFromParts(ageYears, v)}
             />
             <Field label="Age *" error={errors.age}>
-              <input className={inputCls(!!errors.age)} value={form.age}
+              <input className={inputCls(!!errors.age, true)} value={form.age}
                 readOnly
                 style={{ cursor: "not-allowed", opacity: 0.75 }}
                 placeholder="e.g. 3 years / 8 months" />
@@ -2166,7 +2166,7 @@ function AgeYearMonthPicker({
   onYearsChange: (v: string) => void;
   onMonthsChange: (v: string) => void;
 }) {
-  const selectCls = `${inputCls(false)} appearance-none cursor-pointer`;
+  const selectCls = `${inputCls(false, true)} appearance-none cursor-pointer`;
   const optionStyle = { fontWeight: 700, fontSize: "21px", color: "#211915" };
   return (
     <div className="grid grid-cols-2" style={{ gap: "16px", marginTop: "4px" }}>
