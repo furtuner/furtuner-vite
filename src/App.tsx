@@ -128,15 +128,20 @@ function App() {
             <img src="/images/hero-pet.svg" alt="" className="hero-badge-icon" aria-hidden="true" />
           </div>
           <h1 className="hero-headline">
-            Create Complete and Balanced Homemade Diets with Our Dog &amp; Cat Diet Formulator
+            Create Balanced Homemade Meals for Your Dog or Cat
           </h1>
-          <p className="hero-subtitle">
-            FurTuner is an advanced diet formulation platform for dogs and cats that creates
-            personalized, nutritionally balanced recipes using real food ingredients. Each
-            recipe is formulated to meet AAFCO (Association of American Feed Control
-            Officials) minimum nutrient requirements without relying on synthetic vitamin
-            or mineral supplements.
-          </p>
+          <div className="hero-subtitle-group">
+            <p className="hero-subtitle">
+              Choose the real-food ingredients you want to feed, and FurTuner creates a
+              personalized recipe with the right amounts to provide complete and balanced
+              nutrition.
+            </p>
+            <p className="hero-subtitle">
+              Each recipe is formulated to meet the minimum nutrient requirements established
+              by AAFCO (Association of American Feed Control Officials)&mdash;without requiring
+              a vitamin or mineral premix.
+            </p>
+          </div>
         </div>
         <div className="hero-right">
           <img src="/images/hero-image.png" alt="Happy dog and cat" className="hero-img" />
@@ -145,12 +150,7 @@ function App() {
 
       {/* BACKGROUND / PRICE SCROLL SECTION */}
       <section className="hero-bg-section">
-        <div className="hero-bg-crop" aria-hidden="true">
-          <img src="/images/all-bg.svg" className="hero-bg-full" alt="" />
-        </div>
-        <img src="/images/objects-left.svg" alt="" className="obj obj-left" aria-hidden="true" />
-        <img src="/images/objects-right.svg" alt="" className="obj obj-right" aria-hidden="true" />
-        <img src="/images/objects-center.svg" alt="" className="obj obj-center" aria-hidden="true" />
+        <img src="/images/hero-bg-section.svg" className="hero-bg-full" alt="" />
       </section>
 
       {/* WHY CHOOSE FURTUNER */}
