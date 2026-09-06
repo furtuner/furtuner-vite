@@ -34,8 +34,8 @@ html {
 .navbar {
   position: sticky; top: 0; z-index: 200;
   display: flex; align-items: flex-end; justify-content: space-between;
-  padding: calc(20px - var(--nav-shrink) * 10px) 48px calc(20px - var(--nav-shrink) * 10px) 63px;
-  background: #fff;
+  padding: calc(34px - var(--nav-shrink) * 17px) 48px calc(34px - var(--nav-shrink) * 17px) 63px;
+  background: #E8F5FF;
   border-bottom: 1px solid #eef0f4;
   max-width: 1280px;
   margin: 0 auto;
@@ -45,13 +45,13 @@ html {
 .nav-logo {
   display: flex;
   align-items: flex-end;
-  height: calc(190px - var(--nav-shrink) * 126px);
+  height: calc(100px - var(--nav-shrink) * 66px);
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
   mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
 }
 .nav-logo-img {
-  height: 190px; width: auto; display: block; object-fit: contain; flex-shrink: 0;
+  height: 100px; width: auto; display: block; object-fit: contain; flex-shrink: 0;
 }
 
 /* Keeps the sticky navbar from covering the top of the calculator's
@@ -115,7 +115,7 @@ html {
 ══════════════════════════════════════════════ */
 .hero {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   padding: 60px 48px 60px 63px;
@@ -136,7 +136,7 @@ html {
 
 /* Badge row: text + small yarn icon inline */
 .hero-badge-row {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 4px;
 }
 /* Badge text — per spec: 27px/32px line-height, weight 700, orange #D16C00 */
 .hero-badge {
@@ -151,7 +151,7 @@ html {
 }
 /* Yarn icon — per spec: 120x85 */
 .hero-badge-icon {
-  width: 120px; height: 85px; flex-shrink: 0;
+  width: 48px; height: 40px; flex-shrink: 0;
   object-fit: contain;
 }
 
@@ -165,12 +165,20 @@ html {
   margin-bottom: 0;
 }
 
-/* Subtitle — per spec: weight 800, 32px, line-height 130%, color #FF9A30, box 564px */
+/* Subtitle — reworked to match reference: normal-weight paragraph text,
+   two stacked blocks with a small gap between them instead of one giant
+   bold line. */
+.hero-subtitle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 564px;
+}
 .hero-subtitle {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 32px; font-weight: 800;
-  line-height: 1.3; color: #FF9A30;
-  max-width: 564px;
+  font-size: 18px; font-weight: 600;
+  line-height: 1.6; color: #E2790A;
+  margin: 0;
 }
 
 /* RIGHT COLUMN — per spec: capped at 637px wide on wide screens, but allowed
@@ -182,11 +190,12 @@ html {
   max-width: 637px;
   min-width: 220px;
   display: flex;
+  align-self: flex-start;
 }
 .hero-img {
   width: 100%;
-  height: 100%;
-  min-height: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: cover;
   border-radius: 19px;
   display: block;
@@ -785,7 +794,7 @@ html {
    clause from both queries below. */
 @media (max-width: 600px) and (min-width: 99999px) {
   .navbar { padding: calc(16px - var(--nav-shrink) * 8px) 20px; }
-  .nav-logo-img { height: calc(100px - var(--nav-shrink) * 52px); }
+  .nav-logo-img { height: calc(64px - var(--nav-shrink) * 30px); }
   .nav-links { gap: 16px; }
   .nav-link { font-size: 16px; }
   #calculator { scroll-margin-top: 133px; }
