@@ -439,12 +439,12 @@ function ProfilePage({
             <div className="grid grid-cols-2" style={{ gap: "16px" }}>
               <Field label="Weight (kg) *" error={errors.weightKg}>
                 <input type="number" min="0.1" step="0.1"
-                  className={inputCls(!!errors.weightKg)} value={form.weightKg}
+                  className={inputCls(!!errors.weightKg, true)} value={form.weightKg}
                   onChange={e => handleKgChange(e.target.value)} placeholder="e.g. 25.0" />
               </Field>
               <Field label="Weight (lb)">
                 <input type="number" min="0.1" step="0.1"
-                  className={inputCls(false)} value={form.weightLb}
+                  className={inputCls(false, true)} value={form.weightLb}
                   onChange={e => handleLbChange(e.target.value)} placeholder="e.g. 55.1" />
               </Field>
             </div>
@@ -727,12 +727,12 @@ function CatProfilePage({
             <div className="grid grid-cols-2" style={{ gap: "16px", marginTop: "16px" }}>
               <Field label="Weight (kg) *" error={errors.weightKg}>
                 <input type="number" min="0.1" step="0.1"
-                  className={inputCls(!!errors.weightKg)} value={form.weightKg}
+                  className={inputCls(!!errors.weightKg, true)} value={form.weightKg}
                   onChange={e => handleKgChange(e.target.value)} placeholder="e.g. 4.5" />
               </Field>
               <Field label="Weight (lb)">
                 <input type="number" min="0.1" step="0.1"
-                  className={inputCls(false)} value={form.weightLb}
+                  className={inputCls(false, true)} value={form.weightLb}
                   onChange={e => handleLbChange(e.target.value)} placeholder="e.g. 9.9" />
               </Field>
             </div>
@@ -2149,8 +2149,10 @@ function MultiPillGroup({
   );
 }
 
-function inputCls(error: boolean) {
+function inputCls(error: boolean, centered: boolean = false) {
   return `w-full h-[64px] px-4 rounded-[10px] text-[21px] font-bold text-[#211915] bg-[#E0F2FF] outline-none transition-all ${
+    centered ? "text-center" : ""
+  } ${
     error ? "shadow-[0_0_0_2px_#B02424]" : "focus:shadow-[0_0_0_2px_#3C6293]"
   }`;
 }
