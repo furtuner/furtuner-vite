@@ -319,11 +319,9 @@ body {
 
 /* ── Hover overlay layer ──
    Invisible hit-boxes, same size/position as the real cards, sitting on top
-   of the ambient crossfade. Hovering one fades + flips it in (Set A front,
-   Set B back); leaving fades + flips it back out.
-   The flip hinges on the LEFT edge (like a calendar/book page turning),
-   rather than spinning in place around the center, plus a soft page-fold
-   shading gradient near the hinge and a lifted shadow mid-flip for depth. */
+   of the ambient crossfade. Hovering one crossfades it in (Set A front
+   fades out, Set B back fades in); leaving reverses it. Simple opacity
+   crossfade — no 3D transforms, so no clipping/perspective edge cases. */
 .why-hover-layer {
   background: transparent;
   pointer-events: none;
@@ -332,7 +330,6 @@ body {
   position: relative;
   opacity: 0;
   pointer-events: auto;
-  perspective: 1800px;
   transition: opacity 0.35s ease;
 }
 .why-hover-card.is-active {
@@ -342,11 +339,6 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.75s cubic-bezier(0.34, 1.15, 0.64, 1);
-}
-.why-hover-card.is-active .why-flip-inner {
-  transform: rotateY(180deg);
 }
 .why-flip-front,
 .why-flip-back {
@@ -354,24 +346,19 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
+  transition: opacity 0.4s ease;
+}
+.why-flip-front {
+  opacity: 1;
 }
 .why-flip-back {
-  transform: rotateY(180deg);
+  opacity: 0;
 }
-/* Page-fold shading: a soft dark gradient hugging the hinge edge, present
-   on both faces, so whichever side is currently facing the viewer reads as
-   a curling page rather than a flat mirror-swap. */
-.why-flip-front::after,
-.why-flip-back::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 12%);
+.why-hover-card.is-active .why-flip-front {
+  opacity: 0;
 }
-.why-flip-back::after {
-  background: linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 12%);
+.why-hover-card.is-active .why-flip-back {
+  opacity: 1;
 }
 
 .why-full-img {
