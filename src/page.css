@@ -770,7 +770,13 @@ body {
 .btn-reset:hover { background: #D9791A; }
 
 /* ══════════════════════════════════════════════  FOOTER  */
-.site-footer { background: #E8F5FF; padding: 44px 63px; }
+.site-footer {
+  background: #E8F5FF;
+  padding: 44px 63px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
 .footer-inner {
   display: flex; align-items: flex-end; justify-content: space-between;
   max-width: 1280px;
