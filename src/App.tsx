@@ -353,7 +353,7 @@ function App() {
       {view === 'about' && (
         <main className="faq-page" style={{ textAlign: 'center' }}>
           <button className="faq-back-link" onClick={goHome}>
-            &larr; Back to Home
+            <span>&larr;</span> Back to Home
           </button>
           <h2
             style={{
@@ -390,18 +390,18 @@ function App() {
       )}
 
       {view === 'faq' && (
-        <main className="faq-page">
+        <main className="faq-page" style={{ textAlign: 'center' }}>
           <button className="faq-back-link" onClick={goHome}>
-            &larr; Back to Home
+            <span>&larr;</span> Back to Home
           </button>
           <FAQSection visible={true} />
         </main>
       )}
 
       {view === 'calculator' && (
-        <main className="calculator-page">
+        <main className="calculator-page" style={{ textAlign: 'center' }}>
           <button className="faq-back-link" onClick={goHome}>
-            &larr; Back to Home
+            <span>&larr;</span> Back to Home
           </button>
           <DogDietCalculator key={calculatorInstance} visible={true} onGoHome={goHome} />
         </main>

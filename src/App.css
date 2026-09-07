@@ -14,27 +14,20 @@
    Turning it off lets the navbar's size track scroll position directly. */
 html {
   overflow-anchor: none;
+  min-width: 1280px;
+}
+body {
+  min-width: 1280px;
 }
 
 /* ══════════════════════════════════════════════
    NAVBAR  — logo left, SUPPORT / FAQ links right
-   The logo itself is always rendered at full size (190px) — it never
-   scales down or gets distorted. What shrinks on scroll is the visible
-   "window" (.nav-logo)'s height, tied 1:1 to scroll position via the
-   --nav-shrink CSS variable (0 = top of page, 1 = fully scrolled), set
-   in App.tsx. Since the logo is bottom-anchored inside that shrinking
-   window with overflow hidden, the top of the logo (the icon) is what
-   gets progressively covered as you scroll — and a soft mask-image
-   gradient fades that edge to transparent instead of hard-clipping it,
-   so it dissolves away smoothly rather than being sliced off.
+   Static fixed-size navbar — no longer shrinks or fades on scroll.
 ══════════════════════════════════════════════ */
-:root {
-  --nav-shrink: 0;
-}
 .navbar {
   position: sticky; top: 0; z-index: 200;
   display: flex; align-items: flex-end; justify-content: space-between;
-  padding: calc(34px - var(--nav-shrink) * 17px) 48px calc(34px - var(--nav-shrink) * 17px) 63px;
+  padding: 34px 63px;
   background: #E8F5FF;
   border-bottom: 1px solid #eef0f4;
   max-width: 1280px;
@@ -45,10 +38,8 @@ html {
 .nav-logo {
   display: flex;
   align-items: flex-end;
-  height: calc(100px - var(--nav-shrink) * 66px);
+  height: 100px;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
 }
 .nav-logo-img {
   height: 100px; width: auto; display: block; object-fit: contain; flex-shrink: 0;
@@ -92,16 +83,33 @@ html {
 .faq-back-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: none;
+  gap: 8px;
+  background: #E0F2FF;
   border: none;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 700;
   color: #143C6F;
-  padding: 8px 0;
+  padding: 10px 20px 10px 16px;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
-.faq-back-link:hover { color: #F0932B; }
+.faq-back-link span {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.faq-back-link:hover {
+  background: #143C6F;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(20, 60, 111, 0.25);
+  transform: translateY(-1px);
+}
+.faq-back-link:hover span {
+  transform: translateX(-3px);
+}
+.faq-back-link:active {
+  transform: translateY(0);
+}
 
 .calculator-page {
   padding: 24px 63px 0;
@@ -118,7 +126,7 @@ html {
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  padding: 60px 48px 60px 63px;
+  padding: 60px 0 60px 63px;
   background: #fff;
   max-width: 1280px;
   margin: 0 auto;
@@ -127,16 +135,17 @@ html {
 
 /* LEFT COLUMN — per Figma spec: headline box 593px, subtitle box 564px */
 .hero-left {
-  flex: 1 1 500px;
-  max-width: 600px;
+  flex: 1.15 1 520px;
+  max-width: 660px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 26px;
 }
 
 /* Badge row: text + small yarn icon inline */
 .hero-badge-row {
-  display: flex; align-items: center; gap: 4px;
+  display: flex; align-items: flex-start; gap: 0px;
+  max-width: 615px;
 }
 /* Badge text — per spec: 27px/32px line-height, weight 700, orange #D16C00 */
 .hero-badge {
@@ -145,23 +154,24 @@ html {
   line-height: 32px;
   color: #D16C00;
   text-transform: uppercase;
-  max-width: 486px;
+  max-width: 615px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 /* Yarn icon — per spec: 120x85 */
 .hero-badge-icon {
-  width: 48px; height: 40px; flex-shrink: 0;
+  width: 78px; height: 55px; flex-shrink: 0;
   object-fit: contain;
+  margin-left: -18px;
 }
 
 /* Headline — per spec: Marcellus 40px, line-height 150%, color #3C6293, box 593px */
 .hero-headline {
   font-family: 'Marcellus', serif;
-  font-size: 40px; font-weight: 700;
+  font-size: 42px; font-weight: 700;
   line-height: 1.5; letter-spacing: -0.01em;
   color: #3C6293;
-  max-width: 593px;
+  max-width: 615px;
   margin-bottom: 0;
 }
 
@@ -171,14 +181,17 @@ html {
 .hero-subtitle-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 564px;
+  gap: 16px;
+  max-width: 615px;
 }
 .hero-subtitle {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 18px; font-weight: 600;
-  line-height: 1.6; color: #E2790A;
+  font-family: 'Poltawski Nowy', serif;
+  font-size: 21px; font-weight: 700;
+  line-height: 1.7; color: #E2790A;
   margin: 0;
+}
+.hero-subtitle--accent {
+  color: #3C6293;
 }
 
 /* RIGHT COLUMN — per spec: capped at 637px wide on wide screens, but allowed
@@ -187,16 +200,21 @@ html {
    being locked to a fixed square, so it never falls short of the text. */
 .hero-right {
   flex: 1 1 500px;
-  max-width: 637px;
   min-width: 220px;
   display: flex;
   align-self: flex-start;
+  border-radius: 19px;
+  overflow: hidden;
 }
 .hero-img {
   width: 100%;
   aspect-ratio: 1 / 1;
   height: auto;
   object-fit: cover;
+  /* Small safety-margin crop in case the source photo has a faint edge
+     border/shadow baked in — kept modest (1.06x) so it can't cut into
+     the dog's ears the way a larger overscan did previously. */
+  transform: scale(1.06);
   border-radius: 19px;
   display: block;
 }
@@ -266,7 +284,7 @@ html {
 
 .section-title {
   font-family: 'Marcellus', serif;
-  font-size: 48px; font-weight: 400;
+  font-size: 48px; font-weight: 700;
   color: var(--navy-mid);
   margin-bottom: 32px; line-height: 1.2;
 }
@@ -277,10 +295,8 @@ html {
 .why-row2  { display: flex; gap: 16px; align-items: stretch; }
 
 /* ── Why-Choose carousel ──
-   Set A / Set B stacked in the same grid cell, ambiently crossfading via
-   CSS on their own 40s cycle. A third layer (.why-hover-layer) sits on top,
-   invisible at rest, and reveals a per-card flip on hover — independent of
-   whatever the ambient crossfade below is currently showing. */
+   Set A displays statically at rest. A hover layer (.why-hover-layer) sits
+   on top, invisible at rest, and reveals a per-card flip on hover. */
 .why-carousel {
   display: grid;
   background: #fff;
@@ -295,29 +311,17 @@ html {
 .why-set-b {
   pointer-events: none;
 }
-
-@keyframes why-fade-a {
-  0%, 38%  { opacity: 1; }
-  48%, 90% { opacity: 0; }
-  100%     { opacity: 1; }
-}
-@keyframes why-fade-b {
-  0%, 38%  { opacity: 0; }
-  48%, 90% { opacity: 1; }
-  100%     { opacity: 0; }
-}
-.why-set-a {
-  animation: why-fade-a 40s ease-in-out infinite;
-}
 .why-set-b {
-  animation: why-fade-b 40s ease-in-out infinite;
-  background: transparent;
+  opacity: 0;
 }
 
 /* ── Hover overlay layer ──
    Invisible hit-boxes, same size/position as the real cards, sitting on top
    of the ambient crossfade. Hovering one fades + flips it in (Set A front,
-   Set B back); leaving fades + flips it back out. */
+   Set B back); leaving fades + flips it back out.
+   The flip hinges on the LEFT edge (like a calendar/book page turning),
+   rather than spinning in place around the center, plus a soft page-fold
+   shading gradient near the hinge and a lifted shadow mid-flip for depth. */
 .why-hover-layer {
   background: transparent;
   pointer-events: none;
@@ -326,7 +330,7 @@ html {
   position: relative;
   opacity: 0;
   pointer-events: auto;
-  perspective: 1600px;
+  perspective: 1800px;
   transition: opacity 0.35s ease;
 }
 .why-hover-card.is-active {
@@ -337,7 +341,7 @@ html {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transition: transform 0.75s cubic-bezier(0.34, 1.15, 0.64, 1);
 }
 .why-hover-card.is-active .why-flip-inner {
   transform: rotateY(180deg);
@@ -352,6 +356,20 @@ html {
 }
 .why-flip-back {
   transform: rotateY(180deg);
+}
+/* Page-fold shading: a soft dark gradient hugging the hinge edge, present
+   on both faces, so whichever side is currently facing the viewer reads as
+   a curling page rather than a flat mirror-swap. */
+.why-flip-front::after,
+.why-flip-back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 12%);
+}
+.why-flip-back::after {
+  background: linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 12%);
 }
 
 .why-full-img {
@@ -769,21 +787,24 @@ html {
 .btn-reset:hover { background: #D9791A; }
 
 /* ══════════════════════════════════════════════  FOOTER  */
-.site-footer { background: var(--navy); padding: 32px 63px; }
-.footer-inner {
-  display: flex; align-items: center; justify-content: space-between;
+.site-footer {
+  background: #E8F5FF;
+  padding: 44px 63px;
   max-width: 1280px;
   margin: 0 auto;
   box-sizing: border-box;
 }
-.footer-brand { display: flex; align-items: center; gap: 12px; font-family: 'Manuale', serif; font-weight: 800; font-size: 20px; color: #F0932B; }
-.footer-logo-img {
-  height: 150px; width: auto; object-fit: contain;
-  background: #fff;
-  border-radius: 12px;
-  padding: 10px 18px;
+.footer-inner {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
-.footer-copy  { font-size: 14px; color: #F0932B; }
+.footer-brand { display: flex; align-items: flex-end; gap: 12px; font-family: 'Manuale', serif; font-weight: 800; font-size: 20px; color: #F0932B; }
+.footer-logo-img {
+  height: 100px; width: auto; object-fit: contain;
+}
+.footer-copy  { font-size: 14px; color: #DE7100; }
 
 /* ══════════════════════════════════════════════  RESPONSIVE  */
 /* Disabled site-wide: the "and (min-width: 99999px)" clause can never be
@@ -793,8 +814,8 @@ html {
    all. Restore the old behavior by deleting the "and (min-width: 99999px)"
    clause from both queries below. */
 @media (max-width: 600px) and (min-width: 99999px) {
-  .navbar { padding: calc(16px - var(--nav-shrink) * 8px) 20px; }
-  .nav-logo-img { height: calc(64px - var(--nav-shrink) * 30px); }
+  .navbar { padding: 16px 20px; }
+  .nav-logo-img { height: 64px; }
   .nav-links { gap: 16px; }
   .nav-link { font-size: 16px; }
   #calculator { scroll-margin-top: 133px; }

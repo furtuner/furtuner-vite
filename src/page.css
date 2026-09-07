@@ -83,16 +83,33 @@ body {
 .faq-back-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: none;
+  gap: 8px;
+  background: #E0F2FF;
   border: none;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 700;
   color: #143C6F;
-  padding: 8px 0;
+  padding: 10px 20px 10px 16px;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
-.faq-back-link:hover { color: #F0932B; }
+.faq-back-link span {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.faq-back-link:hover {
+  background: #143C6F;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(20, 60, 111, 0.25);
+  transform: translateY(-1px);
+}
+.faq-back-link:hover span {
+  transform: translateX(-3px);
+}
+.faq-back-link:active {
+  transform: translateY(0);
+}
 
 .calculator-page {
   padding: 24px 63px 0;
