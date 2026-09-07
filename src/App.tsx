@@ -111,7 +111,7 @@ function App() {
               FurTuner turns them into a personalized, complete and balanced recipe
               with the right amount of each ingredient.
             </p>
-            <p className="hero-subtitle">
+            <p className="hero-subtitle hero-subtitle--accent">
               Real foods you choose. Nutrition FurTuner balances. No vitamin or
               mineral premix required.
             </p>
