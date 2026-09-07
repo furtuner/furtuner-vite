@@ -598,10 +598,12 @@ function App() {
       )}
 
       {view === 'calculator' && (
-        <main className="calculator-page" style={{ textAlign: 'center' }}>
-          <button className="faq-back-link" onClick={goHome}>
-            <span>&larr;</span> Back to Home
-          </button>
+        <main className="calculator-page">
+          <div style={{ textAlign: 'center' }}>
+            <button className="faq-back-link" onClick={goHome}>
+              <span>&larr;</span> Back to Home
+            </button>
+          </div>
           <DogDietCalculator key={calculatorInstance} visible={true} onGoHome={goHome} />
         </main>
       )}
