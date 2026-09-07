@@ -282,17 +282,17 @@ function App() {
           </h1>
           <div className="hero-subtitle-group">
             <p className="hero-subtitle">
-              Choose the real-food ingredients you want to feed your dog or cat, and
-              FurTuner turns them into a personalized, complete and balanced recipe
+              Choose the real-food ingredients you want to feed your dog or cat, and{' '}
+              <strong>FurTuner turns them into a personalized, complete and balanced recipe</strong>{' '}
               with the right amount of each ingredient.
             </p>
             <p className="hero-subtitle hero-subtitle--accent">
-              Real foods you choose. Nutrition FurTuner balances. No vitamin or
-              mineral premix required.
+              <strong>Real foods you choose. Nutrition FurTuner balances. No vitamin or
+              mineral premix required.</strong>
             </p>
             <p className="hero-subtitle">
-              Each recipe is formulated to meet the minimum nutrient requirements
-              established by AAFCO (Association of American Feed Control Officials).
+              Each recipe is formulated to meet the{' '}
+              <strong>minimum nutrient requirements established by AAFCO (Association of American Feed Control Officials).</strong>
             </p>
           </div>
         </div>

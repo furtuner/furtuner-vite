@@ -186,9 +186,12 @@ body {
 }
 .hero-subtitle {
   font-family: 'Poltawski Nowy', serif;
-  font-size: 21px; font-weight: 700;
+  font-size: 21px; font-weight: 400;
   line-height: 1.7; color: #E2790A;
   margin: 0;
+}
+.hero-subtitle strong {
+  font-weight: 700;
 }
 .hero-subtitle--accent {
   color: #3C6293;
