@@ -109,7 +109,7 @@ body {
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  padding: 60px 63px;
+  padding: 60px 0 60px 63px;
   background: #fff;
   max-width: 1280px;
   margin: 0 auto;
