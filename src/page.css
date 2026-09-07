@@ -27,7 +27,7 @@ body {
 .navbar {
   position: sticky; top: 0; z-index: 200;
   display: flex; align-items: flex-end; justify-content: space-between;
-  padding: 34px 48px 34px 63px;
+  padding: 34px 63px;
   background: #E8F5FF;
   border-bottom: 1px solid #eef0f4;
   max-width: 1280px;
@@ -118,8 +118,8 @@ body {
 
 /* LEFT COLUMN — per Figma spec: headline box 593px, subtitle box 564px */
 .hero-left {
-  flex: 1 1 520px;
-  max-width: 640px;
+  flex: 1.15 1 520px;
+  max-width: 660px;
   display: flex;
   flex-direction: column;
   gap: 26px;
@@ -179,7 +179,6 @@ body {
    being locked to a fixed square, so it never falls short of the text. */
 .hero-right {
   flex: 1 1 500px;
-  max-width: 637px;
   min-width: 220px;
   display: flex;
   align-self: flex-start;
