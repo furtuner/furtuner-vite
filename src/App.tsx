@@ -101,19 +101,28 @@ function SupportForm() {
         </SupportField>
 
         <SupportField label="Reason for Contact *" error={errors.reason}>
-          <div className="flex flex-wrap gap-2.5">
-            {SUPPORT_REASONS.map(r => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => { setReason(r); setErrors(er => ({ ...er, reason: '' })) }}
-                className={`h-[48px] px-5 rounded-[10px] text-[16px] font-bold transition-all ${
-                  reason === r ? 'bg-[#143C6F] text-white' : 'bg-[#E0F2FF] text-[#211915]'
-                }`}
-              >
-                {r}
-              </button>
-            ))}
+          <div style={{ position: 'relative' }}>
+            <select
+              value={reason}
+              onChange={e => { setReason(e.target.value); setErrors(er => ({ ...er, reason: '' })) }}
+              className={`${supportInputCls(!!errors.reason)} appearance-none cursor-pointer`}
+              style={{ paddingRight: '48px' }}
+            >
+              <option value="" style={{ fontWeight: 700, fontSize: '21px', color: '#3C6293' }}>
+                — Select a reason —
+              </option>
+              {SUPPORT_REASONS.map(r => (
+                <option key={r} value={r} style={{ fontWeight: 700, fontSize: '21px', color: '#211915' }}>
+                  {r}
+                </option>
+              ))}
+            </select>
+            <svg
+              width="18" height="18" viewBox="0 0 24 24" fill="none"
+              style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+            >
+              <path d="M6 9l6 6 6-6" stroke="#3C6293" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </SupportField>
 
