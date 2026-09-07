@@ -121,6 +121,8 @@ const MAX_MAP: Record<string, number> = {
   "11 Fruit (Mandatory - Select at least one and up to three maximum)": 3,
   "12 Oil (Mandatory - Select at least one and a maximum of three)": 3,
   "13 Others (Optional - Pick up to two maximum)": 2,
+  "13 Fiber & Seeds (Optional - Pick up to two maximum)": 2,
+  "14 Mineral Group A": 2,
   // ── Cat Conventional ──
   "02 Meat Group B (Optional - Pick up to one)": 1,
   "03 Meat Group C (Optional - Pick up to one)": 1,
