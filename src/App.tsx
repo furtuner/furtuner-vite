@@ -3,6 +3,158 @@ import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
 
+// ══════════════════════════════════════════════
+// SUPPORT FORM
+// Matches DogDietCalculator's visual style (same input/label/pill look).
+// Submits silently in the background via a POST to a Formspree endpoint
+// (SUPPORT_FORM_ENDPOINT below) — no email app opens, the message just
+// lands in the help@furtuner.com inbox directly.
+// ══════════════════════════════════════════════
+const SUPPORT_REASONS = [
+  'General Question',
+  'Recipe or Diet Issue',
+  'Order or Billing',
+  'Technical Problem',
+  'Feedback',
+]
+
+function supportInputCls(error: boolean) {
+  return `w-full h-[64px] px-4 rounded-[10px] text-[21px] font-bold text-[#211915] bg-[#E0F2FF] outline-none transition-all ${
+    error ? 'shadow-[0_0_0_2px_#B02424]' : 'focus:shadow-[0_0_0_2px_#3C6293]'
+  }`
+}
+
+function SupportField({
+  label, error, children,
+}: {
+  label: string; error?: string; children: React.ReactNode
+}) {
+  return (
+    <div>
+      <label className="block text-[23px] font-bold text-[#3C6293]" style={{ marginBottom: '9px' }}>{label}</label>
+      {children}
+      {error && <p className="mt-1.5 text-[15px] text-[#AD0B39] font-bold">{error}</p>}
+    </div>
+  )
+}
+
+// TODO: replace with your real Formspree endpoint, e.g.
+// 'https://formspree.io/f/xxxxxxxx' — sign up at formspree.io, create a
+// form pointed at help@furtuner.com, and paste the endpoint URL it gives
+// you here. Until this is a real endpoint, submissions will fail.
+const SUPPORT_FORM_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+
+function SupportForm() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [reason, setReason] = useState('')
+  const [message, setMessage] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const next: Record<string, string> = {}
+    if (!name.trim()) next.name = 'Please enter your name.'
+    if (!email.trim()) next.email = 'Please enter your email.'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = 'Please enter a valid email.'
+    if (!reason) next.reason = 'Please select a reason.'
+    if (!message.trim()) next.message = 'Please enter a message.'
+    setErrors(next)
+    if (Object.keys(next).length > 0) return
+
+    setStatus('sending')
+    try {
+      const res = await fetch(SUPPORT_FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ name, email, reason, message }),
+      })
+      if (!res.ok) throw new Error('Submission failed')
+      setStatus('sent')
+      setName(''); setEmail(''); setReason(''); setMessage('')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ maxWidth: '640px', margin: '0 auto', textAlign: 'left' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
+        <SupportField label="Name *" error={errors.name}>
+          <input
+            className={supportInputCls(!!errors.name)}
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="e.g. Jamie Rivera"
+          />
+        </SupportField>
+
+        <SupportField label="Email *" error={errors.email}>
+          <input
+            type="email"
+            className={supportInputCls(!!errors.email)}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="e.g. jamie@email.com"
+          />
+        </SupportField>
+
+        <SupportField label="Reason for Contact *" error={errors.reason}>
+          <div className="flex flex-wrap gap-2.5">
+            {SUPPORT_REASONS.map(r => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => { setReason(r); setErrors(er => ({ ...er, reason: '' })) }}
+                className={`h-[48px] px-5 rounded-[10px] text-[16px] font-bold transition-all ${
+                  reason === r ? 'bg-[#143C6F] text-white' : 'bg-[#E0F2FF] text-[#211915]'
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </SupportField>
+
+        <SupportField label="Message *" error={errors.message}>
+          <textarea
+            className={`${supportInputCls(!!errors.message)} h-[160px] pt-4`}
+            style={{ resize: 'vertical' }}
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            placeholder="How can we help?"
+          />
+        </SupportField>
+
+        <p style={{ fontSize: '14px', color: '#3C6293', margin: 0 }}>
+          Your message goes directly to <strong>help@furtuner.com</strong>.
+        </p>
+
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className="h-[64px] rounded-[10px] text-[21px] font-bold text-white transition-all"
+          style={{ background: '#F0932B', opacity: status === 'sending' ? 0.7 : 1, cursor: status === 'sending' ? 'not-allowed' : 'pointer' }}
+        >
+          {status === 'sending' ? 'Sending…' : 'Send Message'}
+        </button>
+
+        {status === 'sent' && (
+          <p style={{ fontSize: '15px', color: '#1B7A3D', fontWeight: 700, margin: 0 }}>
+            Message sent! We'll get back to you soon.
+          </p>
+        )}
+        {status === 'error' && (
+          <p style={{ fontSize: '15px', color: '#AD0B39', fontWeight: 700, margin: 0 }}>
+            Something went wrong sending your message. Please try again, or email us directly at help@furtuner.com.
+          </p>
+        )}
+      </div>
+    </form>
+  )
+}
+
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
   // "Why Choose FurTuner" cards: Set A displays statically at rest. Hovering
@@ -15,7 +167,7 @@ function App() {
   // immediately so its own effect can read that query param, restore the
   // saved wizard state, and unlock the Results page — none of that runs if
   // the app is sitting on the Home view instead.
-  const [view, setView] = useState<'home' | 'faq' | 'about' | 'calculator'>(() => {
+  const [view, setView] = useState<'home' | 'faq' | 'about' | 'calculator' | 'support'>(() => {
     if (typeof window !== 'undefined' && window.location.search.includes('paw_payment=success')) {
       return 'calculator'
     }
@@ -47,6 +199,11 @@ function App() {
     jumpToTop()
   }
 
+  const goSupport = () => {
+    setView('support')
+    jumpToTop()
+  }
+
   const goCalculator = () => {
     setCalculatorInstance(n => n + 1)
     setView('calculator')
@@ -69,7 +226,16 @@ function App() {
           </a>
         </div>
         <nav className="nav-links" style={{ marginLeft: '56px', display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <a href="#support" className="nav-link nav-link--support">SUPPORT</a>
+          <a
+            href="#support"
+            className={`nav-link nav-link--support ${view === 'support' ? 'nav-link--active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault()
+              goSupport()
+            }}
+          >
+            SUPPORT
+          </a>
           <a
             href="#faq"
             className={`nav-link nav-link--faq ${view === 'faq' ? 'nav-link--active' : ''}`}
@@ -395,6 +561,30 @@ function App() {
             <span>&larr;</span> Back to Home
           </button>
           <FAQSection visible={true} />
+        </main>
+      )}
+
+      {view === 'support' && (
+        <main className="faq-page" style={{ textAlign: 'center' }}>
+          <button className="faq-back-link" onClick={goHome}>
+            <span>&larr;</span> Back to Home
+          </button>
+          <h2
+            style={{
+              fontFamily: "'Marcellus', serif",
+              fontWeight: 700,
+              fontSize: 'clamp(28px, 3.5vw, 40px)',
+              marginBottom: '16px',
+              textAlign: 'center',
+              color: '#143C6F',
+            }}
+          >
+            Support
+          </h2>
+          <p style={{ maxWidth: '640px', margin: '0 auto 40px', fontSize: '18px', lineHeight: 1.6, color: '#3C6293', textAlign: 'center' }}>
+            Have a question or ran into an issue? Fill out the form below and we'll get back to you.
+          </p>
+          <SupportForm />
         </main>
       )}
 
