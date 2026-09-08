@@ -287,7 +287,7 @@ function App() {
               with the right amount of each ingredient.
             </p>
             <p className="hero-subtitle hero-subtitle--accent">
-              <strong>Real foods you choose. Nutrition FurTuner balances. No vitamin or
+              <strong>Real foods you choose. No vitamin or
               mineral premix required.</strong>
             </p>
             <p className="hero-subtitle">
