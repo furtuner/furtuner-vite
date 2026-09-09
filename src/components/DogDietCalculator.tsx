@@ -1091,9 +1091,13 @@ function IngredientsPage({
                               {cat.items.map(name => {
                                 const isSel = selected.has(name);
                                 const displayName = INGREDIENT_DISPLAY_OVERRIDES[name] ?? name;
+                                // Only "brewer's yeast / dried yeast" is long enough to need
+                                // a second line — every other ingredient name, regardless of
+                                // shuffle order, stays locked to a single line.
+                                const allowWrap = /brewer/i.test(displayName);
                                 return (
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
-                                    className="text-[15px] font-extrabold transition-all rounded-full"
+                                    className="text-[15px] font-extrabold transition-all"
                                     style={{
                                       flex: "0 0 calc(33.333% - 8px)",
                                       padding: "14px 16px",
@@ -1105,6 +1109,10 @@ function IngredientsPage({
                                       justifyContent: "center",
                                       boxSizing: "border-box",
                                       lineHeight: 1.2,
+                                      borderRadius: "24px",
+                                      whiteSpace: allowWrap ? "normal" : "nowrap",
+                                      overflow: allowWrap ? "visible" : "hidden",
+                                      textOverflow: allowWrap ? "clip" : "ellipsis",
                                     }}
                                   >
                                     {displayName}
@@ -1116,7 +1124,7 @@ function IngredientsPage({
                               <button
                                 type="button"
                                 onClick={() => toggleAll(gn)}
-                                className="text-[15px] font-extrabold transition-all rounded-full"
+                                className="text-[15px] font-extrabold transition-all"
                                 style={{
                                   width: "calc(33.333% - 8px)",
                                   padding: "14px 18px",
@@ -1128,6 +1136,7 @@ function IngredientsPage({
                                   alignItems: "center",
                                   justifyContent: "center",
                                   lineHeight: 1.2,
+                                  borderRadius: "24px",
                                 }}
                               >
                                 {cat.items.every(n => selected.has(n)) ? "✓ Both Selected" : "Select Both"}
