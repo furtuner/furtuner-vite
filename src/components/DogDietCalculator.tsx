@@ -1095,7 +1095,8 @@ function IngredientsPage({
                                     className="text-[15px] font-extrabold transition-all rounded-full"
                                     style={{
                                       flex: "0 0 calc(33.333% - 8px)",
-                                      padding: "14px 18px",
+                                      height: "62px",
+                                      padding: "6px 16px",
                                       background: isSel ? color : chipBg,
                                       color: isSel ? "#fff" : "#211915",
                                       textAlign: "center",
@@ -1103,6 +1104,7 @@ function IngredientsPage({
                                       alignItems: "center",
                                       justifyContent: "center",
                                       boxSizing: "border-box",
+                                      lineHeight: 1.2,
                                     }}
                                   >
                                     {displayName}
@@ -1117,11 +1119,16 @@ function IngredientsPage({
                                 className="text-[15px] font-extrabold transition-all rounded-full"
                                 style={{
                                   width: "calc(33.333% - 8px)",
-                                  padding: "14px 18px",
+                                  height: "62px",
+                                  padding: "6px 18px",
                                   background: "transparent",
                                   border: `1.5px solid ${color}`,
                                   color: color,
                                   boxSizing: "border-box",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  lineHeight: 1.2,
                                 }}
                               >
                                 {cat.items.every(n => selected.has(n)) ? "✓ Both Selected" : "Select Both"}
