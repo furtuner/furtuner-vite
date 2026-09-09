@@ -1466,7 +1466,7 @@ function ResultsPage({
                   return (
                     <tr key={i} style={{ background: i % 2 ? "#fff" : "#E0F2FF", borderBottom: "1px solid #A6CCE8" }}>
                       <td style={{ padding: "5px 8px" }}>{cleanIngredientName(r.ingredient)}</td>
-                      <td style={{ padding: "5px 8px", textAlign: "center", color: "#3C6293" }}>g</td>
+                      <td style={{ padding: "5px 8px", textAlign: "center", color: "#3C6293" }}>grams</td>
                       {DAYS.map(d => (
                         <td key={d} style={{ padding: "5px 6px", textAlign: "right", fontFamily: "monospace" }}>{(ingFresh * d).toFixed(1)}</td>
                       ))}
@@ -1897,7 +1897,7 @@ function ResultsPage({
                         return (
                           <tr key={i} style={{ background: "#E0F2FF", borderBottom: "2px solid #3C6293" }}>
                             <td style={{ padding: "12px 16px", fontSize: "16px", fontWeight: 600, color: "#211915" }}>{cleanIngredientName(r.ingredient)}</td>
-                            <td style={{ padding: "12px 10px", textAlign: "center", fontSize: "16px", fontWeight: 600, color: "#3C6293" }}>g</td>
+                            <td style={{ padding: "12px 10px", textAlign: "center", fontSize: "16px", fontWeight: 600, color: "#3C6293" }}>grams</td>
                             {DAYS.map(d => (
                               <td key={d} style={{ padding: "12px 8px", textAlign: "right", fontFamily: "monospace", fontSize: "15px", fontWeight: 600, color: "#211915" }}>{(ingFresh * d).toFixed(1)}</td>
                             ))}
