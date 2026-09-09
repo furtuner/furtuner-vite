@@ -599,7 +599,7 @@ function App() {
 
       {view === 'calculator' && (
         <main className="calculator-page">
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <button className="faq-back-link" onClick={goHome}>
               <span>&larr;</span> Back to Home
             </button>

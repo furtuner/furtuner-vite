@@ -2792,7 +2792,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   if (!visible) return null;
 
   return (
-    <section id="calculator" className="bg-[#F4F4F4] py-[88px]" ref={sectionRef} style={{ animation: "dietBoxIn 0.45s ease both" }}>
+    <section id="calculator" className="bg-[#F4F4F4] py-[88px]" ref={sectionRef} style={{ animation: "dietBoxIn 0.45s ease both", maxWidth: "1280px", margin: "0 auto" }}>
       <style>{`
         @keyframes dietBoxIn {
           from { opacity: 0; transform: translateY(10px); }
