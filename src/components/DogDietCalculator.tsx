@@ -122,17 +122,17 @@ const MAX_MAP: Record<string, number> = {
   "12 Oil (Mandatory - Select at least one and a maximum of three)": 3,
   "13 Others (Optional - Pick up to two maximum)": 2,
   // ── Cat Conventional ──
-  "02 Meat Group B (Optional - Pick up to one)": 1,
-  "03 Meat Group C (Optional - Pick up to one)": 1,
-  "04 Organ Meat - Other (Optional - Pick up to one)": 1,
+  "02 Meat Group B (Optional - Pick up to one)": 2,
+  "03 Meat Group C (Optional - Pick up to one)": 2,
+  "04 Organ Meat - Other (Optional - Pick up to one)": 2,
   "05 Organ Meat - Liver (Mandatory - Select one)": 1,
   "07 Grain B (Optional - Pick up to one)": 1,
   "09 Vegetable B (Optional - Pick up to two)": 2,
   "11 Fruit (Optional - Up to two maximum)": 2,
   // ── Cat Grain-Free ──
   "06 Grain A (Mandatory - Select at least one and a maximum of three, fixed at 110g) [Quinoa, Tapioca, Potatoes, Sweet Potatoes]": 3,
-  "08 Vegetable B (Optional - Select at least one, up to three)": 3,
-  "09 Fruit (Optional - Select upto three maximum)": 3,
+  "08 Vegetable B (Optional - Select at least one, up to three)": 2,
+  "09 Fruit (Optional - Select upto three maximum)": 2,
   // ── Dog Grain-Free ──
   "02 Meat Group B (Optional - Select upto two maximum)": 2,
   "03 Meat Group C (Optional - Select upto two maximum)": 2,
