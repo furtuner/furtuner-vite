@@ -1387,6 +1387,10 @@ function ResultsPage({
         <style>{`
           .print-only { display: none; }
           @media print {
+            @page {
+              size: landscape;
+              margin: 12mm;
+            }
             body > *:not(.print-only) { display: none !important; }
             .print-only {
               display: block !important;
@@ -1473,6 +1477,24 @@ function ResultsPage({
                     </tr>
                   );
                 })}
+                <tr style={{ background: "#143C6F", color: "#fff" }}>
+                  <td style={{ padding: "8px 8px", fontSize: "12px", fontWeight: 700 }}>Total (grams)</td>
+                  <td style={{ padding: "5px 8px" }}></td>
+                  {DAYS.map(d => {
+                    const tot = breakdown.reduce((s, r) => {
+                      if (Number(r.dm_g) <= 0) return s;
+                      const frac = Number(r.dm_g) / totalDM;
+                      const ingDailyDM = frac * dailyDM;
+                      const wf = Number(r.water_percent) / 100;
+                      let ingFresh = wf < 1 ? ingDailyDM / (1 - wf) : ingDailyDM;
+                      if (r.ingredient.trim().toLowerCase() === "oyster canned") {
+                        ingFresh = ingFresh * (10.0 / 14.9);
+                      }
+                      return s + ingFresh * d;
+                    }, 0);
+                    return <td key={d} style={{ padding: "8px 6px", textAlign: "right", fontFamily: "monospace", fontSize: "12px", fontWeight: 600 }}>{tot.toFixed(1)}</td>;
+                  })}
+                </tr>
               </tbody>
             </table>
 
