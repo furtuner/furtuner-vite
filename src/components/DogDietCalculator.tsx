@@ -1905,7 +1905,7 @@ function ResultsPage({
                         );
                       })}
                       <tr style={{ background: "#143C6F", color: "#fff" }}>
-                        <td style={{ padding: "14px 16px", fontSize: "15px", fontWeight: 700 }}>Total (g)</td>
+                        <td style={{ padding: "14px 16px", fontSize: "15px", fontWeight: 700 }}>Total (grams)</td>
                         <td style={{ padding: "12px 10px" }}></td>
                         {DAYS.map(d => {
                           const tot = breakdown.reduce((s, r) => {
