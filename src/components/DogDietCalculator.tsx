@@ -1082,6 +1082,7 @@ function IngredientsPage({
                               style={{
                                 display: "flex",
                                 flexWrap: "wrap",
+                                alignItems: "flex-start",
                                 justifyContent: "center",
                                 gap: "12px",
                                 width: "100%",
@@ -1105,6 +1106,7 @@ function IngredientsPage({
                                       justifyContent: "center",
                                       boxSizing: "border-box",
                                       lineHeight: 1.2,
+                                      overflow: "hidden",
                                     }}
                                   >
                                     {displayName}
@@ -1129,6 +1131,7 @@ function IngredientsPage({
                                   alignItems: "center",
                                   justifyContent: "center",
                                   lineHeight: 1.2,
+                                  overflow: "hidden",
                                 }}
                               >
                                 {cat.items.every(n => selected.has(n)) ? "✓ Both Selected" : "Select Both"}
