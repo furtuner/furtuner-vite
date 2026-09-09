@@ -180,13 +180,13 @@ body {
 .hero-subtitle-group {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   max-width: 615px;
 }
 .hero-subtitle {
   font-family: 'Poltawski Nowy', serif;
-  font-size: 24px; font-weight: 400;
-  line-height: 1.75; color: #E2790A;
+  font-size: 23px; font-weight: 400;
+  line-height: 1.72; color: #E2790A;
   margin: 0;
 }
 .hero-subtitle strong {
