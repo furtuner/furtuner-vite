@@ -125,7 +125,7 @@ const MAX_MAP: Record<string, number> = {
   "02 Meat Group B (Optional - Pick up to one)": 2,
   "03 Meat Group C (Optional - Pick up to one)": 2,
   "04 Organ Meat - Other (Optional - Pick up to one)": 2,
-  "05 Organ Meat - Liver (Mandatory - Select one)": 1,
+  "05 Organ Meat - Liver (Mandatory - Select one)": 2,
   "07 Grain B (Optional - Pick up to one)": 1,
   "09 Vegetable B (Optional - Pick up to two)": 2,
   "11 Fruit (Optional - Up to two maximum)": 2,
@@ -571,6 +571,12 @@ function CatProfilePage({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [ageYears, setAgeYears] = useState("");
   const [ageMonths, setAgeMonths] = useState("");
+  // Tracked separately from form.repro (not stored in it) — adding "Normal" as a
+  // literal value into form.repro would break getCatDenMultiplier's `repro.length
+  // >= 2` check, which is used specifically to detect Obese. This just controls
+  // whether the Body Condition pill row shows anything highlighted yet, forcing
+  // the user to make an explicit choice instead of "Normal" looking pre-selected.
+  const [bodyConditionTouched, setBodyConditionTouched] = useState(false);
 
   function updateAgeFromParts(years: string, months: string) {
     setAgeYears(years);
@@ -604,6 +610,7 @@ function CatProfilePage({
   }
 
   function setBodyCondition(v: "Normal" | "Obese") {
+    setBodyConditionTouched(true);
     setForm(f => {
       const withoutObese = f.repro.filter(x => x !== "Obese");
       return { ...f, repro: v === "Obese" ? [...withoutObese, "Obese"] : withoutObese };
@@ -647,6 +654,7 @@ function CatProfilePage({
     if (!form.age.trim()) e.age = "Please enter your cat's age.";
     if (!form.sex) e.sex = "Please select a sex.";
     if (!form.repro || form.repro.length === 0) e.repro = "Please select reproductive status.";
+    if (!bodyConditionTouched) e.bodyCondition = "Please select body condition.";
     if (!form.weightKg || parseFloat(form.weightKg) <= 0) e.weightKg = "Please enter a valid body weight.";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -714,10 +722,10 @@ function CatProfilePage({
           <div className="mt-6" style={{ marginTop: "24px" }}>
             <SectionLabel>Body Weight</SectionLabel>
 
-            <Field label="Body Condition *">
+            <Field label="Body Condition *" error={errors.bodyCondition}>
               <PillGroup
                 name="cat-body-condition"
-                value={form.repro.includes("Obese") ? "Obese" : "Normal"}
+                value={!bodyConditionTouched ? "" : form.repro.includes("Obese") ? "Obese" : "Normal"}
                 options={[
                   { value: "Normal", label: "Normal" },
                   { value: "Obese", label: "Obese" },
