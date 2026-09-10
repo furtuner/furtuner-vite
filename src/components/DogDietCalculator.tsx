@@ -1104,7 +1104,7 @@ function IngredientsPage({
                                 // only that pill grows; alignItems:"flex-start" above keeps
                                 // it from stretching its row-siblings.
                                 const allowWrap = displayName.length > 24;
-                                const hasSlashBreak = displayName.includes(" / ");
+                                const hasSlashBreak = displayName.includes("/");
                                 return (
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
                                     className="text-[15px] font-extrabold transition-all"
@@ -1126,7 +1126,7 @@ function IngredientsPage({
                                     }}
                                   >
                                     {allowWrap && hasSlashBreak
-                                      ? displayName.split(" / ").map((part, i, arr) => (
+                                      ? displayName.split(/\s*\/\s*/).map((part, i, arr) => (
                                           <React.Fragment key={i}>
                                             {part}
                                             {i < arr.length - 1 && <br />}
