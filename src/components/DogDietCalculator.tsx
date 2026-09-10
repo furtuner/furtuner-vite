@@ -1743,12 +1743,39 @@ function ResultsPage({
                     FurTuner may automatically select some of the ingredients below to ensure a complete and balanced diet based on your selected ingredients.
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-3" style={{ alignItems: "start" }}>
                   {shuffledFixed.map(r => {
                     const name = cleanIngredientName(r.ingredient);
+                    const allowWrap = name.length > 24;
+                    const isBrewersYeast =
+                      /brewer/i.test(name) && /yeast/i.test(name) && /dried/i.test(name);
+                    const driedSplit = isBrewersYeast
+                      ? name.match(/^(.*?)\s*(\bdried\b.*)$/i)
+                      : null;
                     return (
-                      <span key={r.ingredient} className="bg-[#FA9A36] text-[#211915] text-[14px] font-bold px-4 py-3 rounded-full text-center">
-                        {name}
+                      <span
+                        key={r.ingredient}
+                        className="bg-[#FA9A36] text-[#211915] text-[14px] font-bold px-4 py-3 rounded-full text-center"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxSizing: "border-box",
+                          lineHeight: 1.2,
+                          whiteSpace: allowWrap ? "normal" : "nowrap",
+                          overflow: allowWrap ? "visible" : "hidden",
+                          textOverflow: allowWrap ? "clip" : "ellipsis",
+                        }}
+                      >
+                        {driedSplit ? (
+                          <>
+                            {driedSplit[1]}
+                            <br />
+                            {driedSplit[2]}
+                          </>
+                        ) : (
+                          name
+                        )}
                       </span>
                     );
                   })}
