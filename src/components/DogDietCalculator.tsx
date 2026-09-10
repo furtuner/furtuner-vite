@@ -1099,10 +1099,12 @@ function IngredientsPage({
                               {cat.items.map(name => {
                                 const isSel = selected.has(name);
                                 const displayName = INGREDIENT_DISPLAY_OVERRIDES[name] ?? name;
-                                // Only "brewer's yeast / dried yeast" is long enough to need
-                                // a second line — every other ingredient name, regardless of
-                                // shuffle order, stays locked to a single line.
-                                const allowWrap = /brewer/i.test(displayName);
+                                // Any ingredient name too long to fit on one line gets to
+                                // wrap to 2 lines instead of being truncated/cut off — but
+                                // only that pill grows; alignItems:"flex-start" above keeps
+                                // it from stretching its row-siblings.
+                                const allowWrap = displayName.length > 24;
+                                const hasSlashBreak = displayName.includes(" / ");
                                 return (
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
                                     className="text-[15px] font-extrabold transition-all"
@@ -1123,7 +1125,7 @@ function IngredientsPage({
                                       textOverflow: allowWrap ? "clip" : "ellipsis",
                                     }}
                                   >
-                                    {allowWrap
+                                    {allowWrap && hasSlashBreak
                                       ? displayName.split(" / ").map((part, i, arr) => (
                                           <React.Fragment key={i}>
                                             {part}
