@@ -1104,7 +1104,21 @@ function IngredientsPage({
                                 // only that pill grows; alignItems:"flex-start" above keeps
                                 // it from stretching its row-siblings.
                                 const allowWrap = displayName.length > 24;
-                                const hasSlashBreak = displayName.includes("/");
+                                // Detect "brewer's yeast / dried yeast" by its WORDS, not by
+                                // searching for a slash character — two earlier attempts to
+                                // match the separator character both failed, which points to
+                                // the backend using a non-standard slash-like character here
+                                // rather than a plain "/". Matching on the words themselves
+                                // can't fail the same way. Split right before "dried" so line
+                                // 1 keeps everything up to it (e.g. "brewer's yeast /") and
+                                // line 2 is "dried yeast" — preserving the real text/casing.
+                                const isBrewersYeast =
+                                  /brewer/i.test(displayName) &&
+                                  /yeast/i.test(displayName) &&
+                                  /dried/i.test(displayName);
+                                const driedSplit = isBrewersYeast
+                                  ? displayName.match(/^(.*?)\s*(\bdried\b.*)$/i)
+                                  : null;
                                 return (
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
                                     className="text-[15px] font-extrabold transition-all"
@@ -1125,14 +1139,15 @@ function IngredientsPage({
                                       textOverflow: allowWrap ? "clip" : "ellipsis",
                                     }}
                                   >
-                                    {allowWrap && hasSlashBreak
-                                      ? displayName.split(/\s*\/\s*/).map((part, i, arr) => (
-                                          <React.Fragment key={i}>
-                                            {part}
-                                            {i < arr.length - 1 && <br />}
-                                          </React.Fragment>
-                                        ))
-                                      : displayName}
+                                    {driedSplit ? (
+                                      <>
+                                        {driedSplit[1]}
+                                        <br />
+                                        {driedSplit[2]}
+                                      </>
+                                    ) : (
+                                      displayName
+                                    )}
                                   </button>
                                 );
                               })}
