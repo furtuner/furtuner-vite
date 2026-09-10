@@ -601,16 +601,16 @@ function CatProfilePage({
   // are now two separate single-select rows, but both still write into the
   // same form.repro array so the existing "Obese always wins" multiplier
   // logic (getCatDenMultiplier) keeps working without any changes.
-  function setReproStatus(v: "Intact" | "Neutered") {
+  function setReproStatus(v: "Intact" | "Neutered" | "") {
     setForm(f => ({
       ...f,
-      repro: [v, ...f.repro.filter(x => x === "Obese")],
+      repro: v === "" ? f.repro.filter(x => x === "Obese") : [v, ...f.repro.filter(x => x === "Obese")],
     }));
     setErrors(e => ({ ...e, repro: "" }));
   }
 
-  function setBodyCondition(v: "Normal" | "Obese") {
-    setBodyConditionTouched(true);
+  function setBodyCondition(v: "Normal" | "Obese" | "") {
+    setBodyConditionTouched(v !== "");
     setForm(f => {
       const withoutObese = f.repro.filter(x => x !== "Obese");
       return { ...f, repro: v === "Obese" ? [...withoutObese, "Obese"] : withoutObese };
@@ -715,7 +715,7 @@ function CatProfilePage({
                 { value: "Intact", label: "Intact" },
                 { value: "Neutered", label: "Neutered" },
               ]}
-              onChange={v => setReproStatus(v as "Intact" | "Neutered")}
+              onChange={v => setReproStatus(v as "Intact" | "Neutered" | "")}
             />
           </Field>
 
@@ -730,7 +730,7 @@ function CatProfilePage({
                   { value: "Normal", label: "Normal" },
                   { value: "Obese", label: "Obese" },
                 ]}
-                onChange={v => setBodyCondition(v as "Normal" | "Obese")}
+                onChange={v => setBodyCondition(v as "Normal" | "Obese" | "")}
               />
             </Field>
 
@@ -2160,7 +2160,7 @@ function PillGroup({
       {options.map(o => (
         <button
           key={o.value} type="button"
-          onClick={() => onChange(o.value)}
+          onClick={() => onChange(value === o.value ? "" : o.value)}
           className={`flex-1 h-[64px] rounded-[10px] text-[21px] font-bold transition-all ${
             value === o.value
               ? "bg-[#143C6F] text-white"
