@@ -499,6 +499,7 @@ body {
   text-align: center;
 }
 .how-it-works-video-wrap {
+  position: relative;
   max-width: 860px;
   margin: 0 auto;
   border-radius: 19px;
@@ -511,18 +512,26 @@ body {
   height: auto;
   background: #000;
 }
-/* Restyle native <track> captions — browsers default to a plain
-   solid-black box behind hard-edged white text. This softens it to a
-   semi-transparent, rounded pill that blends with the page instead. */
-.how-it-works-video::cue {
-  background: rgba(20, 60, 111, 0.75);
+/* Custom caption overlay — renders identically in every browser, unlike
+   native ::cue styling which Firefox supports inconsistently. Positioned
+   near the bottom of the video, matching YouTube's own caption look:
+   compact sans-serif text on a minimal semi-transparent black backdrop. */
+.how-it-works-caption-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  max-width: 90%;
+  background: rgba(8, 8, 8, 0.75);
   color: #fff;
-  font-family: 'Poltawski Nowy', serif;
-  font-size: 1.15em;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 8px;
+  font-family: 'Roboto', 'Arial', 'Helvetica Neue', sans-serif;
+  font-size: 0.9em;
+  font-weight: 400;
   line-height: 1.4;
+  padding: 2px 8px;
+  text-align: center;
+  pointer-events: none;
+  white-space: pre-line;
 }
 .expert-inner {
   display: flex; align-items: center; gap: 24px;

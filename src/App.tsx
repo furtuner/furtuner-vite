@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
@@ -166,6 +166,38 @@ function SupportForm() {
 
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
+  // Custom caption overlay for the 'How FurTuner Works' video — see the
+  // cuechange listener below for why we don't use native ::cue styling.
+  const howItWorksVideoRef = useRef<HTMLVideoElement>(null)
+  const [currentCaption, setCurrentCaption] = useState('')
+
+  useEffect(() => {
+    const videoEl = howItWorksVideoRef.current
+    if (!videoEl) return
+
+    let track: TextTrack | undefined
+    const attachListener = () => {
+      track = videoEl.textTracks[0]
+      if (!track) return
+      track.mode = 'hidden'
+      const onCueChange = () => {
+        const active = track!.activeCues
+        setCurrentCaption(active && active.length > 0 ? (active[0] as VTTCue).text : '')
+      }
+      track.addEventListener('cuechange', onCueChange)
+      return () => track!.removeEventListener('cuechange', onCueChange)
+    }
+
+    // textTracks may already be available, or may need a tick after the
+    // <track> element's own load event fires.
+    let cleanup = attachListener()
+    if (!cleanup) {
+      const onLoaded = () => { cleanup = attachListener() }
+      videoEl.addEventListener('loadedmetadata', onLoaded)
+      return () => videoEl.removeEventListener('loadedmetadata', onLoaded)
+    }
+    return cleanup
+  }, [])
   // "Why Choose FurTuner" cards: Set A displays statically at rest. Hovering
   // an individual card shows a flip overlay on top of it (Set A front,
   // Set B back).
@@ -516,6 +548,7 @@ function App() {
           </h2>
           <div className="how-it-works-video-wrap">
             <video
+              ref={howItWorksVideoRef}
               className="how-it-works-video"
               controls
               playsInline
@@ -533,6 +566,9 @@ function App() {
               Your browser doesn't support embedded video. You can view it directly:{' '}
               <a href="/images/how-furtuner-works.mp4">download the video</a>.
             </video>
+            {currentCaption && (
+              <div className="how-it-works-caption-overlay">{currentCaption}</div>
+            )}
           </div>
         </div>
 
