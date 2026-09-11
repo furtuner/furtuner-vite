@@ -169,7 +169,29 @@ function App() {
   // Custom caption overlay for the 'How FurTuner Works' video — see the
   // cuechange listener below for why we don't use native ::cue styling.
   const howItWorksVideoRef = useRef<HTMLVideoElement>(null)
+  const howItWorksWrapRef = useRef<HTMLDivElement>(null)
   const [currentCaption, setCurrentCaption] = useState('')
+
+  useEffect(() => {
+    const videoEl = howItWorksVideoRef.current
+    const wrapEl = howItWorksWrapRef.current
+    if (!videoEl || !wrapEl) return
+
+    // The native fullscreen button on <video controls> fullscreens ONLY the
+    // <video> element — our caption overlay is a sibling div, so it gets
+    // left behind and disappears. When that happens, immediately swap to
+    // fullscreening the wrapper div instead, which contains both the video
+    // and the caption overlay together.
+    const onFullscreenChange = () => {
+      if (document.fullscreenElement === videoEl) {
+        document.exitFullscreen().then(() => {
+          wrapEl.requestFullscreen().catch(() => {})
+        }).catch(() => {})
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
+  }, [])
 
   useEffect(() => {
     const videoEl = howItWorksVideoRef.current
@@ -546,7 +568,7 @@ function App() {
           <h2 className="section-title">
             How <span style={{ color: '#F0932B' }}>Fur</span><span style={{ color: 'var(--navy-mid)' }}>Tuner</span> Works?
           </h2>
-          <div className="how-it-works-video-wrap">
+          <div className="how-it-works-video-wrap" ref={howItWorksWrapRef}>
             <video
               ref={howItWorksVideoRef}
               className="how-it-works-video"
