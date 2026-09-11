@@ -495,10 +495,7 @@ body {
    diet comparison / Build Your Diet CTA
 ══════════════════════════════════════════════ */
 .how-it-works-section {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 64px 63px;
-  box-sizing: border-box;
+  padding: 48px 0 64px;
   text-align: center;
 }
 .how-it-works-video-wrap {
@@ -845,7 +842,7 @@ body {
   .price-scroll-outer { height: auto; }
   .price-scroll-inner { height: auto; }
   .price-scroll-text { font-size: 24px; }
-  .why-section, .expert-section, .plans-section, .form-section, .how-it-works-section { padding-left: 24px; padding-right: 24px; }
+  .why-section, .expert-section, .plans-section, .form-section { padding-left: 24px; padding-right: 24px; }
   .why-row1, .why-row2 { flex-direction: column; }
   .why-card-1, .why-card-2 { width: 100% !important; flex: none; height: 340px; }
   .why-card-3, .why-card-4, .why-card-5 { width: 100% !important; flex: none; height: 340px; }
