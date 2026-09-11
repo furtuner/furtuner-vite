@@ -804,6 +804,8 @@ function IngredientsPage({
   initialSelected = [],
   onSelectionChange,
   serverError,
+  dietType,
+  petType,
 }: {
   onBack: () => void;
   onCalculate: (selected: string[]) => void;
@@ -812,6 +814,8 @@ function IngredientsPage({
   initialSelected?: string[];
   onSelectionChange?: (selected: string[]) => void;
   serverError?: string;
+  dietType?: DietType | null;
+  petType?: PetType | null;
 }) {
   const [categories, setCategories] = useState<Record<string, CategoryMeta>>({});
   const [order, setOrder] = useState<string[]>([]);
@@ -980,11 +984,11 @@ function IngredientsPage({
                 <div key={superGroup} className="mb-8" style={{ marginBottom: "40px" }}>
                   <h3
                     className="text-[#143C6F] mb-4"
-                    style={{ fontFamily: "'Marcellus', serif", fontSize: "30px", fontWeight: 700, marginBottom: superGroup === "Vegetable" ? "6px" : "20px" }}
+                    style={{ fontFamily: "'Marcellus', serif", fontSize: "30px", fontWeight: 700, marginBottom: (superGroup === "Vegetable" && !(petType === "cat" && dietType === "raw")) ? "6px" : "20px" }}
                   >
                     {superGroup}
                   </h3>
-                  {superGroup === "Vegetable" && (
+                  {superGroup === "Vegetable" && !(petType === "cat" && dietType === "raw") && (
                     <p
                       style={{
                         fontSize: "14px",
@@ -2798,7 +2802,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
       const res = await fetch(`${API_BASE}/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredients }),
+        body: JSON.stringify({ ingredients, diet_type: dietType }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -3122,6 +3126,8 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   initialSelected={savedSelected}
                   onSelectionChange={(s) => { setSavedSelected(s); setCalcErrors(""); }}
                   serverError={calcErrors}
+                  dietType={dietType}
+                  petType={petType}
                 />
               )}
               {page === 6 && profile && (

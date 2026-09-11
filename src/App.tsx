@@ -523,6 +523,13 @@ function App() {
               poster="/images/how-furtuner-works-poster.jpg"
             >
               <source src="/images/how-furtuner-works.mp4" type="video/mp4" />
+              <track
+                src="/images/how-furtuner-works.vtt"
+                kind="captions"
+                srcLang="en"
+                label="English"
+                default
+              />
               Your browser doesn't support embedded video. You can view it directly:{' '}
               <a href="/images/how-furtuner-works.mp4">download the video</a>.
             </video>
