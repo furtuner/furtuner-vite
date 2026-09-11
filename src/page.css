@@ -490,6 +490,30 @@ body {
   margin: 0 auto;
   box-sizing: border-box;
 }
+/* ══════════════════════════════════════════════
+   HOW FURTUNER WORKS — explainer video, before the
+   diet comparison / Build Your Diet CTA
+══════════════════════════════════════════════ */
+.how-it-works-section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 64px 63px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.how-it-works-video-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  border-radius: 19px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(20, 60, 111, 0.16);
+}
+.how-it-works-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #000;
+}
 .expert-inner {
   display: flex; align-items: center; gap: 24px;
 }
@@ -821,7 +845,7 @@ body {
   .price-scroll-outer { height: auto; }
   .price-scroll-inner { height: auto; }
   .price-scroll-text { font-size: 24px; }
-  .why-section, .expert-section, .plans-section, .form-section { padding-left: 24px; padding-right: 24px; }
+  .why-section, .expert-section, .plans-section, .form-section, .how-it-works-section { padding-left: 24px; padding-right: 24px; }
   .why-row1, .why-row2 { flex-direction: column; }
   .why-card-1, .why-card-2 { width: 100% !important; flex: none; height: 340px; }
   .why-card-3, .why-card-4, .why-card-5 { width: 100% !important; flex: none; height: 340px; }

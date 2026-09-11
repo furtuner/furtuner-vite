@@ -420,6 +420,24 @@ function App() {
         </div>
       </section>
 
+      {/* HOW FURTUNER WORKS — explainer video, shown before the diet comparison/CTA */}
+      <section className="how-it-works-section">
+        <h2 className="section-title">How FurTuner Works?</h2>
+        <div className="how-it-works-video-wrap">
+          <video
+            className="how-it-works-video"
+            controls
+            playsInline
+            preload="metadata"
+            poster="/images/how-furtuner-works-poster.jpg"
+          >
+            <source src="/images/how-furtuner-works.mp4" type="video/mp4" />
+            Your browser doesn't support embedded video. You can view it directly:{' '}
+            <a href="/images/how-furtuner-works.mp4">download the video</a>.
+          </video>
+        </div>
+      </section>
+
       {/* THREE TAILORED DIET PLANS */}
       <section id="plans" className="plans-section">
         <h2 className="section-title">Three Tailored Diet Plans for Dogs &amp; Cats</h2>
