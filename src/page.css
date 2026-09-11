@@ -511,6 +511,19 @@ body {
   height: auto;
   background: #000;
 }
+/* Restyle native <track> captions — browsers default to a plain
+   solid-black box behind hard-edged white text. This softens it to a
+   semi-transparent, rounded pill that blends with the page instead. */
+.how-it-works-video::cue {
+  background: rgba(20, 60, 111, 0.75);
+  color: #fff;
+  font-family: 'Poltawski Nowy', serif;
+  font-size: 1.15em;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  line-height: 1.4;
+}
 .expert-inner {
   display: flex; align-items: center; gap: 24px;
 }
