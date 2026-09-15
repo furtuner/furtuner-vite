@@ -106,6 +106,17 @@ const INGREDIENT_DISPLAY_OVERRIDES: Record<string, string> = {
   "Eggshells": "Eggshells \"Powder\"",
 };
 
+// Single source of truth for how an ingredient name is shown anywhere in
+// the app (selection pills, results table, printed report) — lowercased
+// throughout for consistency, plus specific word-merges like "beet root"
+// -> "beetroot".
+function formatIngredientName(name: string): string {
+  const overridden = INGREDIENT_DISPLAY_OVERRIDES[name] ?? name;
+  return overridden
+    .toLowerCase()
+    .replace(/\bbeet\s+root\b/g, "beetroot");
+}
+
 const MAX_MAP: Record<string, number> = {
   // ── Dog Conventional ──
   "01 Meat Group A (Mandatory - Select at least one and a maximum of three)": 3,
@@ -324,24 +335,26 @@ function ProfilePage({
 
   function handleKgChange(raw: string) {
     // Accept comma as a decimal separator (e.g. "4,5") in addition to a
-    // period, so it normalizes the same way regardless of how it's typed.
-    const v = raw.replace(",", ".");
-    const kg = parseFloat(v);
+    // period. The displayed/stored value keeps whatever the user actually
+    // typed (comma stays a comma) — only the parsed number used for the
+    // kg<->lb conversion treats a comma as a decimal point.
+    const forCalc = raw.replace(",", ".");
+    const kg = parseFloat(forCalc);
     setForm(f => ({
       ...f,
-      weightKg: v,
-      weightLb: v && !isNaN(kg) ? (kg / 0.453592).toFixed(2) : f.weightLb,
+      weightKg: raw,
+      weightLb: raw && !isNaN(kg) ? (kg / 0.453592).toFixed(2) : f.weightLb,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
 
   function handleLbChange(raw: string) {
-    const v = raw.replace(",", ".");
-    const lb = parseFloat(v);
+    const forCalc = raw.replace(",", ".");
+    const lb = parseFloat(forCalc);
     setForm(f => ({
       ...f,
-      weightLb: v,
-      weightKg: v && !isNaN(lb) ? (lb * 0.453592).toFixed(2) : f.weightKg,
+      weightLb: raw,
+      weightKg: raw && !isNaN(lb) ? (lb * 0.453592).toFixed(2) : f.weightKg,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
@@ -624,24 +637,26 @@ function CatProfilePage({
 
   function handleKgChange(raw: string) {
     // Accept comma as a decimal separator (e.g. "4,5") in addition to a
-    // period, so it normalizes the same way regardless of how it's typed.
-    const v = raw.replace(",", ".");
-    const kg = parseFloat(v);
+    // period. The displayed/stored value keeps whatever the user actually
+    // typed (comma stays a comma) — only the parsed number used for the
+    // kg<->lb conversion treats a comma as a decimal point.
+    const forCalc = raw.replace(",", ".");
+    const kg = parseFloat(forCalc);
     setForm(f => ({
       ...f,
-      weightKg: v,
-      weightLb: v && !isNaN(kg) ? (kg / 0.453592).toFixed(2) : f.weightLb,
+      weightKg: raw,
+      weightLb: raw && !isNaN(kg) ? (kg / 0.453592).toFixed(2) : f.weightLb,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
 
   function handleLbChange(raw: string) {
-    const v = raw.replace(",", ".");
-    const lb = parseFloat(v);
+    const forCalc = raw.replace(",", ".");
+    const lb = parseFloat(forCalc);
     setForm(f => ({
       ...f,
-      weightLb: v,
-      weightKg: v && !isNaN(lb) ? (lb * 0.453592).toFixed(2) : f.weightKg,
+      weightLb: raw,
+      weightKg: raw && !isNaN(lb) ? (lb * 0.453592).toFixed(2) : f.weightKg,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
@@ -1112,7 +1127,7 @@ function IngredientsPage({
                             >
                               {cat.items.map(name => {
                                 const isSel = selected.has(name);
-                                const displayName = INGREDIENT_DISPLAY_OVERRIDES[name] ?? name;
+                                const displayName = formatIngredientName(name);
                                 // Any ingredient name too long to fit on one line gets to
                                 // wrap to 2 lines instead of being truncated/cut off — but
                                 // only that pill grows; alignItems:"flex-start" above keeps
@@ -1320,9 +1335,9 @@ function ResultsPage({
 
   function cleanIngredientName(name: string): string {
     const lower = name.toLowerCase();
-    if (lower.includes("eggshell")) return "Eggshells / Calcium Carbonate";
-    if (lower.includes("oyster")) return "Oyster";
-    return name;
+    if (lower.includes("eggshell")) return formatIngredientName("Eggshells / Calcium Carbonate");
+    if (lower.includes("oyster")) return formatIngredientName("Oyster");
+    return formatIngredientName(name);
   }
 
   const r = result as unknown as Record<string, number | null>;
@@ -2902,7 +2917,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   if (!visible) return null;
 
   return (
-    <section id="calculator" className="bg-[#F4F4F4] py-[88px]" ref={sectionRef} style={{ animation: "dietBoxIn 0.45s ease both", maxWidth: "1280px", margin: "0 auto" }}>
+    <section id="calculator" className="bg-[#F4F4F4] py-[120px]" ref={sectionRef} style={{ animation: "dietBoxIn 0.45s ease both", maxWidth: "1280px", margin: "0 auto", paddingTop: "120px", paddingBottom: "120px" }}>
       <style>{`
         @keyframes dietBoxIn {
           from { opacity: 0; transform: translateY(10px); }
