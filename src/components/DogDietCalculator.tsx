@@ -994,7 +994,9 @@ function IngredientsPage({
                     className="text-[#143C6F] mb-4"
                     style={{ fontFamily: "'Marcellus', serif", fontSize: "30px", fontWeight: 700, marginBottom: (superGroup === "Vegetable" && !(petType === "cat" && dietType === "raw")) ? "6px" : "20px" }}
                   >
-                    {superGroup}
+                    {superGroup === "Grain"
+                      ? (dietType === "grainfree" ? "Carbohydrate (Non-Grain)" : "Carbohydrate (Grain)")
+                      : superGroup}
                   </h3>
                   {superGroup === "Vegetable" && !(petType === "cat" && dietType === "raw") && (
                     <p
