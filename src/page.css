@@ -188,6 +188,8 @@ body {
   font-size: 23px; font-weight: 400;
   line-height: 1.6; color: #E2790A;
   margin: 0;
+  text-align: justify;
+  text-justify: inter-word;
 }
 .hero-subtitle strong {
   font-weight: 700;
@@ -565,6 +567,8 @@ body {
 .expert-text {
   font-size: 22px; font-weight: 700; line-height: 1.55; color: var(--navy);
   max-width: 945px;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 /* ══════════════════════════════════════════════
