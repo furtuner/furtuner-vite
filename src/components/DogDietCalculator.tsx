@@ -336,14 +336,21 @@ function ProfilePage({
   function handleKgChange(raw: string) {
     // Accept comma as a decimal separator (e.g. "4,5") in addition to a
     // period. The displayed/stored value keeps whatever the user actually
-    // typed (comma stays a comma) — only the parsed number used for the
-    // kg<->lb conversion treats a comma as a decimal point.
+    // typed (comma stays a comma). The auto-computed lb value also uses
+    // whichever separator was typed, so both fields stay visually
+    // consistent instead of one using a comma and the other a period.
     const forCalc = raw.replace(",", ".");
     const kg = parseFloat(forCalc);
+    const usesComma = raw.includes(",");
+    let computedLb = "";
+    if (raw && !isNaN(kg)) {
+      computedLb = (kg / 0.453592).toFixed(2);
+      if (usesComma) computedLb = computedLb.replace(".", ",");
+    }
     setForm(f => ({
       ...f,
       weightKg: raw,
-      weightLb: raw && !isNaN(kg) ? (kg / 0.453592).toFixed(2) : f.weightLb,
+      weightLb: raw && !isNaN(kg) ? computedLb : f.weightLb,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
@@ -351,10 +358,16 @@ function ProfilePage({
   function handleLbChange(raw: string) {
     const forCalc = raw.replace(",", ".");
     const lb = parseFloat(forCalc);
+    const usesComma = raw.includes(",");
+    let computedKg = "";
+    if (raw && !isNaN(lb)) {
+      computedKg = (lb * 0.453592).toFixed(2);
+      if (usesComma) computedKg = computedKg.replace(".", ",");
+    }
     setForm(f => ({
       ...f,
       weightLb: raw,
-      weightKg: raw && !isNaN(lb) ? (lb * 0.453592).toFixed(2) : f.weightKg,
+      weightKg: raw && !isNaN(lb) ? computedKg : f.weightKg,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
@@ -638,14 +651,21 @@ function CatProfilePage({
   function handleKgChange(raw: string) {
     // Accept comma as a decimal separator (e.g. "4,5") in addition to a
     // period. The displayed/stored value keeps whatever the user actually
-    // typed (comma stays a comma) — only the parsed number used for the
-    // kg<->lb conversion treats a comma as a decimal point.
+    // typed (comma stays a comma). The auto-computed lb value also uses
+    // whichever separator was typed, so both fields stay visually
+    // consistent instead of one using a comma and the other a period.
     const forCalc = raw.replace(",", ".");
     const kg = parseFloat(forCalc);
+    const usesComma = raw.includes(",");
+    let computedLb = "";
+    if (raw && !isNaN(kg)) {
+      computedLb = (kg / 0.453592).toFixed(2);
+      if (usesComma) computedLb = computedLb.replace(".", ",");
+    }
     setForm(f => ({
       ...f,
       weightKg: raw,
-      weightLb: raw && !isNaN(kg) ? (kg / 0.453592).toFixed(2) : f.weightLb,
+      weightLb: raw && !isNaN(kg) ? computedLb : f.weightLb,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
@@ -653,10 +673,16 @@ function CatProfilePage({
   function handleLbChange(raw: string) {
     const forCalc = raw.replace(",", ".");
     const lb = parseFloat(forCalc);
+    const usesComma = raw.includes(",");
+    let computedKg = "";
+    if (raw && !isNaN(lb)) {
+      computedKg = (lb * 0.453592).toFixed(2);
+      if (usesComma) computedKg = computedKg.replace(".", ",");
+    }
     setForm(f => ({
       ...f,
       weightLb: raw,
-      weightKg: raw && !isNaN(lb) ? (lb * 0.453592).toFixed(2) : f.weightKg,
+      weightKg: raw && !isNaN(lb) ? computedKg : f.weightKg,
     }));
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
