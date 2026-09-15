@@ -322,7 +322,10 @@ function ProfilePage({
     setErrors(e => ({ ...e, [k]: "" }));
   }
 
-  function handleKgChange(v: string) {
+  function handleKgChange(raw: string) {
+    // Accept comma as a decimal separator (e.g. "4,5") in addition to a
+    // period, so it normalizes the same way regardless of how it's typed.
+    const v = raw.replace(",", ".");
     const kg = parseFloat(v);
     setForm(f => ({
       ...f,
@@ -332,7 +335,8 @@ function ProfilePage({
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
 
-  function handleLbChange(v: string) {
+  function handleLbChange(raw: string) {
+    const v = raw.replace(",", ".");
     const lb = parseFloat(v);
     setForm(f => ({
       ...f,
@@ -440,12 +444,12 @@ function ProfilePage({
             <SectionLabel>Body Weight</SectionLabel>
             <div className="grid grid-cols-2" style={{ gap: "16px" }}>
               <Field label="Weight (kg) *" error={errors.weightKg}>
-                <input type="number" min="0.1" step="0.1"
+                <input type="text" inputMode="decimal"
                   className={inputCls(!!errors.weightKg, true)} value={form.weightKg}
                   onChange={e => handleKgChange(e.target.value)} placeholder="e.g. 25.0" />
               </Field>
               <Field label="Weight (lb)">
-                <input type="number" min="0.1" step="0.1"
+                <input type="text" inputMode="decimal"
                   className={inputCls(false, true)} value={form.weightLb}
                   onChange={e => handleLbChange(e.target.value)} placeholder="e.g. 55.1" />
               </Field>
@@ -618,7 +622,10 @@ function CatProfilePage({
     setErrors(e => ({ ...e, repro: "" }));
   }
 
-  function handleKgChange(v: string) {
+  function handleKgChange(raw: string) {
+    // Accept comma as a decimal separator (e.g. "4,5") in addition to a
+    // period, so it normalizes the same way regardless of how it's typed.
+    const v = raw.replace(",", ".");
     const kg = parseFloat(v);
     setForm(f => ({
       ...f,
@@ -628,7 +635,8 @@ function CatProfilePage({
     setErrors(e => ({ ...e, weightKg: "", weightLb: "" }));
   }
 
-  function handleLbChange(v: string) {
+  function handleLbChange(raw: string) {
+    const v = raw.replace(",", ".");
     const lb = parseFloat(v);
     setForm(f => ({
       ...f,
@@ -736,12 +744,12 @@ function CatProfilePage({
 
             <div className="grid grid-cols-2" style={{ gap: "16px", marginTop: "16px" }}>
               <Field label="Weight (kg) *" error={errors.weightKg}>
-                <input type="number" min="0.1" step="0.1"
+                <input type="text" inputMode="decimal"
                   className={inputCls(!!errors.weightKg, true)} value={form.weightKg}
                   onChange={e => handleKgChange(e.target.value)} placeholder="e.g. 4.5" />
               </Field>
               <Field label="Weight (lb)">
-                <input type="number" min="0.1" step="0.1"
+                <input type="text" inputMode="decimal"
                   className={inputCls(false, true)} value={form.weightLb}
                   onChange={e => handleLbChange(e.target.value)} placeholder="e.g. 9.9" />
               </Field>
@@ -2899,7 +2907,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <div className="mx-auto max-w-[1280px] px-[63px]" style={{ maxWidth: "1280px", margin: "0 auto", paddingLeft: "63px", paddingRight: "63px", width: "100%" }}>
+      <div className="mx-auto max-w-[1280px] px-[90px]" style={{ maxWidth: "1280px", margin: "0 auto", paddingLeft: "90px", paddingRight: "90px", width: "100%" }}>
         {/* Step indicator for the 5 numbered steps; the Results page has none */}
         {page <= 5 && <StepIndicator step={page as 1 | 2 | 3 | 4 | 5} />}
 
