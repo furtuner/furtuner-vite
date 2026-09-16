@@ -1779,7 +1779,7 @@ function ResultsPage({
                 <div className="grid grid-cols-2 gap-3">
                   {nonFixed.map(r => (
                     <span key={r.ingredient} className="bg-[#BEE2FB] text-[#211915] text-[14px] font-bold px-4 py-3 rounded-full text-center">
-                      {cleanIngredientName(r.ingredient)}
+                      {r.ingredient}
                     </span>
                   ))}
                 </div>
@@ -2569,11 +2569,15 @@ function StripeCheckoutPanel({
   customer,
   onBack,
   onContinue,
+  onSkip,
+  onTestPayment,
   redirecting,
 }: {
   customer: CustomerInfo;
   onBack: () => void;
   onContinue: () => void;
+  onSkip: () => void;
+  onTestPayment?: () => void;
   redirecting: boolean;
 }) {
   return (
@@ -2626,6 +2630,32 @@ function StripeCheckoutPanel({
             )}
           </button>
         </div>
+
+        {/* TESTING ONLY — remove this before going live. Bypasses Stripe
+            entirely and unlocks the plan as if payment succeeded. */}
+        <button
+          onClick={onSkip}
+          disabled={redirecting}
+          className="w-full text-[#B02424] font-semibold"
+          style={{ fontSize: "13px", padding: "10px", marginTop: "14px", border: "1.5px dashed #B02424", borderRadius: "10px", background: "#FDEBEC", opacity: redirecting ? 0.5 : 1 }}
+        >
+          ⚠️ Skip Payment (Testing Only)
+        </button>
+
+        {/* TESTING ONLY — remove this before going live. Always uses Stripe's
+            test-mode Payment Link, regardless of the STRIPE_TEST_MODE flag,
+            so the real Stripe checkout flow can be verified with a fake card
+            (4242 4242 4242 4242) without touching the live payment link. */}
+        {onTestPayment && (
+          <button
+            onClick={onTestPayment}
+            disabled={redirecting}
+            className="w-full text-[#3C6293] font-semibold"
+            style={{ fontSize: "13px", padding: "10px", marginTop: "10px", border: "1.5px dashed #3C6293", borderRadius: "10px", background: "#E0F2FF", opacity: redirecting ? 0.5 : 1 }}
+          >
+            🧪 Test Payment (Stripe Test Mode)
+          </button>
+        )}
       </div>
     </div>
   );
@@ -2711,13 +2741,16 @@ function CheckoutFlow({
     );
   }
 
-  // stage === "payment" — the actual "unlock" happens when the user returns
-  // from Stripe with ?paw_payment=success (handled by the parent).
+  // stage === "payment" — normally the actual "unlock" happens when the user
+  // returns from Stripe with ?paw_payment=success (handled by the parent).
+  // onSkip below bypasses that entirely for local testing.
   return (
     <StripeCheckoutPanel
       customer={customer!}
       onBack={() => setStage("disclaimer")}
       onContinue={goToStripeCheckout}
+      onSkip={() => { setStage("success"); onUnlock(); }}
+      onTestPayment={() => goToStripeCheckout(STRIPE_PAYMENT_LINK_TEST)}
       redirecting={redirecting}
     />
   );
