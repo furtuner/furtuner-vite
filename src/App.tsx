@@ -6,9 +6,9 @@ import './page.css'
 // ══════════════════════════════════════════════
 // SUPPORT FORM
 // Matches DogDietCalculator's visual style (same input/label/pill look).
-// Submits silently in the background via a POST to a Formspree endpoint
-// (SUPPORT_FORM_ENDPOINT below) — no email app opens, the message just
-// lands in the help@furtuner.com inbox directly.
+// Submits silently in the background via a POST to a Google Apps Script
+// Web App (SUPPORT_FORM_ENDPOINT below) — no email app opens, the message
+// just lands in the help@furtuner.com inbox directly via Google Workspace.
 // ══════════════════════════════════════════════
 const SUPPORT_REASONS = [
   'General Question',
@@ -38,11 +38,12 @@ function SupportField({
   )
 }
 
-// TODO: replace with your real Formspree endpoint, e.g.
-// 'https://formspree.io/f/xxxxxxxx' — sign up at formspree.io, create a
-// form pointed at help@furtuner.com, and paste the endpoint URL it gives
-// you here. Until this is a real endpoint, submissions will fail.
-const SUPPORT_FORM_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+// TODO: replace with your real Google Apps Script Web App URL.
+// Deploy the included apps-script-support-form.gs as a Web App (Execute
+// as: Me, Who has access: Anyone) from a Google account on the furtuner.com
+// Workspace, then paste the resulting /exec URL here. Until this is a real
+// endpoint, submissions will fail.
+const SUPPORT_FORM_ENDPOINT = 'https://script.google.com/a/macros/furtuner.com/s/AKfycbwxA0NSe1cqa8mvhsvze8zNEu7mU0Mh1EkFYZNB5Qic7AFTqG0_OTRNiUo9__Gkccm56Q/exec'
 
 function SupportForm() {
   const [name, setName] = useState('')
@@ -65,9 +66,15 @@ function SupportForm() {
 
     setStatus('sending')
     try {
+      // Content-Type is deliberately 'text/plain' (not 'application/json'):
+      // Apps Script Web Apps don't handle CORS preflight requests, and a
+      // 'text/plain' body is treated as a "simple request" by the browser
+      // so no preflight is triggered. The body itself is still JSON —
+      // Apps Script parses e.postData.contents with JSON.parse regardless
+      // of the declared content type.
       const res = await fetch(SUPPORT_FORM_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ name, email, reason, message }),
       })
       if (!res.ok) throw new Error('Submission failed')
@@ -135,10 +142,6 @@ function SupportForm() {
             placeholder="How can we help?"
           />
         </SupportField>
-
-        <p style={{ fontSize: '14px', color: '#3C6293', margin: 0 }}>
-          Your message goes directly to <strong>help@furtuner.com</strong>.
-        </p>
 
         <button
           type="submit"
