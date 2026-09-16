@@ -43,7 +43,7 @@ function SupportField({
 // as: Me, Who has access: Anyone) from a Google account on the furtuner.com
 // Workspace, then paste the resulting /exec URL here. Until this is a real
 // endpoint, submissions will fail.
-const SUPPORT_FORM_ENDPOINT = 'https://script.google.com/a/macros/furtuner.com/s/AKfycbwxA0NSe1cqa8mvhsvze8zNEu7mU0Mh1EkFYZNB5Qic7AFTqG0_OTRNiUo9__Gkccm56Q/exec'
+const SUPPORT_FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyE44EYzSQtFX8ko6H7oFgR4Gui-ekF2HI3mIeUL2BNzXDpA-Yba04JpDBxLOPvC6zC/exec'
 
 function SupportForm() {
   const [name, setName] = useState('')
