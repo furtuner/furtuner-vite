@@ -1588,9 +1588,6 @@ function ResultsPage({
             It only exists in the DOM (so window.print() can render it)
             but is display:none until a print/PDF context is active. */}
         <style id="print-report-styles">{`
-          .print-only {
-            display: none;
-          }
           @media print {
             @page {
               size: landscape;
@@ -2677,13 +2674,11 @@ function StripeCheckoutPanel({
   customer,
   onBack,
   onContinue,
-  onSkip,
   redirecting,
 }: {
   customer: CustomerInfo;
   onBack: () => void;
   onContinue: () => void;
-  onSkip: () => void;
   redirecting: boolean;
 }) {
   return (
@@ -2736,19 +2731,6 @@ function StripeCheckoutPanel({
             )}
           </button>
         </div>
-
-        {/* TESTING ONLY: bypasses Stripe entirely but still logs to the
-            Sheet exactly like a real payment return would, so the Sheet
-            write itself can be verified without spending real/test money.
-            Remove this button before sending real customers through. */}
-        <button
-          onClick={() => onSkip()}
-          disabled={redirecting}
-          className="w-full text-[#3C6293] font-semibold"
-          style={{ fontSize: "13px", padding: "10px", marginTop: "12px", borderRadius: "10px", border: "1px dashed #A6CCE8", background: "white", opacity: redirecting ? 0.5 : 1 }}
-        >
-          Skip Payment (Testing)
-        </button>
       </div>
     </div>
   );
@@ -2812,13 +2794,25 @@ function CheckoutFlow({
         <div>
           <p className="font-bold text-[#143C6F]" style={{ fontSize: "32px" }}>Get Your Daily Feeding Plan</p>
         </div>
-        <button
-          onClick={() => setStage("customer")}
-          className="bg-[#143C6F] hover:bg-[#FF9D36] text-white transition whitespace-nowrap shrink-0"
-          style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "28px", padding: "18px 44px", borderRadius: "12px" }}
-        >
-          PAY
-        </button>
+        <div className="flex items-center" style={{ gap: "12px" }}>
+          {/* TESTING ONLY: bypasses Stripe entirely and unlocks the plan
+              immediately. Remove this button before sending real customers
+              through the flow — it skips payment completely. */}
+          <button
+            onClick={onUnlock}
+            className="text-[#3C6293] font-bold whitespace-nowrap shrink-0"
+            style={{ fontSize: "15px", padding: "16px 20px", borderRadius: "12px", border: "1.5px solid #A6CCE8", background: "white" }}
+          >
+            Skip Payment
+          </button>
+          <button
+            onClick={() => setStage("customer")}
+            className="bg-[#143C6F] hover:bg-[#FF9D36] text-white transition whitespace-nowrap shrink-0"
+            style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "28px", padding: "18px 44px", borderRadius: "12px" }}
+          >
+            PAY
+          </button>
+        </div>
       </div>
     );
   }
@@ -2848,14 +2842,6 @@ function CheckoutFlow({
       onBack={() => setStage("disclaimer")}
       onContinue={goToStripeCheckout}
       redirecting={redirecting}
-      onSkip={() => {
-        // TESTING ONLY: bypasses the actual Stripe redirect but still logs
-        // the customer to the Sheet exactly like a real return-from-Stripe
-        // would, so the Sheet recording itself can be verified end-to-end.
-        // Remove this before sending real customers through the flow.
-        logPaidCustomerToSheet(customer, petType, dietType);
-        onUnlock();
-      }}
     />
   );
 }
