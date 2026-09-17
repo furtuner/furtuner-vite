@@ -319,10 +319,10 @@ const SUPERGROUP_ORDER = ["Organ Meat", "Meat", "Grain", "Vegetable", "Fruit", "
 function superGroupOf(clean: string): string {
   for (const key of SUPERGROUP_ORDER) {
     if (new RegExp(key, "i").test(clean)) {
-      // Some diets' backend data labels this category "Fiber/Seeds", others
-      // label the same kind of category "Others" — both should display the
-      // same way rather than showing a generic, unhelpful "Others" header.
-      if (key === "Fiber" || key === "Others") return "Fiber & Seeds";
+      // Backend data uses "Fiber/Seeds" for some diets and "Others" for
+      // others to label the same kind of category — unify both under
+      // "Others" so the display is consistent across all diets.
+      if (key === "Fiber") return "Others";
       return key;
     }
   }
