@@ -9,6 +9,35 @@ interface IngredientItem {
   group_name: string;
 }
 
+// ─── Ingredients prefetch cache ────────────────────────────────────────────
+// Kicked off as soon as the user picks a diet type (see selectDiet), well
+// before they reach the Ingredients page — by the time they get there the
+// data is usually already resolved, so there's no visible loading flash.
+// Keyed by API base URL so each pet/diet combination caches independently.
+const ingredientsResolvedCache: Record<string, IngredientItem[]> = {};
+const ingredientsPrefetchCache: Record<string, Promise<IngredientItem[]>> = {};
+
+function prefetchIngredients(apiBase: string): Promise<IngredientItem[]> {
+  if (!ingredientsPrefetchCache[apiBase]) {
+    ingredientsPrefetchCache[apiBase] = fetch(`${apiBase}/user-ingredients`)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data: IngredientItem[]) => {
+        ingredientsResolvedCache[apiBase] = data;
+        return data;
+      })
+      .catch(e => {
+        // Don't cache a failed attempt — let a later real fetch (e.g. from
+        // the Ingredients page itself) retry and surface the error there.
+        delete ingredientsPrefetchCache[apiBase];
+        throw e;
+      });
+  }
+  return ingredientsPrefetchCache[apiBase];
+}
+
 interface CategoryMeta {
   clean: string;
   mandatory: boolean;
@@ -934,51 +963,63 @@ function IngredientsPage({
   const [categories, setCategories] = useState<Record<string, CategoryMeta>>({});
   const [order, setOrder] = useState<string[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set(initialSelected));
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!ingredientsResolvedCache[apiBase]);
   const [error, setError] = useState("");
   const [valError, setValError] = useState("");
 
   useEffect(() => {
-    fetch(`${apiBase}/user-ingredients`)
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((flat: IngredientItem[]) => {
-        const cats: Record<string, CategoryMeta> = {};
-        const ord: string[] = [];
-        flat.forEach(({ ingredient_name, group_name }) => {
-          if (!cats[group_name]) {
-            cats[group_name] = { ...parseMeta(group_name), items: [], selected: [] };
-            ord.push(group_name);
-          }
-          cats[group_name].items.push(ingredient_name);
-        });
-        // Any group_name not found in MAX_MAP falls back to max = 99 (see parseMeta),
-        // which the card UI renders as "∞". Cap those at the real item count instead,
-        // so a category never shows an infinite max just because it's missing from
-        // the hardcoded MAX_MAP table (e.g. Mineral Group A / B).
-        Object.keys(cats).forEach(gn => {
-          if (cats[gn].max === 99) {
-            cats[gn].max = cats[gn].items.length;
-          }
-        });
-        // Restore previously selected ingredients
-        const restoredSelected = new Set(initialSelected);
-        restoredSelected.forEach(name => {
-          const key = Object.keys(cats).find(gn => cats[gn].items.includes(name));
-          if (key) cats[key].selected = [...(cats[key].selected ?? []), name];
-        });
-        // Sort by the leading numeric prefix in group_name (e.g. "01 Meat Group A" → 1),
-        // so categories always appear in the correct sequence regardless of API order
-        ord.sort((a, b) => {
-          const numA = parseInt(a.match(/^\d+/)?.[0] ?? "999", 10);
-          const numB = parseInt(b.match(/^\d+/)?.[0] ?? "999", 10);
-          return numA - numB;
-        });
-        setCategories(cats);
-        setOrder(ord);
-        setSelected(restoredSelected);
-        setLoading(false);
-        onIngredientsLoaded(flat);
-      })
+    function applyFlat(flat: IngredientItem[]) {
+      const cats: Record<string, CategoryMeta> = {};
+      const ord: string[] = [];
+      flat.forEach(({ ingredient_name, group_name }) => {
+        if (!cats[group_name]) {
+          cats[group_name] = { ...parseMeta(group_name), items: [], selected: [] };
+          ord.push(group_name);
+        }
+        cats[group_name].items.push(ingredient_name);
+      });
+      // Any group_name not found in MAX_MAP falls back to max = 99 (see parseMeta),
+      // which the card UI renders as "∞". Cap those at the real item count instead,
+      // so a category never shows an infinite max just because it's missing from
+      // the hardcoded MAX_MAP table (e.g. Mineral Group A / B).
+      Object.keys(cats).forEach(gn => {
+        if (cats[gn].max === 99) {
+          cats[gn].max = cats[gn].items.length;
+        }
+      });
+      // Restore previously selected ingredients
+      const restoredSelected = new Set(initialSelected);
+      restoredSelected.forEach(name => {
+        const key = Object.keys(cats).find(gn => cats[gn].items.includes(name));
+        if (key) cats[key].selected = [...(cats[key].selected ?? []), name];
+      });
+      // Sort by the leading numeric prefix in group_name (e.g. "01 Meat Group A" → 1),
+      // so categories always appear in the correct sequence regardless of API order
+      ord.sort((a, b) => {
+        const numA = parseInt(a.match(/^\d+/)?.[0] ?? "999", 10);
+        const numB = parseInt(b.match(/^\d+/)?.[0] ?? "999", 10);
+        return numA - numB;
+      });
+      setCategories(cats);
+      setOrder(ord);
+      setSelected(restoredSelected);
+      setLoading(false);
+      onIngredientsLoaded(flat);
+    }
+
+    // If a prefetch (kicked off earlier, when the diet type was chosen)
+    // already resolved, use it immediately — no network wait, no flash.
+    const cached = ingredientsResolvedCache[apiBase];
+    if (cached) {
+      applyFlat(cached);
+      return;
+    }
+
+    // Otherwise reuse the same shared in-flight request instead of firing
+    // a brand new one — this still applies even if the prefetch hasn't
+    // finished yet, so there's never a duplicate fetch to the same URL.
+    prefetchIngredients(apiBase)
+      .then(applyFlat)
       .catch(e => {
         setError(`Could not load ingredients: ${e.message}. Is your FastAPI server running at ${apiBase}?`);
         setLoading(false);
@@ -2971,9 +3012,19 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
     setSelectedIngredients(ingredients);
     setPage(6);
     setResult(null);
-    setCalculating(true);
     setCalcErrors("");
     scrollToTop();
+
+    // Avoid a jarring flash for fast responses: only actually show the
+    // "Calculating…" message if the request is still in flight after
+    // 300ms. Most calculations finish faster than that, so the result
+    // just appears with no visible loading state at all; slower ones
+    // still get a proper, readable loading message instead of a flicker.
+    let loadingShown = false;
+    const loadingTimer = setTimeout(() => {
+      loadingShown = true;
+      setCalculating(true);
+    }, 300);
 
     try {
       const res = await fetch(`${API_BASE}/calculate`, {
@@ -2987,7 +3038,8 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
       if (errorIssues.length > 0) {
         setCalcErrors(errorIssues.map((i: string) => i.replace(/^ERROR:\s*/, "")).join(" "));
         setPage(5);
-        setCalculating(false);
+        clearTimeout(loadingTimer);
+        if (loadingShown) setCalculating(false);
         return;
       }
       setResult(data);
@@ -2995,7 +3047,8 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
       const msg = e instanceof Error ? e.message : String(e);
       setResult({ issues: [`Calculation failed: ${msg}`] } as CalcResult);
     }
-    setCalculating(false);
+    clearTimeout(loadingTimer);
+    if (loadingShown) setCalculating(false);
   }
 
   // "Start Over" from the Results page — restarts the current pet/diet's wizard from the Profile step
@@ -3049,6 +3102,18 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
 
   function selectDiet(type: DietType) {
     setDietType(type);
+    // Kick off the ingredients fetch now, right when the diet is chosen —
+    // the user still has to fill out the whole profile form before
+    // reaching the Ingredients page, so by the time they get there this
+    // has usually already finished and there's no loading flash.
+    const prefetchKey = `${petType}_${type}`;
+    const prefetchBase = API_BASES[prefetchKey];
+    if (prefetchBase) {
+      prefetchIngredients(prefetchBase).catch(() => {
+        // Swallow here — if this fails, the Ingredients page's own fetch
+        // will retry and surface a proper error message when it's reached.
+      });
+    }
   }
 
   function goToProfileStep() {
