@@ -1032,28 +1032,20 @@ function IngredientsPage({
   }
 
   function submit() {
-    // Every diet except Cat Raw shows all its vegetable boxes (Vegetable A,
-    // mandatory, plus one or two optional boxes) under a single "select at
-    // least 2 vegetables total, from either card below" hint. That combined
-    // rule replaces Vegetable A's own standalone mandatory-minimum for those
-    // diets. Cat Raw has just one vegetable box and keeps its normal
-    // mandatory (min 1) rule via the generic check below.
-    const usesCombinedVegRule = !(petType === "cat" && dietType === "raw");
-    const vegCats = Object.values(categories).filter(c => superGroupOf(c.clean) === "Vegetable");
-
     const missing = Object.values(categories)
       .filter(c => c.mandatory && c.selected.length === 0)
-      .filter(c => !(usesCombinedVegRule && vegCats.includes(c)))
       .map(c => c.clean);
     if (missing.length > 0) {
       setValError(`Please select at least one item from: ${missing.join(", ")}`);
       return;
     }
-
-    if (usesCombinedVegRule && vegCats.length > 0) {
-      const totalVeg = vegCats.reduce((sum, c) => sum + c.selected.length, 0);
-      if (totalVeg < 2) {
-        setValError("Minimum 2 vegetables must be selected.");
+    const vegAEntry = Object.entries(categories).find(([k]) => /vegetable a/i.test(k));
+    const vegBEntry = Object.entries(categories).find(([k]) => /vegetable b/i.test(k));
+    if (vegAEntry && vegBEntry) {
+      const vegA = vegAEntry[1].selected.length;
+      const vegB = vegBEntry[1].selected.length;
+      if (vegA + vegB < 2) {
+        setValError("Please select at least 2 vegetables total from Vegetable A and/or Vegetable B.");
         return;
       }
     }
