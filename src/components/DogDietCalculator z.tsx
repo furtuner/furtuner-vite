@@ -1401,13 +1401,7 @@ function ResultsPage({
 
     const reportHtml =
       `<!DOCTYPE html><html><head><meta charset="utf-8" />` +
-      `<style>${printStyles.innerHTML}</style>` +
-      // The site's own CSS hides .print-only by default (it only shows
-      // during an actual browser print, via @media print). An email
-      // client never triggers that, so without this override the report
-      // would render as a blank email — this forces it visible here,
-      // specifically for the copy that gets emailed.
-      `<style>.print-only { display: block !important; }</style></head>` +
+      `<style>${printStyles.innerHTML}</style></head>` +
       `<body>${printEl.outerHTML}</body></html>`;
 
     const payload = {
