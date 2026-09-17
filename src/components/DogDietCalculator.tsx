@@ -76,7 +76,7 @@ const API_BASES: Record<string, string> = {
 // TESTING: set STRIPE_TEST_MODE to true to use the test-mode Payment Link
 // (works only with Stripe's fake test cards, e.g. 4242 4242 4242 4242 — no
 // real money moves). Set back to false before real customers use the site.
-const STRIPE_TEST_MODE = true;
+const STRIPE_TEST_MODE = false;
 const STRIPE_PAYMENT_LINK_LIVE = "https://buy.stripe.com/cNidR1gYd815e2l8jQ7Re00";
 const STRIPE_PAYMENT_LINK_TEST = "https://buy.stripe.com/test_cNidR1gYd815e2l8jQ7Re00";
 const STRIPE_PAYMENT_LINK = STRIPE_TEST_MODE ? STRIPE_PAYMENT_LINK_TEST : STRIPE_PAYMENT_LINK_LIVE;
@@ -2716,7 +2716,7 @@ function StripeCheckoutPanel({
             ← Back
           </button>
           <button
-            onClick={onContinue}
+            onClick={() => onContinue()}
             disabled={redirecting}
             className="flex-1 bg-[#143C6F] hover:bg-[#FF9D36] text-white transition-all flex items-center justify-center"
             style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "16px", padding: "16px 24px", borderRadius: "12px", gap: "10px" }}
