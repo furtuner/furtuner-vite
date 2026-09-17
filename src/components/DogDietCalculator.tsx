@@ -62,12 +62,12 @@ type PetType = "dog" | "cat";
 type DietType = "conventional" | "grainfree" | "raw";
 
 const API_BASES: Record<string, string> = {
-  dog_conventional: "https://furtuner-deploy-dog-conventional.vercel.app/",
-  cat_conventional: "https://futuner-deploy-cat-conventional.vercel.app/",
-  dog_grainfree:    "https://furtuner-deploy-dog-grain-free.vercel.app/",
-  dog_raw:          "https://futuner-deploy-dog-meat-based.vercel.app/",
-  cat_grainfree:    "https://futuner-deploy-cat-grain-free.vercel.app/",
-  cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app/",
+  dog_conventional: "https://furtuner-deploy-dog-conventional.vercel.app",
+  cat_conventional: "https://futuner-deploy-cat-conventional.vercel.app",
+  dog_grainfree:    "https://furtuner-deploy-dog-grain-free.vercel.app",
+  dog_raw:          "https://futuner-deploy-dog-meat-based.vercel.app",
+  cat_grainfree:    "https://futuner-deploy-cat-grain-free.vercel.app",
+  cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app",
 };
 
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
