@@ -1032,28 +1032,20 @@ function IngredientsPage({
   }
 
   function submit() {
-    // Every diet except Cat Raw shows all its vegetable boxes (Vegetable A,
-    // mandatory, plus one or two optional boxes) under a single "select at
-    // least 2 vegetables total, from either card below" hint. That combined
-    // rule replaces Vegetable A's own standalone mandatory-minimum for those
-    // diets. Cat Raw has just one vegetable box and keeps its normal
-    // mandatory (min 1) rule via the generic check below.
-    const usesCombinedVegRule = !(petType === "cat" && dietType === "raw");
-    const vegCats = Object.values(categories).filter(c => superGroupOf(c.clean) === "Vegetable");
-
     const missing = Object.values(categories)
       .filter(c => c.mandatory && c.selected.length === 0)
-      .filter(c => !(usesCombinedVegRule && vegCats.includes(c)))
       .map(c => c.clean);
     if (missing.length > 0) {
       setValError(`Please select at least one item from: ${missing.join(", ")}`);
       return;
     }
-
-    if (usesCombinedVegRule && vegCats.length > 0) {
-      const totalVeg = vegCats.reduce((sum, c) => sum + c.selected.length, 0);
-      if (totalVeg < 2) {
-        setValError("Minimum 2 vegetables must be selected.");
+    const vegAEntry = Object.entries(categories).find(([k]) => /vegetable a/i.test(k));
+    const vegBEntry = Object.entries(categories).find(([k]) => /vegetable b/i.test(k));
+    if (vegAEntry && vegBEntry) {
+      const vegA = vegAEntry[1].selected.length;
+      const vegB = vegBEntry[1].selected.length;
+      if (vegA + vegB < 2) {
+        setValError("Please select at least 2 vegetables total from Vegetable A and/or Vegetable B.");
         return;
       }
     }
@@ -2700,6 +2692,18 @@ function StripeCheckoutPanel({
   onSkip: () => void;
   redirecting: boolean;
 }) {
+  // Only shows the "Skip Payment (Testing)" button when the page is
+  // visited with ?testmode=7d2132eae669 in the URL — real customers
+  // visiting furtuner.com normally never see it. Use
+  // https://furtuner.com/?testmode=7d2132eae669 to test the flow.
+  // (This value is only as secret as the deployed JS bundle it lives in —
+  // anyone determined enough to read the site's minified JS could find
+  // it, same as any other client-side check. It just isn't something a
+  // casual visitor would stumble on or guess.)
+  const testMode =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("testmode") === "7d2132eae669";
+
   return (
     <div className="border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ marginTop: "16px" }}>
       <div className="bg-[#143C6F]" style={{ padding: "22px 28px" }}>
@@ -2751,18 +2755,16 @@ function StripeCheckoutPanel({
           </button>
         </div>
 
-        {/* TESTING ONLY: bypasses Stripe entirely but still logs to the
-            Sheet exactly like a real payment return would, so the Sheet
-            write itself can be verified without spending real/test money.
-            Remove this button before sending real customers through. */}
-        <button
-          onClick={() => onSkip()}
-          disabled={redirecting}
-          className="w-full text-[#3C6293] font-semibold"
-          style={{ fontSize: "13px", padding: "10px", marginTop: "12px", borderRadius: "10px", border: "1px dashed #A6CCE8", background: "white", opacity: redirecting ? 0.5 : 1 }}
-        >
-          Skip Payment (Testing)
-        </button>
+        {testMode && (
+          <button
+            onClick={() => onSkip()}
+            disabled={redirecting}
+            className="w-full text-[#3C6293] font-semibold"
+            style={{ fontSize: "13px", padding: "10px", marginTop: "12px", borderRadius: "10px", border: "1px dashed #A6CCE8", background: "white", opacity: redirecting ? 0.5 : 1 }}
+          >
+            Skip Payment (Testing)
+          </button>
+        )}
       </div>
     </div>
   );
