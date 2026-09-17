@@ -319,7 +319,10 @@ const SUPERGROUP_ORDER = ["Organ Meat", "Meat", "Grain", "Vegetable", "Fruit", "
 function superGroupOf(clean: string): string {
   for (const key of SUPERGROUP_ORDER) {
     if (new RegExp(key, "i").test(clean)) {
-      if (key === "Fiber") return "Fiber & Seeds";
+      // Some diets' backend data labels this category "Fiber/Seeds", others
+      // label the same kind of category "Others" — both should display the
+      // same way rather than showing a generic, unhelpful "Others" header.
+      if (key === "Fiber" || key === "Others") return "Fiber & Seeds";
       return key;
     }
   }
@@ -330,6 +333,18 @@ function subLabelOf(clean: string, superGroup: string): string | null {
   let rest = clean.replace(new RegExp("^" + superGroup.replace(" & Seeds", ""), "i"), "").trim();
   rest = rest.replace(/^[-\s]+/, "").trim();
   return rest.length > 0 ? rest : null;
+}
+
+// Mirrors the section heading text actually shown on screen for a given
+// category (see the h3 rendering in IngredientsPage) — used so validation
+// messages reference the same label the customer sees, e.g. "Carbohydrate
+// (Grain)" rather than the raw backend category name "Grain A".
+function displayLabelFor(clean: string, dietType?: DietType | null): string {
+  const superGroup = superGroupOf(clean);
+  if (superGroup === "Grain") {
+    return dietType === "grainfree" ? "Carbohydrate (Non-Grain)" : "Carbohydrate (Grain)";
+  }
+  return superGroup;
 }
 
 // ─── Metric helpers ───────────────────────────────────────────────────────────
@@ -1073,9 +1088,11 @@ function IngredientsPage({
   }
 
   function submit() {
-    const missing = Object.values(categories)
-      .filter(c => c.mandatory && c.selected.length === 0)
-      .map(c => c.clean);
+    const missing = [...new Set(
+      Object.values(categories)
+        .filter(c => c.mandatory && c.selected.length === 0)
+        .map(c => displayLabelFor(c.clean, dietType))
+    )];
     if (missing.length > 0) {
       setValError(`Please select at least one item from: ${missing.join(", ")}`);
       return;
@@ -1086,7 +1103,7 @@ function IngredientsPage({
       const vegA = vegAEntry[1].selected.length;
       const vegB = vegBEntry[1].selected.length;
       if (vegA + vegB < 2) {
-        setValError("Please select at least 2 vegetables total from Vegetable A and/or Vegetable B.");
+        setValError("Please select at least 2 vegetables");
         return;
       }
     }
@@ -1168,6 +1185,8 @@ function IngredientsPage({
                       const displaySubLabel =
                         superGroup === "Meat" && subLabel
                           ? `Meat ${subLabel.replace("Group", "Type")}`
+                          : superGroup === "Mineral" && subLabel
+                          ? `Mineral ${subLabel}`
                           : null;
                       return (
                         <div
