@@ -62,12 +62,12 @@ type PetType = "dog" | "cat";
 type DietType = "conventional" | "grainfree" | "raw";
 
 const API_BASES: Record<string, string> = {
-  dog_conventional: "https://furtuner-deploy-dog-conventional.vercel.app/",
-  cat_conventional: "https://futuner-deploy-cat-conventional.vercel.app/",
-  dog_grainfree:    "https://furtuner-deploy-dog-grain-free.vercel.app/",
-  dog_raw:          "https://futuner-deploy-dog-meat-based.vercel.app/",
-  cat_grainfree:    "https://futuner-deploy-cat-grain-free.vercel.app/",
-  cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app/",
+  dog_conventional: "https://futuner-deploy.vercel.app",
+  cat_conventional: "https://furtuner-deploy-3.onrender.com",
+  dog_grainfree:    "https://furtuner-deploy-1.onrender.com",
+  dog_raw:          "https://furtuner-deploy-2.onrender.com",
+  cat_grainfree:    "https://furtuner-deploy-4.onrender.com",
+  cat_raw:          "https://furtuner-deploy-5.onrender.com",
 };
 
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
@@ -86,71 +86,6 @@ const STRIPE_RETURN_PARAM = "paw_payment";
 // sessionStorage key used to restore the wizard (pet/diet/profile/results)
 // after the full-page redirect to Stripe and back.
 const CHECKOUT_STORAGE_KEY = "pawBalancerCheckout";
-
-// ─── Paid-customer logging (Google Sheet, no backend involved) ───────────
-// The customer's Name + Email get logged the moment they land back on this
-// page after paying — no Stripe webhook, no backend at all. Simpler to set
-// up, but there's a real trade-off worth knowing: this fires off the
-// ?paw_payment=success URL param alone, the same param that already
-// unlocks the feeding plan. It is NOT cryptographic proof of payment the
-// way a signed Stripe webhook is — someone could in principle craft that
-// URL by hand and get logged (and get the unlocked plan) without paying.
-// If that risk matters more to you later, the webhook-based version is the
-// fix; this version trades that guarantee for "one file, zero Stripe
-// Dashboard config."
-//
-// SHARED_SECRET_NOTE: because this request comes straight from the
-// customer's browser, this "secret" ships inside your bundled JS and is
-// visible to anyone who opens dev tools — it is NOT actually secret. It
-// only filters out random bots hitting the Apps Script URL blind; it does
-// not stop someone who deliberately reads your source.
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVuGarwlvkhx0Rovimy-soQqyzH1UJFNvrk73-u-N444RE2W6w1oeNCPeQMRhnatCP_w/exec";
-const SHEETS_SHARED_SECRET = "furtuner-sheet-7f3k9d2x-secret";
-
-/**
- * Fires a one-way POST to the Apps Script Web App so it appends a row to
- * the Google Sheet. Uses `mode: "no-cors"` because Apps Script Web Apps
- * don't send back CORS headers — that means we can never read a response
- * or know for sure it succeeded from here, so this is intentionally
- * fire-and-forget. Never throws — a logging hiccup must never block the
- * customer from seeing their unlocked report.
- */
-function logPaidCustomerToSheet(
-  customer: { fullName: string; email: string } | null,
-  petType: PetType | null,
-  dietType: DietType | null
-) {
-  if (!customer?.email) return;
-  if (!SHEETS_WEBAPP_URL || SHEETS_WEBAPP_URL.startsWith("PASTE_")) return;
-
-  try {
-    fetch(SHEETS_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain" }, // avoids a CORS preflight
-      body: JSON.stringify({
-        secret: SHEETS_SHARED_SECRET,
-        name: customer.fullName || "",
-        email: customer.email,
-        pet_type: petType || "",
-        diet_type: dietType || "",
-        // Client-generated id, just so a page refresh/double-fire doesn't
-        // create two rows for the same visit — see the .gs file's dedupe.
-        request_id:
-          typeof crypto !== "undefined" && "randomUUID" in crypto
-            ? crypto.randomUUID()
-            : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        timestamp: Math.floor(Date.now() / 1000),
-      }),
-    }).catch(() => {
-      // Nothing we can do about a network failure here — there's no
-      // response to inspect either way under no-cors mode.
-    });
-  } catch {
-    // Fetch not available / blocked (e.g. very old browser) — never let
-    // this take down the report page.
-  }
-}
 
 
 const CAT_DIETS: { value: DietType; label: string; emoji: string }[] = [
@@ -1376,53 +1311,17 @@ function ResultsPage({
   const [reportEmail, setReportEmail] = useState("");
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const [emailError, setEmailError] = useState("");
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reportEmail);
 
-  // Same per-pet/diet backend selection used by handleCalculate — the email
-  // endpoint lives on the same backend as /calculate.
-  const emailApiBase = API_BASES[`${petType}_${dietType}`] ?? "http://localhost:8000";
-
-  async function sendReportEmail() {
-    if (!isValidEmail || emailSending || emailSent || !result) return;
+  function sendReportEmail() {
+    if (!isValidEmail || emailSending || emailSent) return;
     setEmailSending(true);
-    setEmailError("");
-
-    // Grab the exact same markup that window.print() renders (the
-    // .print-only block + its scoped <style>), so the PDF the backend builds
-    // is identical to what "Print / Save" produces — not a re-derived summary.
-    const printEl = document.querySelector(".print-only");
-    const printStyles = document.getElementById("print-report-styles");
-    if (!printEl || !printStyles) {
-      setEmailError("Couldn't find the report to send — please try again.");
+    // No email backend is wired up yet — this simulates the send so the
+    // UI/UX is ready to connect to a real endpoint later.
+    setTimeout(() => {
       setEmailSending(false);
-      return;
-    }
-
-    const reportHtml =
-      `<!DOCTYPE html><html><head><meta charset="utf-8" />` +
-      `<style>${printStyles.innerHTML}</style></head>` +
-      `<body>${printEl.outerHTML}</body></html>`;
-
-    const payload = {
-      recipient_email: reportEmail,
-      patient_name: profile.dogName || (profile as any).catName || "Your Pet",
-      report_html: reportHtml,
-    };
-
-    try {
-      const res = await fetch(`${emailApiBase}/report/email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setEmailSent(true);
-    } catch (e: unknown) {
-      setEmailError("Couldn't send the email — please try again.");
-    } finally {
-      setEmailSending(false);
-    }
+    }, 700);
   }
 
   // Shuffle fixed ingredients — reshuffles every time the ingredients tab is opened
@@ -1587,7 +1486,8 @@ function ResultsPage({
             Keeps .print-only content out of normal browsing entirely.
             It only exists in the DOM (so window.print() can render it)
             but is display:none until a print/PDF context is active. */}
-        <style id="print-report-styles">{`
+        <style>{`
+          .print-only { display: none; }
           @media print {
             @page {
               size: landscape;
@@ -2120,10 +2020,10 @@ function ResultsPage({
                   <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "800px" }}>
                     <thead>
                       <tr style={{ background: "#143C6F", color: "#fff" }}>
-                        <th style={{ padding: "16px 16px", textAlign: "left", fontSize: "16px", fontWeight: 700, textTransform: "uppercase" }}>Ingredient</th>
-                        <th style={{ padding: "16px 10px", textAlign: "center", fontSize: "16px", fontWeight: 700, textTransform: "uppercase" }}>Unit</th>
+                        <th style={{ padding: "16px 16px", textAlign: "left", fontSize: "22px", fontWeight: 700, textTransform: "uppercase" }}>Ingredient</th>
+                        <th style={{ padding: "16px 10px", textAlign: "center", fontSize: "22px", fontWeight: 700, textTransform: "uppercase" }}>Unit</th>
                         {DAYS.map(d => (
-                          <th key={d} style={{ padding: "16px 4px", textAlign: "right", fontSize: "15px", fontWeight: 700, whiteSpace: "nowrap" }}>{d}Days</th>
+                          <th key={d} style={{ padding: "16px 8px", textAlign: "right", fontSize: "24px", fontWeight: 700 }}>{d}Days</th>
                         ))}
                       </tr>
                     </thead>
@@ -2247,12 +2147,11 @@ function ResultsPage({
                     🖨 Print / Save
                   </button>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "340px" }}>
                   <div
                     style={{
                       display: "flex", alignItems: "center", gap: "10px",
                       background: "#fff", border: "1.5px solid #A6CCE8", borderRadius: "12px",
-                      padding: "6px 6px 6px 18px",
+                      padding: "6px 6px 6px 18px", minWidth: "340px",
                     }}
                   >
                     {emailSent ? (
@@ -2267,7 +2166,7 @@ function ResultsPage({
                         <input
                           type="email"
                           value={reportEmail}
-                          onChange={e => { setReportEmail(e.target.value); setEmailError(""); }}
+                          onChange={e => setReportEmail(e.target.value)}
                           onKeyDown={e => { if (e.key === "Enter") sendReportEmail(); }}
                           placeholder="Email this report to…"
                           style={{ border: "none", outline: "none", background: "transparent", flex: 1, fontSize: "15px", color: "#211915", fontFamily: "'Parastoo', sans-serif" }}
@@ -2295,10 +2194,6 @@ function ResultsPage({
                         </button>
                       </>
                     )}
-                  </div>
-                  {emailError && (
-                    <span style={{ color: "#C62828", fontSize: "13px", paddingLeft: "18px" }}>{emailError}</span>
-                  )}
                   </div>
                 </div>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -2767,7 +2662,7 @@ function CheckoutFlow({
     try {
       sessionStorage.setItem(
         CHECKOUT_STORAGE_KEY,
-        JSON.stringify({ petType, dietType, profile, selectedIngredients, result, allIngredients, customer })
+        JSON.stringify({ petType, dietType, profile, selectedIngredients, result, allIngredients })
       );
     } catch {
       // sessionStorage unavailable (e.g. private browsing) — payment still
@@ -2776,12 +2671,6 @@ function CheckoutFlow({
 
     const url = new URL(linkOverride ?? STRIPE_PAYMENT_LINK);
     if (customer.email) url.searchParams.set("prefilled_email", customer.email);
-    // client_reference_id isn't required for the Sheet logging anymore
-    // (name/email are read back from sessionStorage instead, see
-    // logPaidCustomerToSheet below) — left in place since it's still a
-    // handy way to see the customer's name against a session in the
-    // Stripe Dashboard itself.
-    if (customer.fullName) url.searchParams.set("client_reference_id", customer.fullName);
     // Stripe's Payment Link "after payment" redirect (set in the Stripe
     // Dashboard for this link) should point back to this page with
     // ?paw_payment=success so the app knows to unlock the plan on return.
@@ -2904,12 +2793,6 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
         if (saved.allIngredients) setAllIngredients(saved.allIngredients);
         setPage(6);
         setRestoredFeedPlanUnlocked(true);
-        // This IS "landing on the report" — log the paid customer's
-        // name/email to the Sheet right here, once, before we clear the
-        // sessionStorage key below (which also doubles as our guard
-        // against logging twice on a refresh, since the key is gone by
-        // the next mount).
-        logPaidCustomerToSheet(saved.customer ?? null, saved.petType ?? null, saved.dietType ?? null);
         sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
       }
     } catch {

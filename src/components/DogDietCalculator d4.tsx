@@ -62,12 +62,12 @@ type PetType = "dog" | "cat";
 type DietType = "conventional" | "grainfree" | "raw";
 
 const API_BASES: Record<string, string> = {
-  dog_conventional: "https://furtuner-deploy-dog-conventional.vercel.app/",
-  cat_conventional: "https://futuner-deploy-cat-conventional.vercel.app/",
-  dog_grainfree:    "https://furtuner-deploy-dog-grain-free.vercel.app/",
-  dog_raw:          "https://futuner-deploy-dog-meat-based.vercel.app/",
-  cat_grainfree:    "https://futuner-deploy-cat-grain-free.vercel.app/",
-  cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app/",
+  dog_conventional: "https://futuner-deploy.vercel.app",
+  cat_conventional: "https://furtuner-deploy-3.onrender.com",
+  dog_grainfree:    "https://furtuner-deploy-1.onrender.com",
+  dog_raw:          "https://furtuner-deploy-2.onrender.com",
+  cat_grainfree:    "https://furtuner-deploy-4.onrender.com",
+  cat_raw:          "https://furtuner-deploy-5.onrender.com",
 };
 
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
@@ -104,8 +104,8 @@ const CHECKOUT_STORAGE_KEY = "pawBalancerCheckout";
 // visible to anyone who opens dev tools — it is NOT actually secret. It
 // only filters out random bots hitting the Apps Script URL blind; it does
 // not stop someone who deliberately reads your source.
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVuGarwlvkhx0Rovimy-soQqyzH1UJFNvrk73-u-N444RE2W6w1oeNCPeQMRhnatCP_w/exec";
-const SHEETS_SHARED_SECRET = "furtuner-sheet-7f3k9d2x-secret";
+const SHEETS_WEBAPP_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const SHEETS_SHARED_SECRET = "PASTE_THE_SAME_SHARED_SECRET_YOU_SET_IN_APPS_SCRIPT";
 
 /**
  * Fires a one-way POST to the Apps Script Web App so it appends a row to

@@ -62,12 +62,12 @@ type PetType = "dog" | "cat";
 type DietType = "conventional" | "grainfree" | "raw";
 
 const API_BASES: Record<string, string> = {
-  dog_conventional: "https://furtuner-deploy-dog-conventional.vercel.app/",
-  cat_conventional: "https://futuner-deploy-cat-conventional.vercel.app/",
-  dog_grainfree:    "https://furtuner-deploy-dog-grain-free.vercel.app/",
-  dog_raw:          "https://futuner-deploy-dog-meat-based.vercel.app/",
-  cat_grainfree:    "https://futuner-deploy-cat-grain-free.vercel.app/",
-  cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app/",
+  dog_conventional: "https://futuner-deploy.vercel.app",
+  cat_conventional: "https://furtuner-deploy-3.onrender.com",
+  dog_grainfree:    "https://furtuner-deploy-1.onrender.com",
+  dog_raw:          "https://furtuner-deploy-2.onrender.com",
+  cat_grainfree:    "https://furtuner-deploy-4.onrender.com",
+  cat_raw:          "https://furtuner-deploy-5.onrender.com",
 };
 
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
@@ -86,71 +86,6 @@ const STRIPE_RETURN_PARAM = "paw_payment";
 // sessionStorage key used to restore the wizard (pet/diet/profile/results)
 // after the full-page redirect to Stripe and back.
 const CHECKOUT_STORAGE_KEY = "pawBalancerCheckout";
-
-// ─── Paid-customer logging (Google Sheet, no backend involved) ───────────
-// The customer's Name + Email get logged the moment they land back on this
-// page after paying — no Stripe webhook, no backend at all. Simpler to set
-// up, but there's a real trade-off worth knowing: this fires off the
-// ?paw_payment=success URL param alone, the same param that already
-// unlocks the feeding plan. It is NOT cryptographic proof of payment the
-// way a signed Stripe webhook is — someone could in principle craft that
-// URL by hand and get logged (and get the unlocked plan) without paying.
-// If that risk matters more to you later, the webhook-based version is the
-// fix; this version trades that guarantee for "one file, zero Stripe
-// Dashboard config."
-//
-// SHARED_SECRET_NOTE: because this request comes straight from the
-// customer's browser, this "secret" ships inside your bundled JS and is
-// visible to anyone who opens dev tools — it is NOT actually secret. It
-// only filters out random bots hitting the Apps Script URL blind; it does
-// not stop someone who deliberately reads your source.
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVuGarwlvkhx0Rovimy-soQqyzH1UJFNvrk73-u-N444RE2W6w1oeNCPeQMRhnatCP_w/exec";
-const SHEETS_SHARED_SECRET = "furtuner-sheet-7f3k9d2x-secret";
-
-/**
- * Fires a one-way POST to the Apps Script Web App so it appends a row to
- * the Google Sheet. Uses `mode: "no-cors"` because Apps Script Web Apps
- * don't send back CORS headers — that means we can never read a response
- * or know for sure it succeeded from here, so this is intentionally
- * fire-and-forget. Never throws — a logging hiccup must never block the
- * customer from seeing their unlocked report.
- */
-function logPaidCustomerToSheet(
-  customer: { fullName: string; email: string } | null,
-  petType: PetType | null,
-  dietType: DietType | null
-) {
-  if (!customer?.email) return;
-  if (!SHEETS_WEBAPP_URL || SHEETS_WEBAPP_URL.startsWith("PASTE_")) return;
-
-  try {
-    fetch(SHEETS_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain" }, // avoids a CORS preflight
-      body: JSON.stringify({
-        secret: SHEETS_SHARED_SECRET,
-        name: customer.fullName || "",
-        email: customer.email,
-        pet_type: petType || "",
-        diet_type: dietType || "",
-        // Client-generated id, just so a page refresh/double-fire doesn't
-        // create two rows for the same visit — see the .gs file's dedupe.
-        request_id:
-          typeof crypto !== "undefined" && "randomUUID" in crypto
-            ? crypto.randomUUID()
-            : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        timestamp: Math.floor(Date.now() / 1000),
-      }),
-    }).catch(() => {
-      // Nothing we can do about a network failure here — there's no
-      // response to inspect either way under no-cors mode.
-    });
-  } catch {
-    // Fetch not available / blocked (e.g. very old browser) — never let
-    // this take down the report page.
-  }
-}
 
 
 const CAT_DIETS: { value: DietType; label: string; emoji: string }[] = [
@@ -2767,7 +2702,7 @@ function CheckoutFlow({
     try {
       sessionStorage.setItem(
         CHECKOUT_STORAGE_KEY,
-        JSON.stringify({ petType, dietType, profile, selectedIngredients, result, allIngredients, customer })
+        JSON.stringify({ petType, dietType, profile, selectedIngredients, result, allIngredients })
       );
     } catch {
       // sessionStorage unavailable (e.g. private browsing) — payment still
@@ -2776,11 +2711,10 @@ function CheckoutFlow({
 
     const url = new URL(linkOverride ?? STRIPE_PAYMENT_LINK);
     if (customer.email) url.searchParams.set("prefilled_email", customer.email);
-    // client_reference_id isn't required for the Sheet logging anymore
-    // (name/email are read back from sessionStorage instead, see
-    // logPaidCustomerToSheet below) — left in place since it's still a
-    // handy way to see the customer's name against a session in the
-    // Stripe Dashboard itself.
+    // Carries the customer's name through to Stripe's Checkout Session so the
+    // /stripe/webhook route can read it back out of the completed-payment
+    // event — the webhook has no other way to know who typed what into our
+    // own CustomerProfileForm.
     if (customer.fullName) url.searchParams.set("client_reference_id", customer.fullName);
     // Stripe's Payment Link "after payment" redirect (set in the Stripe
     // Dashboard for this link) should point back to this page with
@@ -2904,12 +2838,6 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
         if (saved.allIngredients) setAllIngredients(saved.allIngredients);
         setPage(6);
         setRestoredFeedPlanUnlocked(true);
-        // This IS "landing on the report" — log the paid customer's
-        // name/email to the Sheet right here, once, before we clear the
-        // sessionStorage key below (which also doubles as our guard
-        // against logging twice on a refresh, since the key is gone by
-        // the next mount).
-        logPaidCustomerToSheet(saved.customer ?? null, saved.petType ?? null, saved.dietType ?? null);
         sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
       }
     } catch {
