@@ -167,6 +167,44 @@ function SupportForm() {
   )
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// SUPPORT DEEP LINK
+// The nav links call e.preventDefault(), so the address bar never changed when
+// someone opened Support -- there was nothing to link to (e.g. from the diet
+// report email). These two helpers make https://furtuner.com/?page=support
+// open the Support screen directly, and keep the address bar in step with it.
+// ("#support" is accepted too, since that's what the nav link's href says.)
+// Only the `page` parameter is ever touched -- paw_payment, testmode etc. and
+// the rest of the address are left exactly as they were.
+// ─────────────────────────────────────────────────────────────────────────
+type View = 'home' | 'faq' | 'about' | 'calculator' | 'support'
+
+// Which screen the address asks for when the site first loads.
+function viewFromUrl(search: string, hash: string): View {
+  // Must stay first: Stripe sends customers back with ?paw_payment=success and
+  // the calculator has to mount immediately to unlock their results.
+  if (search.includes('paw_payment=success')) return 'calculator'
+  if (new URLSearchParams(search).get('page') === 'support' || hash === '#support') return 'support'
+  return 'home'
+}
+
+// The address the bar SHOULD show for this screen, or null if it's already right.
+function urlForView(view: View, href: string): string | null {
+  const url = new URL(href)
+  const hasSupportParam = url.searchParams.get('page') === 'support'
+  if (view === 'support') {
+    if (hasSupportParam && url.hash !== '#support') return null
+    url.searchParams.set('page', 'support')
+    if (url.hash === '#support') url.hash = ''
+    return url.toString()
+  }
+  if (hasSupportParam) {
+    url.searchParams.delete('page')
+    return url.toString()
+  }
+  return null
+}
+
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
   // Custom caption overlay for the 'How FurTuner Works' video — see the
@@ -233,12 +271,20 @@ function App() {
   // immediately so its own effect can read that query param, restore the
   // saved wizard state, and unlock the Results page — none of that runs if
   // the app is sitting on the Home view instead.
-  const [view, setView] = useState<'home' | 'faq' | 'about' | 'calculator' | 'support'>(() => {
-    if (typeof window !== 'undefined' && window.location.search.includes('paw_payment=success')) {
-      return 'calculator'
+  const [view, setView] = useState<View>(() => {
+    if (typeof window !== 'undefined') {
+      return viewFromUrl(window.location.search, window.location.hash)
     }
     return 'home'
   })
+
+  // Keep the address bar in step with the Support screen. replaceState (not
+  // pushState) so no extra history entries are created -- Back button behaves
+  // exactly as before.
+  useEffect(() => {
+    const next = urlForView(view, window.location.href)
+    if (next) window.history.replaceState(window.history.state, '', next)
+  }, [view])
   // Bumped every time "Build Your Diet" is opened, and passed as the
   // calculator's React `key` — this guarantees a completely fresh component
   // instance (no leftover pet type, diet type, profile, or ingredient

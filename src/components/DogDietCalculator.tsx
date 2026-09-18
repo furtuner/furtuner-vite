@@ -99,6 +99,13 @@ const API_BASES: Record<string, string> = {
   cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app",
 };
 
+// Public URL of the watermark tile used in the EMAILED report (see
+// sendReportEmail). Must be a PNG (Gmail/Outlook don't render SVG) that is
+// reachable from the open internet: put furtuner-watermark.png in this site's
+// /public folder and deploy. Open this URL in a private window to confirm it
+// loads before relying on it.
+const EMAIL_WATERMARK_URL = "https://furtuner.com/images/furtuner-watermark.png";
+
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
 // are handled entirely by Stripe — this app never sees card data.
 //
@@ -1435,18 +1442,43 @@ function ResultsPage({
   const [feedPlanUnlocked, setFeedPlanUnlocked] = useState(!!initialFeedPlanUnlocked);
   const [reportEmail, setReportEmail] = useState("");
   const [emailSending, setEmailSending] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [emailSentTo, setEmailSentTo] = useState(""); // address of the last successful send ("" = none)
   const [emailError, setEmailError] = useState("");
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reportEmail);
+
+  // The "Sent to ..." confirmation fades out on its own; the input stays usable the whole time.
+  useEffect(() => {
+    if (!emailSentTo) return;
+    const t = setTimeout(() => setEmailSentTo(""), 6000);
+    return () => clearTimeout(t);
+  }, [emailSentTo]);
 
   // Same per-pet/diet backend selection used by handleCalculate — the email
   // endpoint lives on the same backend as /calculate.
   const emailApiBase = API_BASES[`${petType}_${dietType}`] ?? "http://localhost:8000";
 
+  // Turns every non-ASCII character (•  —  –  …  é  emoji, etc.) into an HTML
+  // numeric character reference (e.g. "•" -> "&#8226;"). The report HTML then
+  // contains ONLY plain ASCII, so it renders identically no matter what
+  // character set the backend / mail service / email client assumes. Without
+  // this, any hop that treats the UTF-8 bytes as Latin-1 turns "•" into "â¢"
+  // and "—" into "â". <meta charset> doesn't help in email — mail clients
+  // ignore it and trust the MIME headers instead.
+  // Array.from walks by code point, so emoji (surrogate pairs) are handled.
+  function asciiSafeHtml(html: string): string {
+    return Array.from(html)
+      .map(ch => {
+        const cp = ch.codePointAt(0)!;
+        return cp > 127 ? `&#${cp};` : ch;
+      })
+      .join("");
+  }
+
   async function sendReportEmail() {
-    if (!isValidEmail || emailSending || emailSent || !result) return;
+    if (!isValidEmail || emailSending || !result) return;
     setEmailSending(true);
     setEmailError("");
+    setEmailSentTo("");
 
     // Grab the exact same markup that window.print() renders (the
     // .print-only block + its scoped <style>), so the PDF the backend builds
@@ -1459,16 +1491,36 @@ function ResultsPage({
       return;
     }
 
+    // WATERMARK IN EMAIL
+    // On screen the watermark is a position:fixed overlay with a ~14 KB
+    // base64 SVG background, and all of it sits inside `@media print`. Email
+    // clients (Gmail / Outlook) ignore @media print, strip position:fixed,
+    // block data: URIs and do not render SVG at all. So for the emailed copy:
+    //   1. drop that rule (also makes the email ~15 KB lighter), and
+    //   2. tile a normal hosted PNG (opacity already baked into its alpha
+    //      channel) as the background of the report container instead.
+    // The PNG lives in the site's /public folder: see EMAIL_WATERMARK_URL.
+    const watermarkRuleRe = /\.print-watermark\s*\{[^}]*\}/;
+    const printCssForEmail = printStyles.innerHTML.replace(watermarkRuleRe, "");
+    const emailWatermarkCss =
+      `.print-only { background-image: url("${EMAIL_WATERMARK_URL}"); ` +
+      `background-repeat: repeat; background-size: 420px 260px; }` +
+      `.print-watermark { display: none !important; }`;
+
     const reportHtml =
       `<!DOCTYPE html><html><head><meta charset="utf-8" />` +
-      `<style>${printStyles.innerHTML}</style>` +
+      `<style>${printCssForEmail}</style>` +
       // The site's own CSS hides .print-only by default (it only shows
       // during an actual browser print, via @media print). An email
       // client never triggers that, so without this override the report
       // would render as a blank email — this forces it visible here,
       // specifically for the copy that gets emailed.
-      `<style>.print-only { display: block !important; }</style></head>` +
-      `<body>${printEl.outerHTML}</body></html>`;
+      `<style>.print-only { display: block !important; }</style>` +
+      // Hosted-PNG watermark (see WATERMARK IN EMAIL above).
+      `<style>${emailWatermarkCss}</style></head>` +
+      // Body only: the <style> blocks above are already pure ASCII, and
+      // entities would NOT be decoded inside CSS if that ever changes.
+      `<body>${asciiSafeHtml(printEl.outerHTML)}</body></html>`;
 
     const payload = {
       recipient_email: reportEmail,
@@ -1483,7 +1535,8 @@ function ResultsPage({
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setEmailSent(true);
+      setEmailSentTo(reportEmail);
+      setReportEmail(""); // box is empty and fillable again
     } catch (e: unknown) {
       setEmailError("Couldn't send the email — please try again.");
     } finally {
@@ -2324,49 +2377,49 @@ function ResultsPage({
                       padding: "6px 6px 6px 18px",
                     }}
                   >
-                    {emailSent ? (
-                      <span style={{ display: "flex", alignItems: "center", gap: "8px", color: "#2E7D32", fontWeight: 700, fontSize: "15px", padding: "10px 4px" }}>
+                    <input
+                      type="email"
+                      value={reportEmail}
+                      onChange={e => { setReportEmail(e.target.value); setEmailError(""); setEmailSentTo(""); }}
+                      onKeyDown={e => { if (e.key === "Enter") sendReportEmail(); }}
+                      placeholder="Email this report to…"
+                      style={{ border: "none", outline: "none", background: "transparent", flex: 1, fontSize: "15px", color: "#211915", fontFamily: "'Parastoo', sans-serif" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={sendReportEmail}
+                      disabled={!isValidEmail || emailSending}
+                      aria-label="Send report by email"
+                      className="transition"
+                      style={{
+                        display: "inline-flex", alignItems: "center", justifyContent: "center",
+                        width: "42px", height: "42px", borderRadius: "9px", border: "none", flexShrink: 0,
+                        background: isValidEmail ? "#FA9A36" : "#FFDCB7",
+                        cursor: isValidEmail && !emailSending ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      {emailSending ? (
+                        <span style={{ width: "16px", height: "16px", border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+                      ) : (
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M20 6L9 17L4 12" stroke="#2E7D32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        Sent — check your inbox
-                      </span>
-                    ) : (
-                      <>
-                        <input
-                          type="email"
-                          value={reportEmail}
-                          onChange={e => { setReportEmail(e.target.value); setEmailError(""); }}
-                          onKeyDown={e => { if (e.key === "Enter") sendReportEmail(); }}
-                          placeholder="Email this report to…"
-                          style={{ border: "none", outline: "none", background: "transparent", flex: 1, fontSize: "15px", color: "#211915", fontFamily: "'Parastoo', sans-serif" }}
-                        />
-                        <button
-                          type="button"
-                          onClick={sendReportEmail}
-                          disabled={!isValidEmail || emailSending}
-                          aria-label="Send report by email"
-                          className="transition"
-                          style={{
-                            display: "inline-flex", alignItems: "center", justifyContent: "center",
-                            width: "42px", height: "42px", borderRadius: "9px", border: "none", flexShrink: 0,
-                            background: isValidEmail ? "#FA9A36" : "#FFDCB7",
-                            cursor: isValidEmail && !emailSending ? "pointer" : "not-allowed",
-                          }}
-                        >
-                          {emailSending ? (
-                            <span style={{ width: "16px", height: "16px", border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
-                          ) : (
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          )}
-                        </button>
-                      </>
-                    )}
+                      )}
+                    </button>
                   </div>
                   {emailError && (
                     <span style={{ color: "#C62828", fontSize: "13px", paddingLeft: "18px" }}>{emailError}</span>
+                  )}
+                  {emailSentTo && !emailError && (
+                    <span
+                      role="status"
+                      style={{ display: "flex", alignItems: "center", gap: "6px", color: "#2E7D32", fontWeight: 700, fontSize: "13px", paddingLeft: "18px", wordBreak: "break-all" }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                        <path d="M20 6L9 17L4 12" stroke="#2E7D32" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Sent to {emailSentTo} — check your inbox
+                    </span>
                   )}
                   </div>
                 </div>
