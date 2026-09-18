@@ -123,16 +123,16 @@ const STRIPE_PAYMENT_LINK_TEST = "https://buy.stripe.com/test_cNidR1gYd815e2l8jQ
 const STRIPE_PAYMENT_LINK = STRIPE_TEST_MODE ? STRIPE_PAYMENT_LINK_TEST : STRIPE_PAYMENT_LINK_LIVE;
 // Query param Stripe's "after payment" redirect appends back to this app so
 // we know to unlock the feeding plan when the user returns.
-const STRIPE_RETURN_PARAM = "paw_payment";
+const STRIPE_RETURN_PARAM = "furtuner_payment";
 // sessionStorage key used to restore the wizard (pet/diet/profile/results)
 // after the full-page redirect to Stripe and back.
-const CHECKOUT_STORAGE_KEY = "pawBalancerCheckout";
+const CHECKOUT_STORAGE_KEY = "furtunerCheckout";
 
 // ─── Paid-customer logging (Google Sheet, no backend involved) ───────────
 // The customer's Name + Email get logged the moment they land back on this
 // page after paying — no Stripe webhook, no backend at all. Simpler to set
 // up, but there's a real trade-off worth knowing: this fires off the
-// ?paw_payment=success URL param alone, the same param that already
+// ?furtuner_payment=success URL param alone, the same param that already
 // unlocks the feeding plan. It is NOT cryptographic proof of payment the
 // way a signed Stripe webhook is — someone could in principle craft that
 // URL by hand and get logged (and get the unlocked plan) without paying.
@@ -1111,10 +1111,12 @@ function IngredientsPage({
     }
     const vegAEntry = Object.entries(categories).find(([k]) => /vegetable a/i.test(k));
     const vegBEntry = Object.entries(categories).find(([k]) => /vegetable b/i.test(k));
-    if (vegAEntry && vegBEntry) {
-      const vegA = vegAEntry[1].selected.length;
-      const vegB = vegBEntry[1].selected.length;
-      if (vegA + vegB < 2) {
+    const vegCEntry = Object.entries(categories).find(([k]) => /vegetable c/i.test(k));
+    if (vegAEntry || vegBEntry || vegCEntry) {
+      const vegA = vegAEntry?.[1].selected.length ?? 0;
+      const vegB = vegBEntry?.[1].selected.length ?? 0;
+      const vegC = vegCEntry?.[1].selected.length ?? 0;
+      if (vegA + vegB + vegC < 2) {
         setValError("Please select at least 2 vegetables");
         return;
       }
@@ -1184,7 +1186,7 @@ function IngredientsPage({
                         letterSpacing: "0.01em",
                       }}
                     >
-                      * Select at least 2 vegetables total, from either card below.
+                      * Select at least 2 vegetables total, from any of the cards below.
                     </p>
                   )}
                   <div className="flex flex-col" style={{ gap: "20px" }}>
@@ -2941,7 +2943,7 @@ function CheckoutFlow({
     if (customer.fullName) url.searchParams.set("client_reference_id", customer.fullName);
     // Stripe's Payment Link "after payment" redirect (set in the Stripe
     // Dashboard for this link) should point back to this page with
-    // ?paw_payment=success so the app knows to unlock the plan on return.
+    // ?furtuner_payment=success so the app knows to unlock the plan on return.
     window.location.href = url.toString();
   }
 
@@ -2980,7 +2982,7 @@ function CheckoutFlow({
   }
 
   // stage === "payment" — the actual "unlock" happens when the user returns
-  // from Stripe with ?paw_payment=success (handled by the parent).
+  // from Stripe with ?furtuner_payment=success (handled by the parent).
   return (
     <StripeCheckoutPanel
       customer={customer!}
@@ -3051,7 +3053,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   }
 
   // On mount: if this is a return trip from Stripe's hosted checkout
-  // (?paw_payment=success), restore the wizard state we saved before
+  // (?furtuner_payment=success), restore the wizard state we saved before
   // redirecting and jump straight to an unlocked Results page.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
