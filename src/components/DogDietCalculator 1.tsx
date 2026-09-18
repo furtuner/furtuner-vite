@@ -1112,7 +1112,22 @@ function IngredientsPage({
     }
     const vegAEntry = Object.entries(categories).find(([k]) => /vegetable a/i.test(k));
     const vegBEntry = Object.entries(categories).find(([k]) => /vegetable b/i.test(k));
-    if (vegAEntry && vegBEntry) {
+    const vegCEntry = Object.entries(categories).find(([k]) => /vegetable c/i.test(k));
+    if (vegCEntry) {
+      // Dog Conventional / Cat Conventional only: the mandatory Vegetable
+      // box has its own separate "select at least 1" rule already enforced
+      // above — it does NOT count toward this rule. This rule is purely
+      // about the two *optional* boxes (shown on screen as "Vegetable Type
+      // A" and "Vegetable Type B"), which together need at least 2 picks.
+      const vegB = vegBEntry?.[1].selected.length ?? 0;
+      const vegC = vegCEntry[1].selected.length;
+      if (vegB + vegC < 2) {
+        setValError("Please select at least 2 vegetables from Vegetable Type A/Type B");
+        return;
+      }
+    } else if (vegAEntry && vegBEntry) {
+      // All other diets (no Vegetable C category): unchanged, original
+      // behavior — mandatory + optional boxes combined need at least 2.
       const vegA = vegAEntry[1].selected.length;
       const vegB = vegBEntry[1].selected.length;
       if (vegA + vegB < 2) {
@@ -1165,6 +1180,11 @@ function IngredientsPage({
                   return aMand - bMand;
                 });
               });
+              // Only Dog Conventional / Cat Conventional include a "Vegetable C"
+              // (potatoes) category — used below to scope the "Type A"/"Type B"
+              // sub-labels to just those two diets, leaving the other four
+              // diets' Vegetable cards unlabeled exactly as they are today.
+              const hasVegetableC = Object.keys(categories).some(k => /vegetable c/i.test(k));
               return groups.map(({ superGroup, gns }) => (
                 <div key={superGroup} className="mb-8" style={{ marginBottom: "40px" }}>
                   <h3
@@ -1200,6 +1220,8 @@ function IngredientsPage({
                           ? `Meat ${subLabel.replace("Group", "Type")}`
                           : superGroup === "Mineral" && subLabel
                           ? `Mineral ${subLabel}`
+                          : superGroup === "Vegetable" && hasVegetableC && !cat.mandatory
+                          ? (/vegetable c/i.test(cat.clean) ? "Vegetable Type B" : "Vegetable Type A")
                           : null;
                       return (
                         <div
