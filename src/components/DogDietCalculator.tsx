@@ -102,9 +102,14 @@ const API_BASES: Record<string, string> = {
 // Public URL of the watermark tile used in the EMAILED report (see
 // sendReportEmail). Must be a PNG (Gmail/Outlook don't render SVG) that is
 // reachable from the open internet: put furtuner-watermark.png in this site's
-// /public folder and deploy. Open this URL in a private window to confirm it
-// loads before relying on it.
-const EMAIL_WATERMARK_URL = "https://furtuner.com/images/furtuner-watermark.png";
+// /public folder and deploy. Computed from the page's own current origin
+// (rather than hardcoded) so it automatically points at whichever domain
+// is actually serving the site right now — furtuner.com in production, or
+// the *.vercel.app URL while testing — with nothing to switch manually.
+function getEmailWatermarkUrl(): string {
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://furtuner.com";
+  return `${origin}/images/furtuner-watermark.png`;
+}
 
 // Stripe-hosted checkout page. Redirecting here means the actual card fields
 // are handled entirely by Stripe — this app never sees card data.
@@ -1499,11 +1504,11 @@ function ResultsPage({
     //   1. drop that rule (also makes the email ~15 KB lighter), and
     //   2. tile a normal hosted PNG (opacity already baked into its alpha
     //      channel) as the background of the report container instead.
-    // The PNG lives in the site's /public folder: see EMAIL_WATERMARK_URL.
+    // The PNG lives in the site's /public folder: see getEmailWatermarkUrl().
     const watermarkRuleRe = /\.print-watermark\s*\{[^}]*\}/;
     const printCssForEmail = printStyles.innerHTML.replace(watermarkRuleRe, "");
     const emailWatermarkCss =
-      `.print-only { background-image: url("${EMAIL_WATERMARK_URL}"); ` +
+      `.print-only { background-image: url("${getEmailWatermarkUrl()}"); ` +
       `background-repeat: repeat; background-size: 420px 260px; }` +
       `.print-watermark { display: none !important; }`;
 
@@ -1526,6 +1531,11 @@ function ResultsPage({
       recipient_email: reportEmail,
       patient_name: profile.dogName || (profile as any).catName || "Your Pet",
       report_html: reportHtml,
+      // Lets the backend build the "Support page" link against whichever
+      // domain is actually serving the site right now, same reasoning as
+      // getEmailWatermarkUrl() above — furtuner.com in production, or the
+      // *.vercel.app URL while testing, with nothing to switch manually.
+      site_url: typeof window !== "undefined" ? window.location.origin : undefined,
     };
 
     try {
