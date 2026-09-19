@@ -2422,15 +2422,22 @@ function ResultsPage({
                     <span style={{ color: "#C62828", fontSize: "13px", paddingLeft: "18px" }}>{emailError}</span>
                   )}
                   {emailSentTo && !emailError && (
-                    <span
-                      role="status"
-                      style={{ display: "flex", alignItems: "center", gap: "6px", color: "#2E7D32", fontWeight: 700, fontSize: "13px", paddingLeft: "18px", wordBreak: "break-all" }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                        <path d="M20 6L9 17L4 12" stroke="#2E7D32" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      Sent to {emailSentTo} — check your inbox
-                    </span>
+                    <>
+                      <span
+                        role="status"
+                        style={{ display: "flex", alignItems: "center", gap: "6px", color: "#2E7D32", fontWeight: 700, fontSize: "13px", paddingLeft: "18px", wordBreak: "break-all" }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                          <path d="M20 6L9 17L4 12" stroke="#2E7D32" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Sent to {emailSentTo} — check your inbox
+                      </span>
+                      <span
+                        style={{ display: "block", color: "#AD0B39", fontWeight: 700, fontSize: "13px", paddingLeft: "18px", marginTop: "4px" }}
+                      >
+                        Don't see it? Please check your junk/spam folder.
+                      </span>
+                    </>
                   )}
                   </div>
                 </div>
