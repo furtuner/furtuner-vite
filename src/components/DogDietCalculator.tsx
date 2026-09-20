@@ -2938,7 +2938,17 @@ function CheckoutFlow({
       // works, the user just won't auto-return to an unlocked plan.
     }
 
-    const url = new URL(linkOverride ?? STRIPE_PAYMENT_LINK);
+    // Same secret used to reveal the "Skip Payment (Testing)" button: when
+    // present, route to Stripe's TEST-mode Payment Link instead of the live
+    // one, so testing the real Stripe redirect/checkout flow never charges
+    // an actual card. Regular customers (no testmode param) always get the
+    // live link, regardless of the STRIPE_TEST_MODE constant above.
+    const isTestModeVisit =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("testmode") === "7d2132eae669";
+    const effectiveLink = linkOverride ?? (isTestModeVisit ? STRIPE_PAYMENT_LINK_TEST : STRIPE_PAYMENT_LINK);
+
+    const url = new URL(effectiveLink);
     if (customer.email) url.searchParams.set("prefilled_email", customer.email);
     // client_reference_id isn't required for the Sheet logging anymore
     // (name/email are read back from sessionStorage instead, see
