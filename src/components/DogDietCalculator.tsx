@@ -2854,7 +2854,8 @@ function StripeCheckoutPanel({
             <span className="font-semibold text-[#143C6F]">{PLAN_PRICE_LABEL}</span>
           </div>
         </div>
-        <p className="text-[#211915]" style={{ fontSize: "13px", marginTop: "16px", lineHeight: 1.5 }}>
+        <p style={{ display: "flex", alignItems: "flex-start", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#AD0B39", marginTop: "16px", lineHeight: 1.5 }}>
+          <span aria-hidden="true">🔒</span>
           You'll be taken to Stripe's secure checkout to enter your card details. FurTuner never sees or stores your card information.
         </p>
 
