@@ -175,16 +175,16 @@ function SupportForm() {
 // report email). These two helpers make https://furtuner.com/?page=support
 // open the Support screen directly, and keep the address bar in step with it.
 // ("#support" is accepted too, since that's what the nav link's href says.)
-// Only the `page` parameter is ever touched -- paw_payment, testmode etc. and
+// Only the `page` parameter is ever touched -- furtuner_payment, testmode etc. and
 // the rest of the address are left exactly as they were.
 // ─────────────────────────────────────────────────────────────────────────
 type View = 'home' | 'faq' | 'about' | 'calculator' | 'support'
 
 // Which screen the address asks for when the site first loads.
 function viewFromUrl(search: string, hash: string): View {
-  // Must stay first: Stripe sends customers back with ?paw_payment=success and
+  // Must stay first: Stripe sends customers back with ?furtuner_payment=success and
   // the calculator has to mount immediately to unlock their results.
-  if (search.includes('paw_payment=success')) return 'calculator'
+  if (search.includes('furtuner_payment=success')) return 'calculator'
   if (new URLSearchParams(search).get('page') === 'support' || hash === '#support') return 'support'
   return 'home'
 }
@@ -268,7 +268,7 @@ function App() {
   const [whyHoveredCard, setWhyHoveredCard] = useState<number | null>(null)
   // Defaults to 'home' — except when the page is loading because Stripe just
   // redirected the customer back here after a successful payment
-  // (?paw_payment=success). In that case we need DogDietCalculator to mount
+  // (?furtuner_payment=success). In that case we need DogDietCalculator to mount
   // immediately so its own effect can read that query param, restore the
   // saved wizard state, and unlock the Results page — none of that runs if
   // the app is sitting on the Home view instead.
