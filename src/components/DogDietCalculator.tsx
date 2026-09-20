@@ -1439,6 +1439,7 @@ function ResultsPage({
   petType,
   dietType,
   initialFeedPlanUnlocked,
+  restoredCustomer,
 }: {
   profile: ReturnType<typeof buildProfile> | ReturnType<typeof buildCatProfile>;
   result: CalcResult | null;
@@ -1450,6 +1451,10 @@ function ResultsPage({
   petType: PetType;
   dietType: DietType;
   initialFeedPlanUnlocked?: boolean;
+  // Non-null only right after a Stripe payment restore (see the parent's
+  // matching state) — triggers the one-time report-link generation +
+  // Sheet logging effect below. Null on every other visit to this page.
+  restoredCustomer?: { fullName: string; email: string } | null;
 }) {
   const [feedPlanUnlocked, setFeedPlanUnlocked] = useState(!!initialFeedPlanUnlocked);
   const [reportEmail, setReportEmail] = useState("");
@@ -1548,6 +1553,30 @@ function ResultsPage({
       return null;
     }
   }
+
+  // Runs once, right after this Results page mounts as a post-payment
+  // restore (restoredCustomer is only ever non-null in that case — see
+  // the parent's matching state). Generates a report link the same way
+  // the "email me a copy" button does, then logs the paid customer to
+  // the Sheet WITH that link included — for every paying customer, not
+  // just the ones who later choose to also email themselves a copy.
+  // Placed here (not in the parent) because buildReportHtmlForExport
+  // reads from .print-only, which only exists once THIS component has
+  // actually rendered — true by the time any effect here runs, since
+  // this component doesn't mount at all until that DOM exists.
+  const sheetLoggedRef = useRef(false);
+  useEffect(() => {
+    if (!restoredCustomer || sheetLoggedRef.current) return;
+    sheetLoggedRef.current = true;
+
+    (async () => {
+      const reportHtml = buildReportHtmlForExport();
+      const patientName = profile.dogName || (profile as any).catName || "Your Pet";
+      const link = reportHtml ? await uploadReportAndGetLink(reportHtml, patientName) : null;
+      logPaidCustomerToSheet(restoredCustomer, petType, dietType, link ?? undefined);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function sendReportEmail() {
     if (!isValidEmail || emailSending || !result) return;
@@ -3144,34 +3173,12 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Runs once, right after the effect above unlocks the Results page:
-  // generates a report link (uploading the report the same way the
-  // "email me a copy" button does) and logs the paid customer to the
-  // Sheet WITH that link included — for every paying customer, not just
-  // the ones who later choose to also email themselves a copy.
-  //
-  // This has to be a separate effect (not just more code in the one
-  // above) because .print-only — the DOM node the report HTML is read
-  // from — is rendered by the Results page itself, which only exists
-  // after React re-renders with page === 6. That re-render hasn't
-  // happened yet at the point the effect above calls setPage(6); it
-  // happens after this effect's OWN turn, so a one-tick setTimeout here
-  // is enough to wait for it.
-  const sheetLoggedRef = useRef(false);
-  useEffect(() => {
-    if (!restoredFeedPlanUnlocked || page !== 6 || sheetLoggedRef.current) return;
-    sheetLoggedRef.current = true;
-
-    const timer = setTimeout(async () => {
-      const reportHtml = buildReportHtmlForExport();
-      const patientName = profile.dogName || (profile as any).catName || "Your Pet";
-      const link = reportHtml ? await uploadReportAndGetLink(reportHtml, patientName) : null;
-      logPaidCustomerToSheet(restoredCustomer, petType, dietType, link ?? undefined);
-    }, 0);
-
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restoredFeedPlanUnlocked, page]);
+  // Report-link generation + Sheet logging for the post-payment restore
+  // now happens inside ResultsPage itself (see its own useEffect) — that's
+  // where buildReportHtmlForExport/uploadReportAndGetLink actually live,
+  // and ResultsPage only mounts once page is already 6, which naturally
+  // guarantees .print-only exists by the time that effect runs. The
+  // restoredCustomer state above is passed down to it as a prop.
 
 
   async function handleCalculate(ingredients: string[]) {
@@ -3550,6 +3557,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
                   petType={petType as PetType}
                   dietType={dietType as DietType}
                   initialFeedPlanUnlocked={restoredFeedPlanUnlocked}
+                  restoredCustomer={restoredFeedPlanUnlocked ? restoredCustomer : null}
                 />
               )}
             </div>
