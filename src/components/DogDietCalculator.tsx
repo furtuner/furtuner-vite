@@ -91,12 +91,12 @@ type PetType = "dog" | "cat";
 type DietType = "conventional" | "grainfree" | "raw";
 
 const API_BASES: Record<string, string> = {
-  dog_conventional: "https://furtuner-deploy-dog-conventional.vercel.app",
-  cat_conventional: "https://futuner-deploy-cat-conventional.vercel.app",
-  dog_grainfree:    "https://furtuner-deploy-dog-grain-free.vercel.app",
-  dog_raw:          "https://futuner-deploy-dog-meat-based.vercel.app",
-  cat_grainfree:    "https://futuner-deploy-cat-grain-free.vercel.app",
-  cat_raw:          "https://futuner-deploy-cat-meat-based.vercel.app",
+  dog_conventional: "https://dog-conventional.furtuner.com",
+  cat_conventional: "https://cat-conventional.furtuner.com",
+  dog_grainfree:    "https://dog-grain-free.furtuner.com",
+  dog_raw:          "https://dog-meat-based.furtuner.com",
+  cat_grainfree:    "https://cat-grain-free.furtuner.com",
+  cat_raw:          "https://cat-meat-based.furtuner.com",
 };
 
 
