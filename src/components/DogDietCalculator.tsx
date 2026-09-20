@@ -146,7 +146,7 @@ const CHECKOUT_STORAGE_KEY = "furtunerCheckout";
 // visible to anyone who opens dev tools — it is NOT actually secret. It
 // only filters out random bots hitting the Apps Script URL blind; it does
 // not stop someone who deliberately reads your source.
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVuGarwlvkhx0Rovimy-soQqyzH1UJFNvrk73-u-N444RE2W6w1oeNCPeQMRhnatCP_w/exec";
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzqIO-W8M-p4EX0WQACjQBsQabT42Wf04iXfqctwL0hgp3W7sf5niadms6gYv-EGa3BHQ/exec";
 const SHEETS_SHARED_SECRET = "furtuner-sheet-7f3k9d2x-secret";
 
 /**
