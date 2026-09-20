@@ -160,7 +160,8 @@ const SHEETS_SHARED_SECRET = "furtuner-sheet-7f3k9d2x-secret";
 function logPaidCustomerToSheet(
   customer: { fullName: string; email: string } | null,
   petType: PetType | null,
-  dietType: DietType | null
+  dietType: DietType | null,
+  reportLink?: string
 ) {
   if (!customer?.email) return;
   if (!SHEETS_WEBAPP_URL || SHEETS_WEBAPP_URL.startsWith("PASTE_")) return;
@@ -176,6 +177,11 @@ function logPaidCustomerToSheet(
         email: customer.email,
         pet_type: petType || "",
         diet_type: dietType || "",
+        // Link to the exact report this customer got — see report_link
+        // below, populated by uploadReportAndGetLink() once the Results
+        // page has rendered. Blank if that upload failed for any reason;
+        // never blocks logging the rest of the row.
+        report_link: reportLink || "",
         // Client-generated id, just so a page refresh/double-fire doesn't
         // create two rows for the same visit — see the .gs file's dedupe.
         request_id:
@@ -1480,22 +1486,15 @@ function ResultsPage({
       .join("");
   }
 
-  async function sendReportEmail() {
-    if (!isValidEmail || emailSending || !result) return;
-    setEmailSending(true);
-    setEmailError("");
-    setEmailSentTo("");
-
-    // Grab the exact same markup that window.print() renders (the
-    // .print-only block + its scoped <style>), so the PDF the backend builds
-    // is identical to what "Print / Save" produces — not a re-derived summary.
+  // Grabs the exact same markup that window.print() renders (the
+  // .print-only block + its scoped <style>), reworked for use outside a
+  // browser print/email context — see WATERMARK IN EMAIL below. Returns
+  // null if the Results page hasn't actually painted onto the DOM yet
+  // (e.g. called too early in the same tick as setPage(6)).
+  function buildReportHtmlForExport(): string | null {
     const printEl = document.querySelector(".print-only");
     const printStyles = document.getElementById("print-report-styles");
-    if (!printEl || !printStyles) {
-      setEmailError("Couldn't find the report to send — please try again.");
-      setEmailSending(false);
-      return;
-    }
+    if (!printEl || !printStyles) return null;
 
     // WATERMARK IN EMAIL
     // On screen the watermark is a position:fixed overlay with a ~14 KB
@@ -1513,7 +1512,7 @@ function ResultsPage({
       `background-repeat: repeat; background-size: 420px 260px; }` +
       `.print-watermark { display: none !important; }`;
 
-    const reportHtml =
+    return (
       `<!DOCTYPE html><html><head><meta charset="utf-8" />` +
       `<style>${printCssForEmail}</style>` +
       // The site's own CSS hides .print-only by default (it only shows
@@ -1526,7 +1525,42 @@ function ResultsPage({
       `<style>${emailWatermarkCss}</style></head>` +
       // Body only: the <style> blocks above are already pure ASCII, and
       // entities would NOT be decoded inside CSS if that ever changes.
-      `<body>${asciiSafeHtml(printEl.outerHTML)}</body></html>`;
+      `<body>${asciiSafeHtml(printEl.outerHTML)}</body></html>`
+    );
+  }
+
+  // Uploads a report and returns its clean view link, WITHOUT sending any
+  // email — used right after payment succeeds so a link can be recorded
+  // in the Sheet for every paying customer. Returns null on any failure;
+  // never throws, since a link-generation hiccup must never block the
+  // customer from seeing their own unlocked report.
+  async function uploadReportAndGetLink(reportHtml: string, patientName: string): Promise<string | null> {
+    try {
+      const res = await fetch(`${emailApiBase}/report/link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ report_html: reportHtml, patient_name: patientName }),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return typeof data.view_url === "string" ? data.view_url : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function sendReportEmail() {
+    if (!isValidEmail || emailSending || !result) return;
+    setEmailSending(true);
+    setEmailError("");
+    setEmailSentTo("");
+
+    const reportHtml = buildReportHtmlForExport();
+    if (!reportHtml) {
+      setEmailError("Couldn't find the report to send — please try again.");
+      setEmailSending(false);
+      return;
+    }
 
     const payload = {
       recipient_email: reportEmail,
@@ -3058,6 +3092,11 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   const [savedSelected, setSavedSelected] = useState<string[]>([]);
   const [calcErrors, setCalcErrors] = useState<string>("");
   const [restoredFeedPlanUnlocked, setRestoredFeedPlanUnlocked] = useState(false);
+  // Carries the customer info forward from the restoration effect below
+  // into the separate deferred effect that generates a report link and
+  // logs the Sheet row — see that effect for why this can't happen in
+  // one step.
+  const [restoredCustomer, setRestoredCustomer] = useState<{ fullName: string; email: string } | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const apiKey = `${petType}_${dietType}`;
@@ -3086,12 +3125,11 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
         if (saved.allIngredients) setAllIngredients(saved.allIngredients);
         setPage(6);
         setRestoredFeedPlanUnlocked(true);
-        // This IS "landing on the report" — log the paid customer's
-        // name/email to the Sheet right here, once, before we clear the
-        // sessionStorage key below (which also doubles as our guard
-        // against logging twice on a refresh, since the key is gone by
-        // the next mount).
-        logPaidCustomerToSheet(saved.customer ?? null, saved.petType ?? null, saved.dietType ?? null);
+        // Sheet logging itself is handled by the effect below, once the
+        // Results page has actually rendered — a report link can't be
+        // generated until the .print-only DOM node exists, which isn't
+        // true yet at this point in the same tick as setPage(6).
+        setRestoredCustomer(saved.customer ?? null);
         sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
       }
     } catch {
@@ -3105,6 +3143,35 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
     window.history.replaceState({}, "", window.location.pathname + (newSearch ? `?${newSearch}` : ""));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Runs once, right after the effect above unlocks the Results page:
+  // generates a report link (uploading the report the same way the
+  // "email me a copy" button does) and logs the paid customer to the
+  // Sheet WITH that link included — for every paying customer, not just
+  // the ones who later choose to also email themselves a copy.
+  //
+  // This has to be a separate effect (not just more code in the one
+  // above) because .print-only — the DOM node the report HTML is read
+  // from — is rendered by the Results page itself, which only exists
+  // after React re-renders with page === 6. That re-render hasn't
+  // happened yet at the point the effect above calls setPage(6); it
+  // happens after this effect's OWN turn, so a one-tick setTimeout here
+  // is enough to wait for it.
+  const sheetLoggedRef = useRef(false);
+  useEffect(() => {
+    if (!restoredFeedPlanUnlocked || page !== 6 || sheetLoggedRef.current) return;
+    sheetLoggedRef.current = true;
+
+    const timer = setTimeout(async () => {
+      const reportHtml = buildReportHtmlForExport();
+      const patientName = profile.dogName || (profile as any).catName || "Your Pet";
+      const link = reportHtml ? await uploadReportAndGetLink(reportHtml, patientName) : null;
+      logPaidCustomerToSheet(restoredCustomer, petType, dietType, link ?? undefined);
+    }, 0);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restoredFeedPlanUnlocked, page]);
 
 
   async function handleCalculate(ingredients: string[]) {
