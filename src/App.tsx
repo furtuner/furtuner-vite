@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
@@ -324,6 +325,7 @@ function App() {
 
   return (
     <>
+      <Analytics />
       {/* NAVBAR */}
       <header className="navbar">
         <div className="nav-logo">
