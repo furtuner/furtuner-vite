@@ -383,7 +383,7 @@ function App() {
             <img src="/images/hero-pet.svg" alt="" className="hero-badge-icon" aria-hidden="true" />
           </div>
           <h1 className="hero-headline">
-            [TEST] Homemade Pet Food. Balanced for Them. Built by You.
+            Homemade Pet Food. Balanced for Them. Built by You.
           </h1>
           <div className="hero-subtitle-group">
             <p className="hero-subtitle">
