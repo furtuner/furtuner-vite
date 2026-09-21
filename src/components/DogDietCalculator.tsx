@@ -1767,6 +1767,23 @@ function ResultsPage({
   const pctBatch = dailyDM && totalDM > 0 ? (dailyDM / totalDM) * 100 : null;
   const DAYS = [1, 3, 5, 7, 10, 15, 20, 25, 30];
 
+  // Total fresh grams of food for 1 day — identical math (incl. the Oyster canned
+  // and Liver exceptions) to the "1 Days" cell of the Total (grams) row in the
+  // fresh-weight batch table, so the two numbers always match.
+  const dailyGramsTotal = dailyDM && totalDM > 0
+    ? breakdown.reduce((sum, r) => {
+        if (Number(r.dm_g) <= 0) return sum;
+        const frac = Number(r.dm_g) / totalDM;
+        const wf = Number(r.water_percent) / 100;
+        let ingFresh = wf < 1 ? (frac * dailyDM) / (1 - wf) : frac * dailyDM;
+        const nameLower = r.ingredient.trim().toLowerCase();
+        if (nameLower === "oyster canned") ingFresh = ingFresh * (10.0 / 14.9);
+        if (nameLower.includes("liver")) ingFresh = ingFresh * 0.8;
+        return sum + ingFresh;
+      }, 0)
+    : null;
+  const dailyGramsStr = dailyGramsTotal != null ? dailyGramsTotal.toFixed(1) : "—";
+
   return (
     <div style={{ border: "2px solid #3C6293", borderRadius: "13px 13px 0 0", overflow: "hidden" }}>
       <CardHeader
@@ -1831,6 +1848,7 @@ function ResultsPage({
                     ["Body weight (kg)", String(profile.weightKg)],
                     ...(petType === "dog" ? [["Activity Level", String((profile as any).activity ?? "—")]] : []),
                     ["Daily energy need MER (kcal/day)", profile.den.toLocaleString()],
+                    ["Daily grams of food to feed", dailyGramsStr],
                   ].map(([label, value]) => (
                     <React.Fragment key={String(label)}>
                       <p style={{ fontSize: "13px", fontWeight: 700, color: "#211915", margin: 0 }}>{label}</p>
@@ -2212,23 +2230,6 @@ function ResultsPage({
                 </div>
               ))}
             </div>
-            <div style={{ height: "1px", background: "#A6CCE8", margin: "0 0 40px" }}></div>
-            <div className="flex justify-center" style={{ marginBottom: "8px" }}>
-              <button
-                type="button"
-                onClick={onBack}
-                className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
-                style={{
-                  fontFamily: "'Parastoo', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "18px",
-                  padding: "18px 28px",
-                  borderRadius: "12px",
-                }}
-              >
-                ← Back to Ingredients
-              </button>
-            </div>
         </div>
         </>
         )}
@@ -2296,6 +2297,7 @@ function ResultsPage({
                           ? [["Activity Level", String((profile as any).activity ?? "—")]]
                           : []),
                         ["Daily energy need MER (kcal/day)", profile.den.toLocaleString()],
+                        ["Daily grams of food to feed", dailyGramsStr],
                       ].map(([label, value]) => (
                         <React.Fragment key={String(label)}>
                           <p style={{ fontSize: "16px", fontWeight: 700, color: "#211915", margin: 0 }}>{label}</p>
@@ -2511,13 +2513,23 @@ function ResultsPage({
         )}
 
         {/* Actions */}
-        <div className="flex justify-center" style={{ marginTop: "36px" }}>
+        <div className="flex justify-center flex-wrap" style={{ marginTop: "36px", gap: "16px" }}>
+          {!feedPlanUnlocked && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="bg-[#FF9D36] text-white transition hover:brightness-95"
+              style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "22px", padding: "22px 56px", borderRadius: "14px" }}
+            >
+              Back to Ingredients
+            </button>
+          )}
           <button
             onClick={onGoHome ?? onBack}
             className="bg-[#BEE2FB] text-[#143C6F] transition hover:brightness-95"
             style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "22px", padding: "22px 56px", borderRadius: "14px" }}
           >
-            ← Back to Home
+            Back to Home
           </button>
         </div>
 
