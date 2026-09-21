@@ -3029,7 +3029,7 @@ function CheckoutFlow({
     return (
       <div className="bg-[#FFDCB7] border-[1.5px] border-[#FFB160] rounded-[12px] flex flex-col sm:flex-row items-center justify-between" style={{ padding: "28px 32px", gap: "20px", marginTop: "16px" }}>
         <div>
-          <p className="font-bold text-[#143C6F]" style={{ fontSize: "32px" }}>Get Your Daily Feeding Plan</p>
+          <p className="font-bold text-[#143C6F]" style={{ fontSize: "32px" }}>Get Your Recipe and Feeding Plan</p>
         </div>
         <button
           onClick={() => setStage("customer")}
