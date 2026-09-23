@@ -904,60 +904,60 @@ body {
    already sets, plus the additional phone-specific overrides below.
 ═══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 1100px) {
-  .ft-responsive .hero { flex-direction: column; padding: 32px 24px 40px; gap: 32px; }
-  .ft-responsive .hero-left { max-width: 100%; }
-  .ft-responsive .hero-headline { font-size: 28px; }
-  .ft-responsive .hero-subtitle { font-size: 16px; }
-  .ft-responsive .hero-right { width: 100%; }
-  .ft-responsive .hero-img { width: 100%; height: auto; }
-  .ft-responsive .hero-bg-section { height: auto; min-height: 320px; }
-  .ft-responsive .price-scroll-card { position: relative; left: auto; top: auto; width: 90%; max-width: 480px; height: auto; margin: 40px auto; }
-  .ft-responsive .price-scroll-outer { height: auto; }
-  .ft-responsive .price-scroll-inner { height: auto; }
-  .ft-responsive .price-scroll-text { font-size: 24px; }
-  .ft-responsive .why-section, .ft-responsive .expert-section, .ft-responsive .plans-section, .ft-responsive .form-section { padding-left: 24px; padding-right: 24px; }
-  .ft-responsive .why-row1, .ft-responsive .why-row2 { flex-direction: column; }
-  .ft-responsive .why-card-1, .ft-responsive .why-card-2 { width: 100% !important; flex: none; height: 340px; }
-  .ft-responsive .why-card-3, .ft-responsive .why-card-4, .ft-responsive .why-card-5 { width: 100% !important; flex: none; height: 340px; }
-  .ft-responsive .why-overlay-title { font-size: 20px; }
-  .ft-responsive .why-overlay-body { font-size: 13px; }
-  .ft-responsive .why-card-3 .why-overlay-title { top: 170px; }
-  .ft-responsive .why-card-3 .why-overlay-body { top: 240px; }
-  .ft-responsive .why-card-4 .why-overlay-title { top: 24px; }
-  .ft-responsive .why-card-4 .why-overlay-body { top: 90px;  }
-  .ft-responsive .why-card-5 .why-overlay-title { top: 18px;  right: 35%; }
-  .ft-responsive .why-card-5 .why-overlay-body { top: 80px;  right: 35%; }
-  .ft-responsive .section-title { font-size: 32px; }
-  .ft-responsive .plan-cards { flex-direction: column; align-items: center; }
-  .ft-responsive .plan-card { width: 100%; max-width: 351px; }
-  .ft-responsive .comparison-wrap { grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: none; }
-  .ft-responsive .cmp-col-head, .ft-responsive .cmp-col-cell { border-right: none; border-bottom: 1px solid #dce8f0; line-height: 2; padding: 8px 16px; }
-  .ft-responsive .form-body { grid-template-columns: 1fr; }
-  .ft-responsive .form-col:first-child { border-right: none; border-bottom: 1.5px solid var(--navy-mid); padding-bottom: 20px; }
-  .ft-responsive .expert-inner { flex-direction: column; text-align: center; }
-  .ft-responsive .expert-avatar { width: 140px; height: auto; }
-  .ft-responsive .step-label, .ft-responsive .next-step-text, .ft-responsive .next-step-arrow { font-size: 36px; }
+  .hero { flex-direction: column; padding: 32px 24px 40px; gap: 32px; }
+  .hero-left { max-width: 100%; }
+  .hero-headline { font-size: 28px; }
+  .hero-subtitle  { font-size: 16px; }
+  .hero-right { width: 100%; }
+  .hero-img   { width: 100%; height: auto; }
+  .hero-bg-section { height: auto; min-height: 320px; }
+  .price-scroll-card { position: relative; left: auto; top: auto; width: 90%; max-width: 480px; height: auto; margin: 40px auto; }
+  .price-scroll-outer { height: auto; }
+  .price-scroll-inner { height: auto; }
+  .price-scroll-text { font-size: 24px; }
+  .why-section, .expert-section, .plans-section, .form-section { padding-left: 24px; padding-right: 24px; }
+  .why-row1, .why-row2 { flex-direction: column; }
+  .why-card-1, .why-card-2 { width: 100% !important; flex: none; height: 340px; }
+  .why-card-3, .why-card-4, .why-card-5 { width: 100% !important; flex: none; height: 340px; }
+  .why-overlay-title { font-size: 20px; }
+  .why-overlay-body  { font-size: 13px; }
+  .why-card-3 .why-overlay-title { top: 170px; }
+  .why-card-3 .why-overlay-body  { top: 240px; }
+  .why-card-4 .why-overlay-title { top: 24px; }
+  .why-card-4 .why-overlay-body  { top: 90px;  }
+  .why-card-5 .why-overlay-title { top: 18px;  right: 35%; }
+  .why-card-5 .why-overlay-body  { top: 80px;  right: 35%; }
+  .section-title { font-size: 32px; }
+  .plan-cards { flex-direction: column; align-items: center; }
+  .plan-card { width: 100%; max-width: 351px; }
+  .comparison-wrap { grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: none; }
+  .cmp-col-head, .cmp-col-cell { border-right: none; border-bottom: 1px solid #dce8f0; line-height: 2; padding: 8px 16px; }
+  .form-body  { grid-template-columns: 1fr; }
+  .form-col:first-child { border-right: none; border-bottom: 1.5px solid var(--navy-mid); padding-bottom: 20px; }
+  .expert-inner { flex-direction: column; text-align: center; }
+  .expert-avatar { width: 140px; height: auto; }
+  .step-label, .next-step-text, .next-step-arrow { font-size: 36px; }
 
   /* Sections not covered by the pre-existing (but disabled) block above */
-  .ft-responsive .calculator-page { padding: 24px 24px 0; }
-  .ft-responsive .faq-page { padding: 24px 24px 0; }
-  .ft-responsive .how-it-works-video-wrap { max-width: 100%; margin: 0 24px; }
-  .ft-responsive .how-it-works-caption-overlay { font-size: 0.8em; max-width: 94%; }
-  .ft-responsive .build-cta-wrap { padding: 0 24px; }
-  .ft-responsive .plans-section { padding: 48px 24px 40px; }
-  .ft-responsive .site-footer { padding: 32px 24px; }
-  .ft-responsive .footer-inner { flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  .calculator-page { padding: 24px 24px 0; }
+  .faq-page { padding: 24px 24px 0; }
+  .how-it-works-video-wrap { max-width: 100%; margin: 0 24px; }
+  .how-it-works-caption-overlay { font-size: 0.8em; max-width: 94%; }
+  .build-cta-wrap { padding: 0 24px; }
+  .plans-section { padding: 48px 24px 40px; }
+  .site-footer { padding: 32px 24px; }
+  .footer-inner { flex-direction: column; align-items: center; gap: 16px; text-align: center; }
 }
 
 @media (max-width: 600px) {
-  .ft-responsive .navbar { padding: 16px 20px; }
-  .ft-responsive .nav-logo-img { height: 56px; }
-  .ft-responsive #calculator { scroll-margin-top: 133px; }
+  .navbar { padding: 16px 20px; }
+  .nav-logo-img { height: 56px; }
+  #calculator { scroll-margin-top: 133px; }
 
   /* Hamburger menu: the three text links collapse into a dropdown panel,
      toggled by .nav-hamburger (button lives in App.tsx's navbar JSX). */
-  .ft-responsive .nav-hamburger { display: flex; }
-  .ft-responsive .nav-links {
+  .nav-hamburger { display: flex; }
+  .nav-links {
     display: none; /* shown via .nav-links--open below when toggled open */
     position: absolute;
     top: 100%;
@@ -972,20 +972,20 @@ body {
     border-bottom: 1px solid #eef0f4;
     box-shadow: 0 12px 24px rgba(20, 60, 111, 0.12);
   }
-  .ft-responsive .nav-links--open {
+  .nav-links--open {
     display: flex;
   }
-  .ft-responsive .nav-link { font-size: 20px; }
+  .nav-link { font-size: 20px; }
 
-  .ft-responsive .hero-headline { font-size: 24px; }
-  .ft-responsive .hero-badge { font-size: 12px; }
-  .ft-responsive .section-title { font-size: 26px; }
-  .ft-responsive .why-card-1, .ft-responsive .why-card-2, .ft-responsive .why-card-3, .ft-responsive .why-card-4, .ft-responsive .why-card-5 { height: 280px; }
-  .ft-responsive .expert-text { font-size: 15px; }
-  .ft-responsive .plan-label { font-size: 22px; }
-  .ft-responsive .cmp-col-head, .ft-responsive .cmp-col-cell { font-size: 14px; padding: 8px 12px; }
-  .ft-responsive .btn-build-diet { width: 100%; max-width: 320px; }
-  .ft-responsive .how-it-works-video-wrap { margin: 0 16px; }
-  .ft-responsive .step-label, .ft-responsive .next-step-text, .ft-responsive .next-step-arrow { font-size: 26px; }
-  .ft-responsive .footer-logo-img { height: 70px; }
+  .hero-headline { font-size: 24px; }
+  .hero-badge { font-size: 12px; }
+  .section-title { font-size: 26px; }
+  .why-card-1, .why-card-2, .why-card-3, .why-card-4, .why-card-5 { height: 280px; }
+  .expert-text { font-size: 15px; }
+  .plan-label { font-size: 22px; }
+  .cmp-col-head, .cmp-col-cell { font-size: 14px; padding: 8px 12px; }
+  .btn-build-diet { width: 100%; max-width: 320px; }
+  .how-it-works-video-wrap { margin: 0 16px; }
+  .step-label, .next-step-text, .next-step-arrow { font-size: 26px; }
+  .footer-logo-img { height: 70px; }
 }

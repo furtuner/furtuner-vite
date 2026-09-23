@@ -3,32 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
-    <!-- Responsive design is INTENTIONALLY gated behind the same secret
+    <!-- Responsive viewport is INTENTIONALLY gated behind the same secret
          used to reveal the "Skip Payment (Testing)" button — real customers
          must keep seeing the exact current scaled-desktop layout; only
-         visits with ?testmode=<secret> get the real responsive experience.
-
-         Gating is done TWO ways together, because either one alone has a
-         gap:
-           1. The viewport tag itself (width=1280 vs device-width) — this
-              is what makes the responsive CSS trigger at the *intended*
-              breakpoints for a real phone.
-           2. An .ft-responsive class on <html>, which every new/changed
-              rule in page.css's RESPONSIVE section is scoped under. This
-              is the one that actually matters for security-of-behavior:
-              mobile browsers' "Request Desktop Site" feature overrides a
-              page's own viewport tag with an internal ~980px default,
-              regardless of what this page asks for — which used to make
-              the responsive CSS fire accidentally for ordinary customers
-              who toggled that browser feature, since 980px falls under
-              our 1100px breakpoint. The class isn't a viewport report at
-              all, so no browser feature can flip it on by accident — only
-              this script, only when the secret matches.
-
-         Both are written/set before the browser starts layout — no
-         flash/reflow. Keep this testmode value in sync with
-         DogDietCalculator.tsx's own copy of the same secret if it's ever
-         rotated. -->
+         visits with ?testmode=<secret> get the real responsive viewport
+         (and, as a result, the responsive CSS in page.css actually
+         activates — those media queries only ever match based on what
+         this tag reports, so leaving it at width=1280 for everyone else
+         means the responsive rules simply never trigger for them, with
+         zero changes needed anywhere else). Written via document.write so
+         it's in place before the browser starts layout — no flash/reflow.
+         Keep this testmode value in sync with DogDietCalculator.tsx's own
+         copy of the same secret if it's ever rotated. -->
     <script>
       (function () {
         var isTestMode = new URLSearchParams(window.location.search).get("testmode") === "7d2132eae669";
@@ -37,7 +23,6 @@
           (isTestMode ? "width=device-width, initial-scale=1" : "width=1280") +
           '">'
         );
-        if (isTestMode) document.documentElement.classList.add("ft-responsive");
       })();
     </script>
     <title>FurTuner — Science-Based Pet Nutrition</title>
