@@ -3,40 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
-// ─── Mobile-optimized styling, gated behind testmode (same secret used for
-// the Skip Payment button and the homepage's responsive CSS) ──────────────
-// This component is built almost entirely with inline styles rather than
-// CSS classes, so a stylesheet/media-query approach (like the homepage
-// redesign) can't reach it — inline styles always win over any external
-// CSS. Instead, specific style objects below are computed conditionally in
-// JS, swapping to mobile-friendly values ONLY when both:
-//   1. the testmode secret is present in the URL, and
-//   2. the actual screen is phone-width right now (tracked live via a
-//      resize listener, so rotating a test device / resizing DevTools
-//      updates it without needing a reload)
-// Real customers — including ones on an actual phone, without the secret —
-// always get the exact current desktop-fixed layout, completely unchanged.
-const MOBILE_TEST_SECRET = "7d2132eae669";
-const MOBILE_TEST_BREAKPOINT = 640;
-
-function useMobileTestView(): boolean {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const hasSecret =
-      typeof window !== "undefined" &&
-      new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
-    if (!hasSecret) return; // never even attaches a listener for real customers
-
-    const check = () => setIsMobile(window.innerWidth <= MOBILE_TEST_BREAKPOINT);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  return isMobile;
-}
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface IngredientItem {
   ingredient_name: string;
@@ -483,7 +449,6 @@ function ProfilePage({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [ageYears, setAgeYears] = useState("");
   const [ageMonths, setAgeMonths] = useState("");
-  const isMobileTest = useMobileTestView();
 
   function updateAgeFromParts(years: string, months: string) {
     setAgeYears(years);
@@ -566,17 +531,8 @@ function ProfilePage({
         title="Dog Profile"
         eyebrow="Step 1 of 3"
       />
-      <div
-        className="bg-white grid grid-cols-1 md:grid-cols-2"
-        style={{ padding: isMobileTest ? "20px" : "32px", columnGap: "0px", gridTemplateColumns: isMobileTest ? "1fr" : undefined }}
-      >
-        <div
-          style={
-            isMobileTest
-              ? { paddingRight: 0, borderRight: "none", paddingBottom: "24px", borderBottom: "1.5px solid #3C6293", marginBottom: "24px" }
-              : { paddingRight: "32px", borderRight: "1.5px solid #3C6293" }
-          }
-        >
+      <div className="bg-white grid grid-cols-1 md:grid-cols-2" style={{ padding: "32px", columnGap: "0px" }}>
+        <div className="md:pr-8 md:border-r-[1.5px] md:border-[#3C6293]" style={{ paddingRight: "32px", borderRight: "1.5px solid #3C6293" }}>
           <SectionLabel>Basic Information</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <Field label="Dog Name *" error={errors.dogName}>
@@ -779,7 +735,6 @@ function CatProfilePage({
   // whether the Body Condition pill row shows anything highlighted yet, forcing
   // the user to make an explicit choice instead of "Normal" looking pre-selected.
   const [bodyConditionTouched, setBodyConditionTouched] = useState(false);
-  const isMobileTest = useMobileTestView();
 
   function updateAgeFromParts(years: string, months: string) {
     setAgeYears(years);
@@ -893,17 +848,8 @@ function CatProfilePage({
         title="Cat Profile"
         eyebrow="Step 1 of 3"
       />
-      <div
-        className="bg-white grid grid-cols-1 md:grid-cols-2"
-        style={{ padding: isMobileTest ? "20px" : "32px", columnGap: "0px", gridTemplateColumns: isMobileTest ? "1fr" : undefined }}
-      >
-        <div
-          style={
-            isMobileTest
-              ? { paddingRight: 0, borderRight: "none", paddingBottom: "24px", borderBottom: "1.5px solid #3C6293", marginBottom: "24px" }
-              : { paddingRight: "32px", borderRight: "1.5px solid #3C6293" }
-          }
-        >
+      <div className="bg-white grid grid-cols-1 md:grid-cols-2" style={{ padding: "32px", columnGap: "0px" }}>
+        <div className="md:pr-8 md:border-r-[1.5px] md:border-[#3C6293]" style={{ paddingRight: "32px", borderRight: "1.5px solid #3C6293" }}>
           <SectionLabel>Basic Information</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <Field label="Cat Name *" error={errors.catName}>
@@ -1053,7 +999,6 @@ function IngredientsPage({
   const [selected, setSelected] = useState<Set<string>>(new Set(initialSelected));
   const [loading, setLoading] = useState(!ingredientsResolvedCache[apiBase]);
   const [error, setError] = useState("");
-  const isMobileTest = useMobileTestView();
   const [valError, setValError] = useState("");
 
   useEffect(() => {
@@ -1266,73 +1211,46 @@ function IngredientsPage({
                         <div
                           key={gn}
                           className="flex"
-                          style={{
-                            border: `2px solid ${color}`,
-                            borderRadius: "16px",
-                            background: "#fff",
-                            position: "relative",
-                            flexDirection: isMobileTest ? "column" : "row",
-                          }}
+                          style={{ border: `2px solid ${color}`, borderRadius: "16px", background: "#fff", position: "relative" }}
                         >
                           <div
                             className="shrink-0 flex flex-col justify-between items-center text-white"
-                            style={
-                              isMobileTest
-                                ? {
-                                    width: "100%",
-                                    padding: "14px 16px",
-                                    background: color,
-                                    position: "relative",
-                                    zIndex: 2,
-                                    borderRadius: "14px 14px 0 0",
-                                    gap: "6px",
-                                    textAlign: "center",
-                                  }
-                                : {
-                                    width: "180px",
-                                    padding: "14px 16px",
-                                    background: color,
-                                    position: "relative",
-                                    zIndex: 2,
-                                    borderRadius: "14px 0 0 14px",
-                                    gap: "10px",
-                                    textAlign: "center",
-                                  }
-                            }
+                            style={{
+                              width: "180px",
+                              padding: "14px 16px",
+                              background: color,
+                              position: "relative",
+                              zIndex: 2,
+                              borderRadius: "14px 0 0 14px",
+                              gap: "10px",
+                              textAlign: "center",
+                            }}
                           >
-                            {/* Reliable CSS-triangle arrow (border trick), not clip-path —
-                                only makes sense pointing right in the desktop side-by-side
-                                layout, so it's hidden when stacked on mobile. */}
-                            {!isMobileTest && (
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  right: "-16px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  width: 0,
-                                  height: 0,
-                                  borderTop: "16px solid transparent",
-                                  borderBottom: "16px solid transparent",
-                                  borderLeft: `16px solid ${color}`,
-                                  zIndex: 3,
-                                }}
-                              />
-                            )}
+                            {/* Reliable CSS-triangle arrow (border trick), not clip-path */}
                             <div
-                              style={
-                                isMobileTest
-                                  ? { textAlign: "center", padding: "0 16px" }
-                                  : {
-                                      position: "absolute",
-                                      top: "50%",
-                                      left: 0,
-                                      right: 0,
-                                      transform: "translateY(-50%)",
-                                      textAlign: "center",
-                                      padding: "0 16px",
-                                    }
-                              }
+                              style={{
+                                position: "absolute",
+                                right: "-16px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                width: 0,
+                                height: 0,
+                                borderTop: "16px solid transparent",
+                                borderBottom: "16px solid transparent",
+                                borderLeft: `16px solid ${color}`,
+                                zIndex: 3,
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: 0,
+                                right: 0,
+                                transform: "translateY(-50%)",
+                                textAlign: "center",
+                                padding: "0 16px",
+                              }}
                             >
                               <p className="text-[21px] font-bold leading-tight">{cat.mandatory ? "Mandatory" : "Optional"}</p>
                               {displaySubLabel && (
@@ -1347,7 +1265,7 @@ function IngredientsPage({
                             {superGroup !== "Mineral" && (
                               <p
                                 className="text-[16px] font-bold"
-                                style={{ color: cat.mandatory ? "#FF9D36" : "#143C6F", textAlign: "center", marginTop: isMobileTest ? 0 : "auto" }}
+                                style={{ color: cat.mandatory ? "#FF9D36" : "#143C6F", textAlign: "center", marginTop: "auto" }}
                               >
                                 {cat.mandatory ? `Min: 1, Max: ${maxLabel}` : `Max: ${maxLabel}`}
                               </p>
@@ -1355,31 +1273,17 @@ function IngredientsPage({
                           </div>
                           <div
                             className="flex-1"
-                            style={
-                              isMobileTest
-                                ? {
-                                    position: "relative",
-                                    zIndex: 1,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: "14px",
-                                    padding: "16px",
-                                    borderRadius: "0 0 14px 14px",
-                                    background: "#fff",
-                                  }
-                                : {
-                                    position: "relative",
-                                    zIndex: 1,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: "14px",
-                                    padding: "16px 16px 16px 28px",
-                                    borderRadius: "0 14px 14px 0",
-                                    background: "#fff",
-                                  }
-                            }
+                            style={{
+                              position: "relative",
+                              zIndex: 1,
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              gap: "14px",
+                              padding: "16px 16px 16px 28px",
+                              borderRadius: "0 14px 14px 0",
+                              background: "#fff",
+                            }}
                           >
                             <div
                               style={{
@@ -1418,7 +1322,7 @@ function IngredientsPage({
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
                                     className="text-[15px] font-extrabold transition-all"
                                     style={{
-                                      flex: isMobileTest ? "0 0 calc(50% - 6px)" : "0 0 calc(33.333% - 8px)",
+                                      flex: "0 0 calc(33.333% - 8px)",
                                       padding: "14px 16px",
                                       background: isSel ? color : chipBg,
                                       color: isSel ? "#fff" : "#211915",
