@@ -292,10 +292,6 @@ function App() {
   // selections from a previous visit) every single time, regardless of any
   // edge case in how the previous instance unmounted.
   const [calculatorInstance, setCalculatorInstance] = useState(0)
-  // Mobile nav: whether the hamburger-toggled dropdown panel is open.
-  // Reset to closed on every view change so it doesn't stay open behind
-  // whatever screen the user just navigated to.
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const jumpToTop = () => {
     window.scrollTo({ top: 0, behavior: 'auto' })
@@ -303,32 +299,27 @@ function App() {
 
   const goHome = () => {
     setView('home')
-    setMobileMenuOpen(false)
     jumpToTop()
   }
 
   const goFAQ = () => {
     setView('faq')
-    setMobileMenuOpen(false)
     jumpToTop()
   }
 
   const goAbout = () => {
     setView('about')
-    setMobileMenuOpen(false)
     jumpToTop()
   }
 
   const goSupport = () => {
     setView('support')
-    setMobileMenuOpen(false)
     jumpToTop()
   }
 
   const goCalculator = () => {
     setCalculatorInstance(n => n + 1)
     setView('calculator')
-    setMobileMenuOpen(false)
     jumpToTop()
   }
 
@@ -348,18 +339,7 @@ function App() {
             <img src="/images/logo.svg" alt="FurTuner" className="nav-logo-img" />
           </a>
         </div>
-        <button
-          type="button"
-          className={`nav-hamburger ${mobileMenuOpen ? 'nav-hamburger--open' : ''}`}
-          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileMenuOpen}
-          onClick={() => setMobileMenuOpen(open => !open)}
-        >
-          <span className="nav-hamburger-bar" />
-          <span className="nav-hamburger-bar" />
-          <span className="nav-hamburger-bar" />
-        </button>
-        <nav className={`nav-links ${mobileMenuOpen ? 'nav-links--open' : ''}`}>
+        <nav className="nav-links" style={{ marginLeft: '56px', display: 'flex', alignItems: 'center', gap: '32px' }}>
           <a
             href="#support"
             className={`nav-link nav-link--support ${view === 'support' ? 'nav-link--active' : ''}`}

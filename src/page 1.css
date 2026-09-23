@@ -14,9 +14,10 @@
    Turning it off lets the navbar's size track scroll position directly. */
 html {
   overflow-anchor: none;
+  min-width: 1280px;
 }
 body {
-  overflow-x: hidden; /* safety net: prevents any stray element from causing horizontal scroll on mobile */
+  min-width: 1280px;
 }
 
 /* ══════════════════════════════════════════════
@@ -57,8 +58,7 @@ body {
 
 /* SUPPORT / FAQ nav tabs */
 .nav-links {
-  display: flex; align-items: center; align-self: flex-end; gap: 32px;
-  margin-left: 56px;
+  display: flex; align-items: center; align-self: flex-end; gap: 40px;
   padding-bottom: 8px;
 }
 .nav-link {
@@ -72,40 +72,6 @@ body {
 .nav-link--support { color: #F0932B; }
 .nav-link--faq { color: #143C6F; }
 .nav-link--active { text-decoration: underline; text-underline-offset: 4px; }
-
-/* Hamburger toggle — hidden on desktop, shown only under the mobile
-   breakpoint (see RESPONSIVE section at the bottom of this file). */
-.nav-hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.nav-hamburger-bar {
-  display: block;
-  width: 26px;
-  height: 3px;
-  border-radius: 2px;
-  background: #143C6F;
-  transition: transform 0.25s ease, opacity 0.2s ease;
-}
-.nav-hamburger--open .nav-hamburger-bar:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
-}
-.nav-hamburger--open .nav-hamburger-bar:nth-child(2) {
-  opacity: 0;
-}
-.nav-hamburger--open .nav-hamburger-bar:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
-}
 
 /* FAQ standalone page view */
 .faq-page {
@@ -898,12 +864,21 @@ body {
 }
 .footer-copy  { font-size: 14px; color: #DE7100; }
 
-/* ══════════════════════════════════════════════  RESPONSIVE  ══════════
-   Tablet/small-desktop breakpoint (≤1100px), then phone breakpoint
-   (≤600px) nested inside it — phones get everything the tablet breakpoint
-   already sets, plus the additional phone-specific overrides below.
-═══════════════════════════════════════════════════════════════════════ */
-@media (max-width: 1100px) {
+/* ══════════════════════════════════════════════  RESPONSIVE  */
+/* Disabled site-wide: the "and (min-width: 99999px)" clause can never be
+   true, so none of these rules can ever match — the desktop layout is
+   locked in for every device, orientation, and browser "Desktop site"
+   toggle, since it no longer depends on any reported viewport width at
+   all. Restore the old behavior by deleting the "and (min-width: 99999px)"
+   clause from both queries below. */
+@media (max-width: 600px) and (min-width: 99999px) {
+  .navbar { padding: 16px 20px; }
+  .nav-logo-img { height: 64px; }
+  .nav-links { gap: 16px; }
+  .nav-link { font-size: 16px; }
+  #calculator { scroll-margin-top: 133px; }
+}
+@media (max-width: 1100px) and (min-width: 99999px) {
   .hero { flex-direction: column; padding: 32px 24px 40px; gap: 32px; }
   .hero-left { max-width: 100%; }
   .hero-headline { font-size: 28px; }
@@ -935,57 +910,5 @@ body {
   .form-body  { grid-template-columns: 1fr; }
   .form-col:first-child { border-right: none; border-bottom: 1.5px solid var(--navy-mid); padding-bottom: 20px; }
   .expert-inner { flex-direction: column; text-align: center; }
-  .expert-avatar { width: 140px; height: auto; }
   .step-label, .next-step-text, .next-step-arrow { font-size: 36px; }
-
-  /* Sections not covered by the pre-existing (but disabled) block above */
-  .calculator-page { padding: 24px 24px 0; }
-  .faq-page { padding: 24px 24px 0; }
-  .how-it-works-video-wrap { max-width: 100%; margin: 0 24px; }
-  .how-it-works-caption-overlay { font-size: 0.8em; max-width: 94%; }
-  .build-cta-wrap { padding: 0 24px; }
-  .plans-section { padding: 48px 24px 40px; }
-  .site-footer { padding: 32px 24px; }
-  .footer-inner { flex-direction: column; align-items: center; gap: 16px; text-align: center; }
-}
-
-@media (max-width: 600px) {
-  .navbar { padding: 16px 20px; }
-  .nav-logo-img { height: 56px; }
-  #calculator { scroll-margin-top: 133px; }
-
-  /* Hamburger menu: the three text links collapse into a dropdown panel,
-     toggled by .nav-hamburger (button lives in App.tsx's navbar JSX). */
-  .nav-hamburger { display: flex; }
-  .nav-links {
-    display: none; /* shown via .nav-links--open below when toggled open */
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-    margin-left: 0;
-    padding: 20px;
-    background: #E8F5FF;
-    border-bottom: 1px solid #eef0f4;
-    box-shadow: 0 12px 24px rgba(20, 60, 111, 0.12);
-  }
-  .nav-links--open {
-    display: flex;
-  }
-  .nav-link { font-size: 20px; }
-
-  .hero-headline { font-size: 24px; }
-  .hero-badge { font-size: 12px; }
-  .section-title { font-size: 26px; }
-  .why-card-1, .why-card-2, .why-card-3, .why-card-4, .why-card-5 { height: 280px; }
-  .expert-text { font-size: 15px; }
-  .plan-label { font-size: 22px; }
-  .cmp-col-head, .cmp-col-cell { font-size: 14px; padding: 8px 12px; }
-  .btn-build-diet { width: 100%; max-width: 320px; }
-  .how-it-works-video-wrap { margin: 0 16px; }
-  .step-label, .next-step-text, .next-step-arrow { font-size: 26px; }
-  .footer-logo-img { height: 70px; }
 }
