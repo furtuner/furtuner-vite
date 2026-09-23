@@ -3,28 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
-    <!-- Responsive viewport is INTENTIONALLY gated behind the same secret
-         used to reveal the "Skip Payment (Testing)" button — real customers
-         must keep seeing the exact current scaled-desktop layout; only
-         visits with ?testmode=<secret> get the real responsive viewport
-         (and, as a result, the responsive CSS in page.css actually
-         activates — those media queries only ever match based on what
-         this tag reports, so leaving it at width=1280 for everyone else
-         means the responsive rules simply never trigger for them, with
-         zero changes needed anywhere else). Written via document.write so
-         it's in place before the browser starts layout — no flash/reflow.
-         Keep this testmode value in sync with DogDietCalculator.tsx's own
-         copy of the same secret if it's ever rotated. -->
-    <script>
-      (function () {
-        var isTestMode = new URLSearchParams(window.location.search).get("testmode") === "7d2132eae669";
-        document.write(
-          '<meta name="viewport" content="' +
-          (isTestMode ? "width=device-width, initial-scale=1" : "width=1280") +
-          '">'
-        );
-      })();
-    </script>
+    <!-- Responsive viewport: lets CSS media queries respond to the device's
+         actual screen width, instead of the browser reporting a fixed 1280px
+         and just scaling the whole desktop layout down to fit. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>FurTuner — Science-Based Pet Nutrition</title>
     <meta
       name="description"
