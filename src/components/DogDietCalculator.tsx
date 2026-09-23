@@ -3228,6 +3228,7 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   const [calculating, setCalculating] = useState(false);
   const [savedSelected, setSavedSelected] = useState<string[]>([]);
   const [calcErrors, setCalcErrors] = useState<string>("");
+  const isMobileTest = useMobileTestView();
   const [restoredFeedPlanUnlocked, setRestoredFeedPlanUnlocked] = useState(false);
   // Carries the customer info forward from the restoration effect below
   // into the separate deferred effect that generates a report link and
@@ -3415,14 +3416,35 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
   if (!visible) return null;
 
   return (
-    <section id="calculator" className="bg-[#F4F4F4] py-[120px]" ref={sectionRef} style={{ animation: "dietBoxIn 0.45s ease both", maxWidth: "1280px", margin: "0 auto", paddingTop: "120px", paddingBottom: "120px" }}>
+    <section
+      id="calculator"
+      className="bg-[#F4F4F4] py-[120px]"
+      ref={sectionRef}
+      style={{
+        animation: "dietBoxIn 0.45s ease both",
+        maxWidth: "1280px",
+        margin: "0 auto",
+        paddingTop: isMobileTest ? "40px" : "120px",
+        paddingBottom: isMobileTest ? "40px" : "120px",
+      }}
+    >
       <style>{`
         @keyframes dietBoxIn {
           from { opacity: 0; transform: translateY(10px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <div className="mx-auto max-w-[1280px] px-[90px]" style={{ maxWidth: "1280px", margin: "0 auto", paddingLeft: "90px", paddingRight: "90px", width: "100%" }}>
+      <div
+        className="mx-auto max-w-[1280px] px-[90px]"
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          paddingLeft: isMobileTest ? "16px" : "90px",
+          paddingRight: isMobileTest ? "16px" : "90px",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
         {/* Step indicator for the 5 numbered steps; the Results page has none */}
         {page <= 5 && <StepIndicator step={page as 1 | 2 | 3 | 4 | 5} />}
 
