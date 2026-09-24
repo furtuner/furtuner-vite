@@ -28,7 +28,18 @@ function useMobileTestView(): boolean {
       new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
     if (!hasSecret) return; // never even attaches a listener for real customers
 
-    const check = () => setIsMobile(window.innerWidth <= MOBILE_TEST_BREAKPOINT);
+    const check = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // Portrait phones: narrow width, same as before. Landscape phones
+      // are wider (up to ~930px on the largest current devices) but much
+      // shorter, so a width-only check missed them entirely — rotating a
+      // phone sideways used to silently fall back to the desktop-scaled
+      // layout. The height cap catches landscape phones without also
+      // catching a plain desktop browser window resized to a similar
+      // width (those are almost never under ~500px tall).
+      setIsMobile(w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930));
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
@@ -162,6 +173,19 @@ const STRIPE_RETURN_PARAM = "furtuner_payment";
 // sessionStorage key used to restore the wizard (pet/diet/profile/results)
 // after the full-page redirect to Stripe and back.
 const CHECKOUT_STORAGE_KEY = "furtunerCheckout";
+// sessionStorage key for general in-progress wizard state — separate from
+// CHECKOUT_STORAGE_KEY above, which only exists briefly around a Stripe
+// round-trip. This one is kept continuously updated so that ANY full page
+// reload (not just the Stripe return) can resume where the user left off.
+// This matters because some things outside our control force a full
+// reload of a SPA — e.g. a mobile browser's "Request Desktop Site" toggle
+// always reloads the current page — which wipes all in-memory React state
+// and previously dropped the user back to the very first screen even if
+// they were mid-way through, say, viewing their Overview & AAFCO results.
+// Does NOT restore a paid/unlocked state — only pre-payment wizard
+// progress (pet/diet/profile/selections/result) — to avoid touching the
+// payment-unlock logic at all.
+const WIZARD_STATE_KEY = "furtunerWizardState";
 
 // ─── Paid-customer logging (Google Sheet, no backend involved) ───────────
 // The customer's Name + Email get logged the moment they land back on this
@@ -1191,7 +1215,7 @@ function IngredientsPage({
         title="Select Ingredients"
         desc="Choose ingredients for the diet. Mandatory categories must have at least one selection."
       />
-      <div className="bg-white" style={{ padding: "32px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "16px" : "32px" }}>
         {error && (
           <div className="bg-[#FDEBEC] border-[1.5px] border-[#B02424] rounded-[12px] text-[#AD0B39] font-bold text-[14px]" style={{ padding: "18px 20px", marginTop: "8px", marginBottom: "24px" }}>
             ❌ {error}
@@ -1387,7 +1411,7 @@ function IngredientsPage({
                                 flexWrap: "wrap",
                                 alignItems: "flex-start",
                                 justifyContent: "center",
-                                gap: "12px",
+                                gap: isMobileTest ? "8px" : "12px",
                                 width: "100%",
                               }}
                             >
@@ -1401,8 +1425,12 @@ function IngredientsPage({
                                 // On mobile the pills are narrower (2-per-row instead of
                                 // 3-per-row), so text needs to start wrapping at a shorter
                                 // length or it gets clipped (seen on names like "chicken
-                                // breast, no skin" cut off mid-word on phones).
-                                const allowWrap = displayName.length > (isMobileTest ? 14 : 24);
+                                // breast, no skin" cut off mid-word on phones). Threshold
+                                // is tuned for a true 320px-wide screen (the narrowest
+                                // common phone width) — it leaves a little visible slack
+                                // on larger phones, which is fine, but it's the minimum
+                                // needed so nothing clips at the narrow end.
+                                const allowWrap = displayName.length > (isMobileTest ? 11 : 24);
                                 // Detect "brewer's yeast / dried yeast" by its WORDS, not by
                                 // searching for a slash character — two earlier attempts to
                                 // match the separator character both failed, which points to
@@ -1422,8 +1450,8 @@ function IngredientsPage({
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
                                     className="text-[15px] font-extrabold transition-all"
                                     style={{
-                                      flex: isMobileTest ? "0 0 calc(50% - 6px)" : "0 0 calc(33.333% - 8px)",
-                                      padding: isMobileTest ? "14px 10px" : "14px 16px",
+                                      flex: isMobileTest ? "0 0 calc(50% - 4px)" : "0 0 calc(33.333% - 8px)",
+                                      padding: isMobileTest ? "12px 8px" : "14px 16px",
                                       background: isSel ? color : chipBg,
                                       color: isSel ? "#fff" : "#211915",
                                       textAlign: "center",
@@ -3286,12 +3314,19 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
     sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  // True once the Stripe-return restore below has actually run (whether or
+  // not it found anything to restore) — lets the general restore effect
+  // that follows know not to also run and potentially overwrite it with
+  // older saved state.
+  const stripeReturnHandledRef = useRef(false);
+
   // On mount: if this is a return trip from Stripe's hosted checkout
   // (?furtuner_payment=success), restore the wizard state we saved before
   // redirecting and jump straight to an unlocked Results page.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get(STRIPE_RETURN_PARAM) !== "success") return;
+    stripeReturnHandledRef.current = true;
 
     try {
       const raw = sessionStorage.getItem(CHECKOUT_STORAGE_KEY);
@@ -3323,6 +3358,53 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
     window.history.replaceState({}, "", window.location.pathname + (newSearch ? `?${newSearch}` : ""));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // On mount, for every OTHER case (i.e. not a Stripe return, handled
+  // above): resume wherever the user was mid-wizard, if we have it saved.
+  // This is what makes a forced full-page reload — e.g. toggling a mobile
+  // browser's "Request Desktop Site", which always reloads the current
+  // page and wipes all in-memory React state — land back where the user
+  // actually was (say, viewing their Overview & AAFCO results) instead of
+  // dumping them back to the very first screen. Deliberately does NOT
+  // restore a paid/unlocked state — only pre-payment progress — so this
+  // stays well clear of the payment-unlock logic above.
+  useEffect(() => {
+    if (stripeReturnHandledRef.current) return;
+    try {
+      const raw = sessionStorage.getItem(WIZARD_STATE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (saved.petType) setPetType(saved.petType);
+      if (saved.dietType) setDietType(saved.dietType);
+      if (saved.page) setPage(saved.page);
+      if (saved.profile) setProfile(saved.profile);
+      if (saved.dogProfileDraft) setDogProfileDraft(saved.dogProfileDraft);
+      if (saved.catProfileDraft) setCatProfileDraft(saved.catProfileDraft);
+      if (saved.selectedIngredients) setSelectedIngredients(saved.selectedIngredients);
+      if (saved.allIngredients) setAllIngredients(saved.allIngredients);
+      if (saved.savedSelected) setSavedSelected(saved.savedSelected);
+      if (saved.result) setResult(saved.result);
+    } catch {
+      // Corrupt/missing sessionStorage — just start fresh at page 1.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep the general wizard-state snapshot continuously up to date so the
+  // restore effect above always has something reasonably fresh to work
+  // with, whatever the reload reason turns out to be.
+  useEffect(() => {
+    if (page === 1 && !petType) return; // nothing meaningful to save yet
+    try {
+      sessionStorage.setItem(WIZARD_STATE_KEY, JSON.stringify({
+        petType, dietType, page, profile, dogProfileDraft, catProfileDraft,
+        selectedIngredients, allIngredients, savedSelected, result,
+      }));
+    } catch {
+      // sessionStorage unavailable (e.g. private browsing) — progress just
+      // won't survive a forced reload; nothing else to do about it here.
+    }
+  }, [page, petType, dietType, profile, dogProfileDraft, catProfileDraft, selectedIngredients, allIngredients, savedSelected, result]);
 
   // Report-link generation + Sheet logging for the post-payment restore
   // now happens inside ResultsPage itself (see its own useEffect) — that's
@@ -3400,6 +3482,10 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
     setSavedSelected([]);
     setCalcErrors("");
     setDietType(null);
+    // Explicit "start over" — clear the saved snapshot too, so a later
+    // forced reload (or just reopening the app) doesn't resurrect
+    // abandoned progress instead of starting clean.
+    try { sessionStorage.removeItem(WIZARD_STATE_KEY); } catch {}
     scrollToTop();
   }
 

@@ -37,7 +37,28 @@
           (isTestMode ? "width=device-width, initial-scale=1" : "width=1280") +
           '">'
         );
-        if (isTestMode) document.documentElement.classList.add("ft-responsive");
+        if (!isTestMode) return; // real customers: nothing else to set up
+
+        // Keep .ft-responsive in sync with the CURRENT effective viewport at
+        // all times, not just once at initial load. Previously this class
+        // was set once here and never touched again — so toggling a mobile
+        // browser's "Request Desktop Site" (which overrides the viewport
+        // meta tag above with the browser's own ~980px default, regardless
+        // of what this page requests) left the class stuck "on": mobile CSS
+        // kept partially applying, just rendered in that wider canvas and
+        // shrunk to fit — which looks like the mobile view zoomed out,
+        // instead of properly switching to the real desktop layout. Same
+        // width/height thresholds as the useMobileTestView hook in
+        // DogDietCalculator.tsx and App.tsx — keep all three in sync if
+        // this is ever changed.
+        function updateResponsiveClass() {
+          var w = window.innerWidth;
+          var h = window.innerHeight;
+          var isMobile = w <= 640 || (h <= 500 && w <= 930);
+          document.documentElement.classList.toggle("ft-responsive", isMobile);
+        }
+        updateResponsiveClass();
+        window.addEventListener("resize", updateResponsiveClass);
       })();
     </script>
     <title>FurTuner — Science-Based Pet Nutrition</title>

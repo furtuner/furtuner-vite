@@ -21,7 +21,13 @@ function useMobileTestView(): boolean {
       new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
     if (!hasSecret) return;
 
-    const check = () => setIsMobile(window.innerWidth <= MOBILE_TEST_BREAKPOINT);
+    const check = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // Same landscape-phone coverage as DogDietCalculator.tsx's copy of
+      // this hook — keep both in sync.
+      setIsMobile(w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930));
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
