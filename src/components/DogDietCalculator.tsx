@@ -641,12 +641,12 @@ function ProfilePage({
           <div className="mt-6" style={{ marginTop: "24px" }}>
             <SectionLabel>Body Weight</SectionLabel>
             <div className="grid grid-cols-2" style={{ gap: "16px" }}>
-              <Field label="Weight (kg) *" error={errors.weightKg}>
+              <Field label="Weight (kg) *" error={errors.weightKg} labelFontSize={isMobileTest ? "16px" : undefined} labelNoWrap={isMobileTest}>
                 <input type="text" inputMode="decimal"
                   className={inputCls(!!errors.weightKg, true)} value={form.weightKg}
                   onChange={e => handleKgChange(e.target.value)} placeholder="e.g. 25.0" />
               </Field>
-              <Field label="Weight (lb)">
+              <Field label="Weight (lb)" labelFontSize={isMobileTest ? "16px" : undefined} labelNoWrap={isMobileTest}>
                 <input type="text" inputMode="decimal"
                   className={inputCls(false, true)} value={form.weightLb}
                   onChange={e => handleLbChange(e.target.value)} placeholder="e.g. 55.1" />
@@ -966,12 +966,12 @@ function CatProfilePage({
             </Field>
 
             <div className="grid grid-cols-2" style={{ gap: "16px", marginTop: "16px" }}>
-              <Field label="Weight (kg) *" error={errors.weightKg}>
+              <Field label="Weight (kg) *" error={errors.weightKg} labelFontSize={isMobileTest ? "16px" : undefined} labelNoWrap={isMobileTest}>
                 <input type="text" inputMode="decimal"
                   className={inputCls(!!errors.weightKg, true)} value={form.weightKg}
                   onChange={e => handleKgChange(e.target.value)} placeholder="e.g. 4.5" />
               </Field>
-              <Field label="Weight (lb)">
+              <Field label="Weight (lb)" labelFontSize={isMobileTest ? "16px" : undefined} labelNoWrap={isMobileTest}>
                 <input type="text" inputMode="decimal"
                   className={inputCls(false, true)} value={form.weightLb}
                   onChange={e => handleLbChange(e.target.value)} placeholder="e.g. 9.9" />
@@ -1398,7 +1398,11 @@ function IngredientsPage({
                                 // wrap to 2 lines instead of being truncated/cut off — but
                                 // only that pill grows; alignItems:"flex-start" above keeps
                                 // it from stretching its row-siblings.
-                                const allowWrap = displayName.length > 24;
+                                // On mobile the pills are narrower (2-per-row instead of
+                                // 3-per-row), so text needs to start wrapping at a shorter
+                                // length or it gets clipped (seen on names like "chicken
+                                // breast, no skin" cut off mid-word on phones).
+                                const allowWrap = displayName.length > (isMobileTest ? 14 : 24);
                                 // Detect "brewer's yeast / dried yeast" by its WORDS, not by
                                 // searching for a slash character — two earlier attempts to
                                 // match the separator character both failed, which points to
@@ -1419,7 +1423,7 @@ function IngredientsPage({
                                     className="text-[15px] font-extrabold transition-all"
                                     style={{
                                       flex: isMobileTest ? "0 0 calc(50% - 6px)" : "0 0 calc(33.333% - 8px)",
-                                      padding: "14px 16px",
+                                      padding: isMobileTest ? "14px 10px" : "14px 16px",
                                       background: isSel ? color : chipBg,
                                       color: isSel ? "#fff" : "#211915",
                                       textAlign: "center",
@@ -1552,6 +1556,7 @@ function ResultsPage({
   // Sheet logging effect below. Null on every other visit to this page.
   restoredCustomer?: { fullName: string; email: string } | null;
 }) {
+  const isMobileTest = useMobileTestView();
   const [feedPlanUnlocked, setFeedPlanUnlocked] = useState(!!initialFeedPlanUnlocked);
   const [reportEmail, setReportEmail] = useState("");
   const [emailSending, setEmailSending] = useState(false);
@@ -2255,17 +2260,22 @@ function ResultsPage({
         <p className="text-[#143C6F] uppercase" style={{ fontSize: "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", letterSpacing: "0.02em" }}>Overview &amp; AAFCO</p>
         <div>
             <div className="overflow-x-auto rounded-[12px] border border-[#A6CCE8] shadow-sm">
-              <table className="w-full text-[13px] border-collapse" style={{ tableLayout: "fixed", width: "100%" }}>
+              {/* On mobile, fixed % column widths at the desktop font size force the
+                  header labels ("AAFCO Minimum", "Diet Value") to overlap each other
+                  instead of wrapping — so on mobile we switch to a fixed pixel table
+                  width with auto layout and let the wrapper above scroll it
+                  horizontally, same pattern as the ingredient breakdown table below. */}
+              <table className="text-[13px] border-collapse" style={{ tableLayout: isMobileTest ? "auto" : "fixed", width: isMobileTest ? "640px" : "100%" }}>
                 <thead>
                   <tr className="bg-[#143C6F] text-white">
-                    <th className="uppercase tracking-wider" style={{ width: "26%", padding: "16px 16px", textAlign: "left", fontSize: "22px", fontWeight: 800 }}>Nutrient</th>
-                    <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Unit</th>
-                    <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800, lineHeight: 1.15 }}>
+                    <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "160px" : "26%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "left", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Nutrient</th>
+                    <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "80px" : "18%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Unit</th>
+                    <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "100px" : "18%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800, lineHeight: 1.15 }}>
                       <div>Diet</div>
                       <div>Value</div>
                     </th>
-                    <th className="uppercase tracking-wider" style={{ width: "20%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>AAFCO Minimum</th>
-                    <th className="uppercase tracking-wider" style={{ width: "18%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Status</th>
+                    <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "140px" : "20%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>AAFCO Minimum</th>
+                    <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "80px" : "18%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -2481,13 +2491,17 @@ function ResultsPage({
                 {/* Diet Nutrient Composition — Dry Matter Basis + Per 1000 Kcal DM */}
                 <p className="text-[#143C6F] uppercase" style={{ fontSize: "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", marginTop: "32px", letterSpacing: "0.02em" }}>Diet Nutrient Composition</p>
                 <div className="overflow-x-auto rounded-[12px] border border-[#A6CCE8] shadow-sm mb-6">
-                  <table className="w-full text-[13px] border-collapse" style={{ tableLayout: "fixed", width: "100%" }}>
+                  {/* Same mobile fix as the Overview & AAFCO table above: switch from
+                      fixed % widths at desktop font size to a fixed pixel width with
+                      auto layout, so headers like "Per 1000 Kcal DM" wrap/scroll
+                      instead of overlapping "Dry Matter Basis". */}
+                  <table className="text-[13px] border-collapse" style={{ tableLayout: isMobileTest ? "auto" : "fixed", width: isMobileTest ? "560px" : "100%" }}>
                     <thead>
                       <tr className="bg-[#143C6F] text-white">
-                        <th className="uppercase tracking-wider" style={{ width: "26%", padding: "16px 16px", textAlign: "left", fontSize: "22px", fontWeight: 800 }}>Nutrient</th>
-                        <th className="uppercase tracking-wider" style={{ width: "17%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Unit</th>
-                        <th className="uppercase tracking-wider" style={{ width: "25%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800, whiteSpace: "nowrap" }}>Dry Matter Basis</th>
-                        <th className="uppercase tracking-wider" style={{ width: "32%", padding: "16px 16px", textAlign: "center", fontSize: "22px", fontWeight: 800 }}>Per 1000 Kcal DM</th>
+                        <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "160px" : "26%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "left", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Nutrient</th>
+                        <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "70px" : "17%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Unit</th>
+                        <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "160px" : "25%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800, whiteSpace: "nowrap" }}>Dry Matter Basis</th>
+                        <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "170px" : "32%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "center", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Per 1000 Kcal DM</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2648,13 +2662,28 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function Field({
-  label, error, children,
+  label, error, children, labelFontSize, labelNoWrap,
 }: {
   label: string; error?: string; children: React.ReactNode;
+  // Optional overrides, used only where a caller opts in (e.g. the
+  // Weight (kg)/(lb) pair on mobile) — a smaller, non-wrapping label lets
+  // a longer label like "Weight (kg) *" stay on one line next to its
+  // shorter sibling "Weight (lb)" in a 2-column grid. Without this, the
+  // longer label alone wraps onto 2 lines while the sibling stays on 1,
+  // pushing the two input boxes out of vertical alignment. Left undefined
+  // everywhere else so longer labels (e.g. "Reproductive Status *") keep
+  // their normal wrapping behavior instead of risking horizontal overflow.
+  labelFontSize?: string;
+  labelNoWrap?: boolean;
 }) {
   return (
     <div>
-      <label className="block text-[23px] font-bold text-[#3C6293]" style={{ marginBottom: "9px" }}>{label}</label>
+      <label
+        className="block font-bold text-[#3C6293]"
+        style={{ marginBottom: "9px", fontSize: labelFontSize ?? "23px", whiteSpace: labelNoWrap ? "nowrap" : "normal" }}
+      >
+        {label}
+      </label>
       {children}
       {error && <p className="mt-1.5 text-[15px] text-[#AD0B39] font-bold">{error}</p>}
     </div>
