@@ -4,6 +4,94 @@ import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
 
+// ─── Mobile-test view, same gate as DogDietCalculator.tsx ────────────────
+// Same secret + breakpoint as the calculator's useMobileTestView, so both
+// activate together under the same ?testmode=... URL. Real visitors,
+// including real phones without the secret, see the current layout
+// completely unchanged.
+const MOBILE_TEST_SECRET = "7d2132eae669";
+const MOBILE_TEST_BREAKPOINT = 640;
+
+function useMobileTestView(): boolean {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const hasSecret =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
+    if (!hasSecret) return;
+
+    const check = () => setIsMobile(window.innerWidth <= MOBILE_TEST_BREAKPOINT);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
+
+// ─── Diet comparison data ─────────────────────────────────────────────────
+// Mirrors the hardcoded desktop comparison-wrap content below exactly.
+// Used only by the mobile per-diet 2-column tables (see DIET_PLANS render),
+// so the existing desktop markup didn't need to be touched.
+const COMPARISON_FEATURES = [
+  'Protein Content (%)',
+  'Carbohydrate Level',
+  'Cereal Grains',
+  'Vegetables',
+  'Human-Grade Ingredients',
+  'Nutritional Balance',
+  'Vitamin/Mineral Supplements',
+]
+
+const DIET_PLANS = [
+  {
+    id: '1',
+    label: 'Conventional Diet',
+    icon: '/images/diet-conventional.svg',
+    alt: 'Conventional diet icon',
+    values: [
+      <>&gt;30% (Dog)<br />&gt;45% (Cat)</>,
+      'Moderate',
+      'Included',
+      'Included',
+      '100% Human-Grade',
+      'Meets AAFCO standards',
+      'No synthetic vitamin/mineral premix required',
+    ],
+  },
+  {
+    id: '2',
+    label: 'Grain-Free Diet',
+    icon: '/images/diet-grain.svg',
+    alt: 'Grain-Free diet icon',
+    values: [
+      <>&gt;30% (Dog)<br />&gt;45% (Cat)</>,
+      'Moderate',
+      'Not Included',
+      'Included',
+      '100% Human-Grade',
+      'Meets AAFCO standards',
+      'No synthetic vitamin/mineral premix required',
+    ],
+  },
+  {
+    id: '3',
+    label: 'Meat-Based Diet',
+    icon: '/images/diet-meat.svg',
+    alt: 'Meat-Based diet icon',
+    values: [
+      <>&gt;50% (Dog)<br />&gt;60% (Cat)</>,
+      'Very Low',
+      'Not Included',
+      'Included (minimal amounts)',
+      '100% Human-Grade',
+      'Meets AAFCO standards',
+      'No synthetic vitamin/mineral premix required',
+    ],
+  },
+]
+
 // ══════════════════════════════════════════════
 // SUPPORT FORM
 // Matches DogDietCalculator's visual style (same input/label/pill look).
@@ -208,6 +296,7 @@ function urlForView(view: View, href: string): string | null {
 
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
+  const isMobileTest = useMobileTestView()
   // Custom caption overlay for the 'How FurTuner Works' video — see the
   // cuechange listener below for why we don't use native ::cue styling.
   const howItWorksVideoRef = useRef<HTMLVideoElement>(null)
@@ -549,6 +638,45 @@ function App() {
       <section id="plans" className="plans-section">
         <h2 className="section-title">Three Tailored Diet Plans for Dogs &amp; Cats</h2>
 
+        {/* Mobile: each diet card is followed immediately by its own 2-column
+            (Feature / Value) table — no hover, no shared toggle state, all
+            three stacked and always visible. The 4-wide side-by-side grid
+            below is unusable at phone widths (hover doesn't exist on touch,
+            and the columns get too narrow to read), so this is a fully
+            separate render path built from the same data rather than a CSS
+            reflow of the desktop markup. Uses inline styles only, since this
+            file's page.css isn't available to edit alongside it. */}
+        {isMobileTest && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "0 16px" }}>
+            {DIET_PLANS.map(diet => (
+              <div key={diet.id} style={{ border: "1.5px solid #A6CCE8", borderRadius: "14px", overflow: "hidden" }}>
+                <div style={{ background: "#143C6F", padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+                  <img src={diet.icon} alt={diet.alt} style={{ width: "56px", height: "56px", filter: "brightness(0) invert(1)" }} />
+                  <p style={{ color: "#fff", fontWeight: 700, fontSize: "20px", margin: 0, textAlign: "center" }}>{diet.label}</p>
+                </div>
+                <div>
+                  {COMPARISON_FEATURES.map((feature, i) => (
+                    <div
+                      key={feature}
+                      style={{
+                        display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px",
+                        padding: "12px 16px",
+                        background: i % 2 === 1 ? "#F5FAFF" : "#fff",
+                        borderTop: i === 0 ? "none" : "1px solid #E5EEF7",
+                      }}
+                    >
+                      <span style={{ fontSize: "14px", fontWeight: 700, color: "#211915" }}>{feature}</span>
+                      <span style={{ fontSize: "14px", fontWeight: 600, color: "#3C6293", textAlign: "right" }}>{diet.values[i]}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!isMobileTest && (
+        <>
         <div className="plan-cards">
           <div
             className={`plan-card ${activeDiet === '1' ? 'diet-active' : ''}`}
@@ -633,6 +761,8 @@ function App() {
             <div className="cmp-col-cell">No synthetic vitamin/mineral premix required</div>
           </div>
         </div>
+        </>
+        )}
 
         {/* HOW FURTUNER WORKS — explainer video, shown after the diet comparison table, right before Build Your Diet */}
         <div className="how-it-works-section">

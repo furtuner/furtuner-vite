@@ -1892,7 +1892,7 @@ function ResultsPage({
         title="Diet Report"
         desc={`Nutritional analysis based on your ${petType}'s profile and selected ingredients.`}
       />
-      <div className="bg-white" style={{ padding: "32px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "20px" : "32px" }}>
 
         {/* ─── Print styles ─────────────────────────────────────────────
             Keeps .print-only content out of normal browsing entirely.
@@ -2213,10 +2213,16 @@ function ResultsPage({
                     FurTuner may automatically select some of the ingredients below to ensure a complete and balanced diet based on your selected ingredients.
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-3" style={{ alignItems: "start" }}>
+                <div className="grid grid-cols-3 gap-3" style={{ alignItems: "start", gridTemplateColumns: isMobileTest ? "repeat(2, 1fr)" : undefined }}>
                   {shuffledFixed.map(r => {
                     const name = cleanIngredientName(r.ingredient);
-                    const allowWrap = name.length > 24;
+                    // Same mobile-aware wrap threshold as the main ingredient
+                    // picker pills — these orange pills were still using the
+                    // old fixed 24-char threshold with a 3-column grid on
+                    // mobile, so short-ish names like "wheatgerm oil" or
+                    // "cottage cheese" were getting clipped (nowrap +
+                    // overflow hidden) instead of wrapping to fit.
+                    const allowWrap = name.length > (isMobileTest ? 12 : 24);
                     const isBrewersYeast =
                       /brewer/i.test(name) && /yeast/i.test(name) && /dried/i.test(name);
                     const driedSplit = isBrewersYeast
@@ -2232,6 +2238,7 @@ function ResultsPage({
                           justifyContent: "center",
                           boxSizing: "border-box",
                           lineHeight: 1.2,
+                          padding: isMobileTest ? "12px 10px" : undefined,
                           whiteSpace: allowWrap ? "normal" : "nowrap",
                           overflow: allowWrap ? "visible" : "hidden",
                           textOverflow: allowWrap ? "clip" : "ellipsis",
@@ -2540,12 +2547,17 @@ function ResultsPage({
                 </div>
 
                 {/* Print / Save button + Email report — side by side */}
-                <div className="no-print" style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "14px", marginTop: "24px", flexWrap: "wrap" }}>
+                {/* Print / Save button + Email report — side by side on desktop,
+                    stacked full-width on mobile. The email box previously had a
+                    fixed minWidth: "340px" which, combined with this page's 32px
+                    side padding, didn't fit inside a ~360-400px phone screen and
+                    pushed its rounded border past the card's edge. */}
+                <div className="no-print" style={{ display: "flex", justifyContent: "flex-end", alignItems: isMobileTest ? "stretch" : "center", gap: "14px", marginTop: "24px", flexWrap: "wrap", flexDirection: isMobileTest ? "column" : "row" }}>
                   <button
                     onClick={() => window.print()}
                     className="hover:brightness-95 transition"
                     style={{
-                      display: "inline-flex", alignItems: "center", gap: "8px",
+                      display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px",
                       background: "#143C6F", color: "#fff",
                       fontWeight: 700, fontSize: "15px",
                       padding: "12px 22px", borderRadius: "10px", border: "none", cursor: "pointer",
@@ -2555,12 +2567,13 @@ function ResultsPage({
                     🖨 Print / Save
                   </button>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "340px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: isMobileTest ? "0" : "340px", width: isMobileTest ? "100%" : undefined, boxSizing: "border-box" }}>
                   <div
                     style={{
                       display: "flex", alignItems: "center", gap: "10px",
                       background: "#fff", border: "1.5px solid #A6CCE8", borderRadius: "12px",
                       padding: "6px 6px 6px 18px",
+                      boxSizing: "border-box", width: "100%",
                     }}
                   >
                     <input
@@ -2569,7 +2582,7 @@ function ResultsPage({
                       onChange={e => { setReportEmail(e.target.value); setEmailError(""); setEmailSentTo(""); }}
                       onKeyDown={e => { if (e.key === "Enter") sendReportEmail(); }}
                       placeholder="Email this report to…"
-                      style={{ border: "none", outline: "none", background: "transparent", flex: 1, fontSize: "15px", color: "#211915", fontFamily: "'Parastoo', sans-serif" }}
+                      style={{ border: "none", outline: "none", background: "transparent", flex: 1, minWidth: 0, fontSize: "15px", color: "#211915", fontFamily: "'Parastoo', sans-serif" }}
                     />
                     <button
                       type="button"
