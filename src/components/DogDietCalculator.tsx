@@ -43,36 +43,27 @@ const MOBILE_AAFCO_CSS = `
 .dd-m-aafco thead { display: none; }
 .dd-m-aafco tr.dd-sec { display: block; }
 .dd-m-aafco tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
-.dd-m-aafco tr.dd-row {
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);
-  grid-template-areas: "name name status" "unit val min";
-  gap: 8px 10px;
-  align-items: center;
-  padding: 12px 14px;
-  border-bottom: 1px solid #A6CCE8;
-}
+.dd-m-aafco tr.dd-colhead, .dd-m-aafco tr.dd-row { display: grid; grid-template-columns: minmax(0,0.85fr) minmax(0,1fr) minmax(0,1fr); }
+.dd-m-aafco tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; padding: 0 14px; }
+.dd-m-aafco tr.dd-colhead td { padding: 8px 10px !important; font-size: 12px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; }
+.dd-m-aafco tr.dd-colhead td:first-child { padding-left: 0 !important; }
+.dd-m-aafco tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #DCE9F4; }
+.dd-m-aafco tr.dd-colhead td:last-child { padding-right: 0 !important; }
+.dd-m-aafco tr.dd-row { grid-template-areas: "name name status" "unit val min"; row-gap: 6px; column-gap: 0; align-items: center; padding: 10px 14px; border-bottom: 1px solid #E5EEF7; }
 .dd-m-aafco tr.dd-row:last-child { border-bottom: 0; }
-.dd-m-aafco tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; }
-.dd-m-aafco td.dd-name { grid-area: name; font-size: 17px !important; font-weight: 700 !important; line-height: 1.25; }
+.dd-m-aafco tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
+.dd-m-aafco td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
 .dd-m-aafco td.dd-status { grid-area: status; text-align: right !important; }
-.dd-m-aafco td.dd-unit { grid-area: unit; }
-.dd-m-aafco td.dd-val { grid-area: val; }
-.dd-m-aafco td.dd-min { grid-area: min; }
-.dd-m-aafco tr.dd-row td { overflow-wrap: anywhere; }
+.dd-m-aafco td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
+.dd-m-aafco td.dd-val, .dd-m-aafco td.dd-min { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #DCE9F4; }
+.dd-m-aafco td.dd-val { grid-area: val; padding: 0 10px !important; }
+.dd-m-aafco td.dd-min { grid-area: min; padding: 0 0 0 10px !important; }
+.dd-m-aafco td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
 @media (max-width: 360px) {
-  .dd-m-aafco tr.dd-row { padding: 12px 10px; gap: 8px 6px; }
   .dd-m-aafco tr.dd-row td { font-size: 15px !important; }
-  .dd-m-aafco td.dd-name { font-size: 16px !important; }
-}
-.dd-m-aafco td.dd-unit::before, .dd-m-aafco td.dd-val::before, .dd-m-aafco td.dd-min::before {
-  content: attr(data-label);
-  display: block;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  color: #3C6293;
-  margin-bottom: 2px;
+  .dd-m-aafco tr.dd-colhead td { font-size: 11px !important; padding: 8px 6px !important; }
+  .dd-m-aafco td.dd-val { padding: 0 6px !important; }
+  .dd-m-aafco td.dd-min { padding: 0 0 0 6px !important; }
 }
 `;
 
@@ -81,35 +72,26 @@ const MOBILE_NUTR_CSS = `
 .dd-m-nutr thead { display: none; }
 .dd-m-nutr tr.dd-sec { display: block; }
 .dd-m-nutr tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
-.dd-m-nutr tr.dd-row {
-  display: grid;
-  grid-template-columns: minmax(0,0.7fr) minmax(0,1fr) minmax(0,1fr);
-  grid-template-areas: "name name name" "unit val per";
-  gap: 8px 10px;
-  align-items: start;
-  padding: 12px 14px;
-  border-bottom: 1px solid #A6CCE8;
-}
+.dd-m-nutr tr.dd-colhead, .dd-m-nutr tr.dd-row { display: grid; grid-template-columns: minmax(0,0.85fr) minmax(0,1fr) minmax(0,1fr); }
+.dd-m-nutr tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; padding: 0 14px; }
+.dd-m-nutr tr.dd-colhead td { padding: 8px 10px !important; font-size: 12px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; }
+.dd-m-nutr tr.dd-colhead td:first-child { padding-left: 0 !important; }
+.dd-m-nutr tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #DCE9F4; }
+.dd-m-nutr tr.dd-colhead td:last-child { padding-right: 0 !important; }
+.dd-m-nutr tr.dd-row { grid-template-areas: "name name name" "unit val per"; row-gap: 6px; column-gap: 0; align-items: center; padding: 10px 14px; border-bottom: 1px solid #E5EEF7; }
 .dd-m-nutr tr.dd-row:last-child { border-bottom: 0; }
 .dd-m-nutr tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
-.dd-m-nutr td.dd-name { grid-area: name; font-size: 17px !important; font-weight: 700 !important; line-height: 1.25; }
-.dd-m-nutr td.dd-unit { grid-area: unit; }
-.dd-m-nutr td.dd-val { grid-area: val; }
-.dd-m-nutr td.dd-per { grid-area: per; }
-.dd-m-nutr td.dd-unit::before, .dd-m-nutr td.dd-val::before, .dd-m-nutr td.dd-per::before {
-  content: attr(data-label);
-  display: block;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  color: #3C6293;
-  margin-bottom: 2px;
-  line-height: 1.2;
-}
+.dd-m-nutr td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
+.dd-m-nutr .dd-m-nutr td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
+.dd-m-nutr td.dd-val, .dd-m-nutr td.dd-per { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #DCE9F4; }
+.dd-m-nutr td.dd-val { grid-area: val; padding: 0 10px !important; }
+.dd-m-nutr td.dd-per { grid-area: per; padding: 0 0 0 10px !important; }
+.dd-m-nutr td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
 @media (max-width: 360px) {
-  .dd-m-nutr tr.dd-row { padding: 12px 10px; gap: 8px 6px; }
   .dd-m-nutr tr.dd-row td { font-size: 15px !important; }
-  .dd-m-nutr td.dd-name { font-size: 16px !important; }
+  .dd-m-nutr tr.dd-colhead td { font-size: 11px !important; padding: 8px 6px !important; }
+  .dd-m-nutr td.dd-val { padding: 0 6px !important; }
+  .dd-m-nutr td.dd-per { padding: 0 0 0 6px !important; }
 }
 `;
 
@@ -537,10 +519,11 @@ const STATUS_COLORS = {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 function StepIndicator({ step }: { step: 1 | 2 | 3 | 4 | 5 }) {
+  const isMobileTest = useMobileTestView();
   return (
     <h2
       className="text-[#3C6293] mb-6"
-      style={{ fontFamily: "'Marcellus', serif", fontSize: "clamp(32px, 5vw, 55px)", fontWeight: 400 }}
+      style={{ fontFamily: "'Marcellus', serif", fontSize: isMobileTest ? "22px" : "clamp(32px, 5vw, 55px)", fontWeight: 400, marginBottom: isMobileTest ? "10px" : undefined }}
     >
       Step {step} Of 5
     </h2>
@@ -548,10 +531,11 @@ function StepIndicator({ step }: { step: 1 | 2 | 3 | 4 | 5 }) {
 }
 
 function CardHeader({ eyebrow, title, desc }: { eyebrow: string; title: string; desc?: string }) {
+  const isMobileTest = useMobileTestView();
   return (
-    <div className="bg-[#143C6F] rounded-t-[10px]" style={{ padding: "30px 40px" }}>
-      <h3 className="text-white leading-tight" style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 600, fontSize: "42px" }}>{title}</h3>
-      {desc && <p className="text-[#FFC588] font-semibold" style={{ marginTop: "8px", fontSize: "20px", lineHeight: 1.5 }}>{desc}</p>}
+    <div className="bg-[#143C6F] rounded-t-[10px]" style={{ padding: isMobileTest ? "16px 16px 14px" : "30px 40px", borderRadius: isMobileTest ? "12px" : undefined }}>
+      <h3 className="text-white leading-tight" style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 600, fontSize: isMobileTest ? "26px" : "42px" }}>{title}</h3>
+      {desc && <p className="text-[#FFC588] font-semibold" style={{ marginTop: isMobileTest ? "6px" : "8px", fontSize: isMobileTest ? "14px" : "20px", lineHeight: isMobileTest ? 1.4 : 1.5 }}>{desc}</p>}
     </div>
   );
 }
@@ -679,7 +663,7 @@ function ProfilePage({
   }
 
   return (
-    <div className={`border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+    <div className={`border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ border: isMobileTest ? "none" : "2px solid #3C6293", borderRadius: "12px" }}>
       {isMobileTest && <style>{MOBILE_PROFILE_CSS}</style>}
       <CardHeader
         title="Dog Profile"
@@ -687,7 +671,7 @@ function ProfilePage({
       />
       <div
         className="bg-white grid grid-cols-1 md:grid-cols-2"
-        style={{ padding: isMobileTest ? "20px" : "32px", columnGap: "0px", gridTemplateColumns: isMobileTest ? "1fr" : undefined }}
+        style={{ padding: isMobileTest ? "10px 8px" : "32px", columnGap: "0px", gridTemplateColumns: isMobileTest ? "1fr" : undefined }}
       >
         <div
           style={
@@ -1007,7 +991,7 @@ function CatProfilePage({
   }
 
   return (
-    <div className={`border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+    <div className={`border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ border: isMobileTest ? "none" : "2px solid #3C6293", borderRadius: "12px" }}>
       {isMobileTest && <style>{MOBILE_PROFILE_CSS}</style>}
       <CardHeader
         title="Cat Profile"
@@ -1015,7 +999,7 @@ function CatProfilePage({
       />
       <div
         className="bg-white grid grid-cols-1 md:grid-cols-2"
-        style={{ padding: isMobileTest ? "20px" : "32px", columnGap: "0px", gridTemplateColumns: isMobileTest ? "1fr" : undefined }}
+        style={{ padding: isMobileTest ? "10px 8px" : "32px", columnGap: "0px", gridTemplateColumns: isMobileTest ? "1fr" : undefined }}
       >
         <div
           style={
@@ -1305,13 +1289,13 @@ function IngredientsPage({
   }
 
   return (
-    <div className="border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+    <div className="border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ border: isMobileTest ? "none" : "2px solid #3C6293", borderRadius: "12px" }}>
       <CardHeader
         eyebrow="Step 2 of 3"
         title="Select Ingredients"
         desc="Choose ingredients for the diet. Mandatory categories must have at least one selection."
       />
-      <div className="bg-white" style={{ padding: isMobileTest ? "16px" : "32px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "8px 4px" : "32px" }}>
         {error && (
           <div className="bg-[#FDEBEC] border-[1.5px] border-[#B02424] rounded-[12px] text-[#AD0B39] font-bold text-[14px]" style={{ padding: "18px 20px", marginTop: "8px", marginBottom: "24px" }}>
             ❌ {error}
@@ -1347,10 +1331,10 @@ function IngredientsPage({
                 });
               });
               return groups.map(({ superGroup, gns }) => (
-                <div key={superGroup} className="mb-8" style={{ marginBottom: "40px" }}>
+                <div key={superGroup} className="mb-8" style={{ marginBottom: isMobileTest ? "22px" : "40px" }}>
                   <h3
                     className="text-[#143C6F] mb-4"
-                    style={{ fontFamily: "'Marcellus', serif", fontSize: "30px", fontWeight: 700, marginBottom: (superGroup === "Vegetable" && !(petType === "cat" && dietType === "raw")) ? "6px" : "20px" }}
+                    style={{ fontFamily: "'Marcellus', serif", fontSize: isMobileTest ? "22px" : "30px", fontWeight: 700, marginBottom: (superGroup === "Vegetable" && !(petType === "cat" && dietType === "raw")) ? "6px" : (isMobileTest ? "10px" : "20px") }}
                   >
                     {superGroup === "Grain"
                       ? (dietType === "grainfree" ? "Carbohydrate (Non-Grain)" : "Carbohydrate (Grain)")
@@ -1369,7 +1353,7 @@ function IngredientsPage({
                       * Select at least 2 vegetables total, from any of the cards below.
                     </p>
                   )}
-                  <div className="flex flex-col" style={{ gap: "20px" }}>
+                  <div className="flex flex-col" style={{ gap: isMobileTest ? "12px" : "20px" }}>
                     {gns.map(gn => {
                       const cat = categories[gn];
                       const maxLabel = cat.max === 99 ? "∞" : cat.max;
@@ -1387,8 +1371,8 @@ function IngredientsPage({
                           key={gn}
                           className="flex"
                           style={{
-                            border: `2px solid ${color}`,
-                            borderRadius: "16px",
+                            border: `${isMobileTest ? "1.5px" : "2px"} solid ${color}`,
+                            borderRadius: isMobileTest ? "14px" : "16px",
                             background: "#fff",
                             position: "relative",
                             flexDirection: isMobileTest ? "column" : "row",
@@ -1483,8 +1467,8 @@ function IngredientsPage({
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "center",
-                                    gap: "14px",
-                                    padding: "12px",
+                                    gap: "0px",
+                                    padding: "0px",
                                     borderRadius: "0 0 14px 14px",
                                     background: "#fff",
                                   }
@@ -1509,12 +1493,12 @@ function IngredientsPage({
                                       // 2-column grid of uniform rounded boxes.
                                       display: "grid",
                                       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                                      gap: "10px",
+                                      gap: "6px",
                                       width: "100%",
                                       boxSizing: "border-box",
-                                      padding: "12px",
+                                      padding: "6px",
                                       background: "#F1F1F1",
-                                      borderRadius: "20px",
+                                      borderRadius: "0 0 12px 12px",
                                     }
                                   : {
                                       display: "flex",
@@ -1526,7 +1510,7 @@ function IngredientsPage({
                                     }
                               }
                             >
-                              {cat.items.map(name => {
+                              {cat.items.map((name, idx) => {
                                 const isSel = selected.has(name);
                                 const displayName = formatIngredientName(name);
                                 // Any ingredient name too long to fit on one line gets to
@@ -1562,6 +1546,7 @@ function IngredientsPage({
                                     className="text-[15px] font-extrabold transition-all"
                                     style={{
                                       flex: isMobileTest ? undefined : "0 0 calc(33.333% - 8px)",
+                                      gridColumn: isMobileTest && cat.items.length % 2 === 1 && idx === cat.items.length - 1 ? "1 / -1" : undefined,
                                       padding: isMobileTest ? "10px 8px" : "14px 16px",
                                       background: isSel ? color : chipBg,
                                       color: isSel ? "#fff" : "#211915",
@@ -1577,7 +1562,7 @@ function IngredientsPage({
                                       borderRadius: isMobileTest ? "14px" : "24px",
                                       ...(isMobileTest
                                         ? {
-                                            minHeight: "72px",
+                                            minHeight: "64px",
                                             fontSize: "16px",
                                             fontWeight: 700,
                                             border: `1.5px solid ${isSel ? color : "rgba(33,25,21,0.22)"}`,
@@ -1610,7 +1595,8 @@ function IngredientsPage({
                                 onClick={() => toggleAll(gn)}
                                 className="text-[15px] font-extrabold transition-all"
                                 style={{
-                                  width: isMobileTest ? "100%" : "calc(33.333% - 8px)",
+                                  width: isMobileTest ? "calc(100% - 12px)" : "calc(33.333% - 8px)",
+                                  margin: isMobileTest ? "0 6px 6px" : undefined,
                                   minHeight: isMobileTest ? "56px" : undefined,
                                   padding: "14px 18px",
                                   background: "transparent",
@@ -1906,7 +1892,7 @@ function ResultsPage({
 
   if (!result) {
     return (
-      <div style={{ border: "2px solid #3C6293", borderRadius: "13px 13px 0 0", overflow: "hidden" }}>
+      <div style={{ border: isMobileTest ? "none" : "2px solid #3C6293", borderRadius: isMobileTest ? "12px" : "13px 13px 0 0", overflow: "hidden" }}>
         <CardHeader eyebrow="Step 3 of 3" title="Diet Report" desc="Calculating your diet…" />
         <div className="bg-white rounded-b-[16px] p-8 text-center py-16">
           <div className="w-11 h-11 border-[3px] border-[#A6CCE8] border-t-[#FFB160] rounded-full animate-spin mx-auto mb-4" />
@@ -2065,13 +2051,13 @@ function ResultsPage({
   };
 
   return (
-    <div style={{ border: "2px solid #3C6293", borderRadius: "13px 13px 0 0", overflow: "hidden" }}>
+    <div style={{ border: isMobileTest ? "none" : "2px solid #3C6293", borderRadius: isMobileTest ? "12px" : "13px 13px 0 0", overflow: "hidden" }}>
       <CardHeader
         eyebrow="Step 3 of 3"
         title="Diet Report"
         desc={`Nutritional analysis based on your ${petType}'s profile and selected ingredients.`}
       />
-      <div className="bg-white" style={{ padding: isMobileTest ? "20px" : "32px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "10px 8px" : "32px" }}>
 
         {/* ─── Print styles ─────────────────────────────────────────────
             Keeps .print-only content out of normal browsing entirely.
@@ -2482,6 +2468,9 @@ function ResultsPage({
                           {section.cat}
                         </td>
                       </tr>
+                      {isMobileTest && (
+                        <tr className="dd-colhead"><td>Unit</td><td>Diet value</td><td>AAFCO minimum</td></tr>
+                      )}
                       {section.rows
                         .filter(row => row.val != null)
                         .map(row => {
@@ -2505,9 +2494,9 @@ function ResultsPage({
                         return (
                           <tr key={row.label} className="dd-row border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
                             <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
-                            <td className="dd-unit" data-label="Unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
-                            <td className="dd-val font-mono font-semibold" data-label="Diet value" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{dietVal}</td>
-                            <td className="dd-min font-mono" data-label="AAFCO minimum" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{minVal != null ? minVal : (isMobileTest ? "—" : "")}</td>
+                            <td className="dd-unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
+                            <td className="dd-val font-mono font-semibold" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{dietVal}</td>
+                            <td className={`dd-min font-mono${minVal == null ? " dd-dim" : ""}`} style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{minVal != null ? minVal : (isMobileTest ? "—" : "")}</td>
                             <td className="dd-status" style={{ padding: "12px 16px", textAlign: "center", fontSize: "15px" }}>{badge}</td>
                           </tr>
                         );
@@ -2563,10 +2552,10 @@ function ResultsPage({
             ) : dailyDM && pctBatch ? (
               <>
                 {/* PATIENT & ENERGY Card */}
-                <div style={{ border: "1.5px solid #FA9A36", borderRadius: "12px", overflow: "hidden", marginBottom: "32px" }}>
-                  <div style={{ background: "#FA9A36", padding: "14px 20px" }}>
-                    <p style={{ color: "#211915", fontSize: "20px", fontWeight: 900, margin: 0, textTransform: "uppercase", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <svg width="24" height="24" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div style={{ border: "1.5px solid #FA9A36", borderRadius: "12px", overflow: "hidden", marginBottom: isMobileTest ? "16px" : "32px" }}>
+                  <div style={{ background: "#FA9A36", padding: isMobileTest ? "10px 14px" : "14px 20px" }}>
+                    <p style={{ color: "#211915", fontSize: isMobileTest ? "15px" : "20px", fontWeight: 900, margin: 0, textTransform: "uppercase", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: "10px" }}>
+                      <svg width={isMobileTest ? 20 : 24} height={isMobileTest ? 20 : 24} viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15.3099 13.7447C16.7902 12.9244 18.3875 12.4761 20.0363 13.0364C21.7601 13.6237 23.0389 15.0626 24.7346 15.7216C26.0321 16.2237 27.5123 16.2505 28.7349 16.9005C30.618 17.9002 31.4143 20.2985 30.7913 22.2709C30.1683 24.2433 28.3461 25.7405 26.2991 26.3815C24.9313 26.8074 23.4371 26.906 22.1723 27.565C20.8326 28.2688 19.9005 29.5329 18.5889 30.286C17.1789 31.0929 15.3708 31.2274 13.8485 30.6312C12.3261 30.035 11.1316 28.7305 10.7147 27.2108C10.2791 25.615 10.6726 23.916 11.2534 22.356C11.8296 20.8005 12.5931 19.2898 12.9116 17.6671C13.0709 16.8602 13.1224 16.0174 13.4456 15.2554C13.7688 14.4933 14.5605 14.0719 15.3146 13.7492L15.3099 13.7447Z" fill="#211915"/>
                         <path d="M27.1703 4.22291C28.0228 4.60395 28.688 5.30773 29.133 6.10118C29.578 6.89462 29.8122 7.78221 29.9668 8.67427C30.1869 9.94289 30.2432 11.2787 29.7419 12.4712C29.2407 13.6636 28.0744 14.6677 26.7347 14.6901C25.3856 14.717 24.1724 13.7487 23.6197 12.5653C23.0716 11.3863 23.0716 10.037 23.2356 8.75496C23.362 7.76428 23.5822 6.76463 24.1209 5.9129C24.6549 5.0567 25.2873 4.03912 27.175 4.22291" fill="#211915"/>
                         <path d="M12.593 0.897073C13.8343 -0.344646 15.7923 -0.129477 17.0102 0.533969C18.2235 1.19741 19.1041 2.30914 19.7646 3.4881C20.2658 4.38016 20.6686 5.33498 20.8466 6.33463C21.0246 7.33429 20.9684 8.38325 20.5749 9.3291C20.3173 9.9522 19.8957 10.5394 19.2774 10.8577C18.2937 11.3598 17.0665 11.0639 16.0781 10.5708C14.1435 9.60703 12.6118 7.92153 11.8904 5.9536C11.5812 5.11085 11.4126 4.20981 11.5016 3.31775C11.5906 2.42568 11.9513 1.55155 12.593 0.897073Z" fill="#211915"/>
@@ -2576,8 +2565,8 @@ function ResultsPage({
                       Patient &amp; Energy
                     </p>
                   </div>
-                  <div style={{ background: "#FFDCB7", padding: "20px 24px" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 16px", alignItems: "center" }}>
+                  <div style={{ background: "#FFDCB7", padding: isMobileTest ? "10px 14px" : "20px 24px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: isMobileTest ? "9px 12px" : "10px 16px", alignItems: "center" }}>
                       {/* Plain text rows */}
                       {[
                         ["Patient name / ID", profile.dogName || (profile as any).catName || "—"],
@@ -2586,8 +2575,8 @@ function ResultsPage({
                         ["Age", profile.age],
                       ].map(([label, value]) => (
                         <React.Fragment key={String(label)}>
-                          <p style={{ fontSize: "16px", fontWeight: 700, color: "#211915", margin: 0 }}>{label}</p>
-                          <p style={{ fontSize: "16px", fontWeight: 800, color: "#211915", textAlign: "right", margin: 0 }}>{String(value)}</p>
+                          <p style={{ fontSize: isMobileTest ? "14px" : "16px", fontWeight: isMobileTest ? 600 : 700, color: "#211915", margin: 0 }}>{label}</p>
+                          <p style={{ fontSize: isMobileTest ? "15px" : "16px", fontWeight: 800, color: "#211915", textAlign: "right", margin: 0 }}>{String(value)}</p>
                         </React.Fragment>
                       ))}
                       {/* Orange bar rows — width now hugs the content instead of a fixed minWidth */}
@@ -2600,10 +2589,10 @@ function ResultsPage({
                         ["Daily grams of food to feed", dailyGramsStr],
                       ].map(([label, value]) => (
                         <React.Fragment key={String(label)}>
-                          <p style={{ fontSize: "16px", fontWeight: 700, color: "#211915", margin: 0 }}>{label}</p>
+                          <p style={{ fontSize: isMobileTest ? "14px" : "16px", fontWeight: isMobileTest ? 600 : 700, color: "#211915", margin: 0 }}>{label}</p>
                           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div style={{ background: "#FA9A36", borderRadius: "4px", padding: "4px 14px", display: "inline-block", width: "fit-content", textAlign: "right" }}>
-                              <span style={{ fontSize: "15px", fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>{value}</span>
+                            <div style={{ background: "#FA9A36", borderRadius: "4px", padding: isMobileTest ? "3px 10px" : "4px 14px", display: "inline-block", width: "fit-content", textAlign: "right" }}>
+                              <span style={{ fontSize: isMobileTest ? "14px" : "15px", fontWeight: 700, color: "#fff", whiteSpace: isMobileTest ? "normal" : "nowrap", textAlign: "right" }}>{value}</span>
                             </div>
                           </div>
                         </React.Fragment>
@@ -2756,6 +2745,9 @@ function ResultsPage({
                               {section.cat}
                             </td>
                           </tr>
+                          {isMobileTest && (
+                            <tr className="dd-colhead"><td>Unit</td><td>Dry matter basis</td><td>Per 1000 kcal DM</td></tr>
+                          )}
                           {section.rows
                             .filter(row => row.val != null)
                             .map(row => {
@@ -2767,11 +2759,11 @@ function ResultsPage({
                             return (
                               <tr key={row.label} className="dd-row border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
                                 <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
-                                <td className="dd-unit" data-label="Unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
-                                <td className="dd-val font-mono font-semibold" data-label="Dry matter basis" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>
+                                <td className="dd-unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
+                                <td className="dd-val font-mono font-semibold" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>
                                   {row.val != null ? Number(row.val).toFixed(row.dec ?? 2) : "—"}
                                 </td>
-                                <td className="dd-per font-mono" data-label="Per 1000 kcal DM" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{perKcalStr}</td>
+                                <td className={`dd-per font-mono${perKcalStr === "—" ? " dd-dim" : ""}`} style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{perKcalStr}</td>
                               </tr>
                             );
                           })}
@@ -3077,6 +3069,7 @@ function CustomerProfileForm({
 }: {
   onNext: (info: CustomerInfo) => void;
 }) {
+  const isMobileTest = useMobileTestView();
   const [form, setForm] = useState<CustomerInfo>({ fullName: "", email: "", confirmEmail: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -3102,12 +3095,13 @@ function CustomerProfileForm({
   }
 
   return (
-    <div className="border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ marginTop: "16px" }}>
-      <div className="bg-[#143C6F]" style={{ padding: "22px 28px" }}>
+    <div className={`border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ marginTop: "16px" }}>
+      {isMobileTest && <style>{MOBILE_PROFILE_CSS}</style>}
+      <div className="bg-[#143C6F]" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px" }}>
         <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Customer Profile</p>
         <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>Tell us who's unlocking this feeding plan.</p>
       </div>
-      <div className="bg-white" style={{ padding: "28px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "14px" : "28px" }}>
         <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <Field label="Full Name *" error={errors.fullName}>
             <input className={inputCls(!!errors.fullName)} value={form.fullName}
@@ -3143,6 +3137,7 @@ function DisclaimerAccept({
   onBack: () => void;
   onAccept: () => void;
 }) {
+  const isMobileTest = useMobileTestView();
   const [scrolledToEnd, setScrolledToEnd] = useState(false);
   const [checked, setChecked] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -3158,13 +3153,13 @@ function DisclaimerAccept({
 
   return (
     <div className="border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ marginTop: "16px" }}>
-      <div className="bg-[#143C6F]" style={{ padding: "22px 28px" }}>
+      <div className="bg-[#143C6F]" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px" }}>
         <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Liability Disclaimer</p>
         <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>
           {scrolledToEnd ? "You've reached the end — please review and accept below." : "Please scroll to the bottom to continue."}
         </p>
       </div>
-      <div className="bg-white" style={{ padding: "28px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "14px" : "28px" }}>
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -3275,6 +3270,7 @@ function StripeCheckoutPanel({
   onSkip: () => void;
   redirecting: boolean;
 }) {
+  const isMobileTest = useMobileTestView();
   // Only shows the "Skip Payment (Testing)" button when the page is
   // visited with ?testmode=7d2132eae669 in the URL — real customers
   // visiting furtuner.com normally never see it. Use
@@ -3289,11 +3285,11 @@ function StripeCheckoutPanel({
 
   return (
     <div className="border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ marginTop: "16px" }}>
-      <div className="bg-[#143C6F]" style={{ padding: "22px 28px" }}>
+      <div className="bg-[#143C6F]" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px" }}>
         <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Payment</p>
         <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>Daily Feeding Plan — {PLAN_PRICE_LABEL}</p>
       </div>
-      <div className="bg-white" style={{ padding: "28px" }}>
+      <div className="bg-white" style={{ padding: isMobileTest ? "14px" : "28px" }}>
         <div className="rounded-[10px] bg-[#F4F4F4]" style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: "6px" }}>
           <div className="flex justify-between" style={{ fontSize: "15px" }}>
             <span className="text-[#211915]">Name</span>
@@ -3318,7 +3314,7 @@ function StripeCheckoutPanel({
             onClick={onBack}
             disabled={redirecting}
             className="text-[#3C6293] font-bold"
-            style={{ fontSize: "15px", padding: "16px 20px", borderRadius: "12px", border: "1.5px solid #A6CCE8", background: "white", opacity: redirecting ? 0.5 : 1 }}
+            style={{ fontSize: "15px", padding: isMobileTest ? "12px 14px" : "16px 20px", borderRadius: "12px", border: "1.5px solid #A6CCE8", background: "white", opacity: redirecting ? 0.5 : 1 }}
           >
             ← Back
           </button>
@@ -3326,7 +3322,7 @@ function StripeCheckoutPanel({
             onClick={() => onContinue()}
             disabled={redirecting}
             className="flex-1 bg-[#143C6F] hover:bg-[#FF9D36] text-white transition-all flex items-center justify-center"
-            style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "16px", padding: "16px 24px", borderRadius: "12px", gap: "10px" }}
+            style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: isMobileTest ? "15px" : "16px", lineHeight: 1.15, padding: isMobileTest ? "12px 10px" : "16px 24px", borderRadius: "12px", gap: "10px" }}
           >
             {redirecting ? (
               <>
@@ -3371,6 +3367,7 @@ function CheckoutFlow({
   result: CalcResult | null;
   allIngredients: IngredientItem[];
 }) {
+  const isMobileTest = useMobileTestView();
   const [stage, setStage] = useState<CheckoutStage>("gate");
   const [customer, setCustomer] = useState<CustomerInfo | null>(null);
   const [redirecting, setRedirecting] = useState(false);
@@ -3418,14 +3415,14 @@ function CheckoutFlow({
 
   if (stage === "gate") {
     return (
-      <div className="bg-[#FFDCB7] border-[1.5px] border-[#FFB160] rounded-[12px] flex flex-col sm:flex-row items-center justify-between" style={{ padding: "28px 32px", gap: "20px", marginTop: "16px" }}>
+      <div className="bg-[#FFDCB7] border-[1.5px] border-[#FFB160] rounded-[12px] flex flex-col sm:flex-row items-center justify-between" style={{ padding: isMobileTest ? "16px" : "28px 32px", gap: isMobileTest ? "12px" : "20px", marginTop: "16px" }}>
         <div>
-          <p className="font-bold text-[#143C6F]" style={{ fontSize: "32px" }}>Get Your Recipe and Feeding Plan</p>
+          <p className="font-bold text-[#143C6F]" style={{ fontSize: isMobileTest ? "20px" : "32px", textAlign: isMobileTest ? "center" : undefined, lineHeight: 1.25 }}>Get Your Recipe and Feeding Plan</p>
         </div>
         <button
           onClick={() => setStage("customer")}
           className="bg-[#143C6F] hover:bg-[#FF9D36] text-white transition whitespace-nowrap shrink-0"
-          style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: "28px", padding: "18px 44px", borderRadius: "12px" }}
+          style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: isMobileTest ? "17px" : "28px", padding: isMobileTest ? "0 24px" : "18px 44px", borderRadius: "12px", width: isMobileTest ? "100%" : undefined, height: isMobileTest ? "52px" : undefined }}
         >
           PAY
         </button>
@@ -3765,8 +3762,9 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
         animation: "dietBoxIn 0.45s ease both",
         maxWidth: "1280px",
         margin: "0 auto",
-        paddingTop: isMobileTest ? "40px" : "120px",
-        paddingBottom: isMobileTest ? "40px" : "120px",
+        paddingTop: isMobileTest ? "12px" : "120px",
+        paddingBottom: isMobileTest ? "24px" : "120px",
+        background: isMobileTest ? "#fff" : undefined,
       }}
     >
       <style>{`
@@ -3780,8 +3778,8 @@ export function DogDietCalculator({ visible, onGoHome }: { visible: boolean; onG
         style={{
           maxWidth: "1280px",
           margin: "0 auto",
-          paddingLeft: isMobileTest ? "16px" : "90px",
-          paddingRight: isMobileTest ? "16px" : "90px",
+          paddingLeft: isMobileTest ? "0" : "90px",
+          paddingRight: isMobileTest ? "0" : "90px",
           width: "100%",
           boxSizing: "border-box",
         }}

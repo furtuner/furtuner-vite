@@ -123,7 +123,7 @@ const HOME_MOBILE_CSS = `
 .hero-badge-icon { width: 56px !important; height: 40px !important; margin-left: 0 !important; }
 .hero-headline { order: 2; font-size: 29px !important; line-height: 1.3 !important; max-width: 100% !important; margin: 0 !important; }
 .hero-right { order: 3; width: 100%; flex: none !important; min-width: 0 !important; align-self: stretch !important; }
-.hero-img { aspect-ratio: 4 / 3 !important; }
+.hero-img { aspect-ratio: auto !important; height: auto !important; object-fit: contain !important; transform: none !important; }
 .hero-subtitle-group { order: 4; max-width: 100% !important; gap: 14px !important; }
 .hero-subtitle { font-size: 17px !important; line-height: 1.55 !important; text-align: left !important; color: #B85C00 !important; }
 .hero-subtitle--accent { background: #E0F2FF; color: #143C6F !important; padding: 14px 16px; border-radius: 16px; }
@@ -149,15 +149,29 @@ const HOME_MOBILE_CSS = `
 .footer-inner { flex-direction: column !important; align-items: center !important; gap: 12px !important; text-align: center; }
 .footer-logo-img { height: 64px !important; }
 
-.dm-why { display: flex; flex-direction: column; gap: 10px; }
-.dm-why-card { display: flex; align-items: center; gap: 14px; height: 104px; box-sizing: border-box; padding: 0 16px; background: #E0F2FF; border-radius: 20px; }
-.dm-why-ic { flex: 0 0 52px; height: 52px; border-radius: 50%; background: #143C6F; display: flex; align-items: center; justify-content: center; }
-.dm-why-card b { display: block; font-size: 17px; font-weight: 700; color: #143C6F; line-height: 1.2; margin-bottom: 4px; }
-.dm-why-card span { display: block; font-size: 14px; line-height: 1.35; color: #3C6293; font-weight: 600; }
+.calculator-page { padding: 8px 4px 0 !important; }
+.calculator-page > div:first-child { margin-bottom: 12px !important; }
+.dm-why { display: flex; flex-direction: column; gap: 12px; }
+.dm-why.swipe { flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; }
+.dm-why.swipe::-webkit-scrollbar { display: none; }
+.dm-flip { perspective: 1000px; aspect-ratio: 4 / 5; border: none; background: none; padding: 0; cursor: pointer; display: block; width: 100%; flex: 0 0 auto; -webkit-tap-highlight-color: transparent; }
+.dm-why.swipe .dm-flip { width: 78%; scroll-snap-align: center; }
+.dm-flip-in { position: relative; width: 100%; height: 100%; transition: transform 0.55s ease; transform-style: preserve-3d; }
+.dm-flip.flipped .dm-flip-in { transform: rotateY(180deg); }
+.dm-face { position: absolute; inset: 0; border-radius: 26px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #EAF4FB; display: flex; align-items: center; justify-content: center; }
+.dm-face img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.dm-face.back { transform: rotateY(180deg); }
+.dm-hint { position: absolute; right: 12px; bottom: 12px; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: #fff; color: #143C6F; border: 1px solid #A6CCE8; pointer-events: none; }
+.dm-count { text-align: center; font-size: 13px; font-weight: 700; color: #3C6293; margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .dm-flip-in { transition: none; } }
 
 .dm-car { display: flex; align-items: stretch; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 16px 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .dm-car::-webkit-scrollbar { display: none; }
-.dm-card { flex: 0 0 80%; max-width: 340px; scroll-snap-align: center; border: 1.5px solid #A6CCE8; border-radius: 20px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.dm-card { flex: 0 0 80%; max-width: 340px; scroll-snap-align: center; border: 2px solid #A6CCE8; border-radius: 20px; overflow: hidden; background: #fff; display: flex; flex-direction: column; cursor: pointer; transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease; -webkit-tap-highlight-color: transparent; }
+.dm-card.on { border-color: #F0932B; box-shadow: 0 10px 28px rgba(240, 147, 43, 0.35); transform: translateY(-3px); }
+.dm-card.on .dm-card-head { box-shadow: inset 0 -4px 0 #F0932B; }
+.dm-card.on .dm-row span { color: #D9791A; }
+@media (prefers-reduced-motion: reduce) { .dm-card { transition: none; } }
 .dm-card-head { background: #143C6F; color: #fff; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
 .dm-card-head p { margin: 0; font-family: 'Marcellus', serif; font-size: 20px; text-align: center; }
 .dm-row { flex: 1; min-height: 62px; padding: 8px 16px; border-top: 1px solid #E5EEF7; display: flex; flex-direction: column; justify-content: center; }
@@ -166,23 +180,20 @@ const HOME_MOBILE_CSS = `
 .dm-row span { font-size: 15px; font-weight: 700; line-height: 1.25; color: #211915; }
 .dm-dots { display: flex; justify-content: center; gap: 8px; margin: 12px 0 8px; }
 .dm-dots i { width: 8px; height: 8px; border-radius: 50%; background: #A6CCE8; display: block; transition: width 0.2s; }
-.dm-dots i.on { background: #143C6F; width: 22px; border-radius: 4px; }
+.dm-dots i.on { background: #F0932B; width: 22px; border-radius: 4px; }
 
 `
 
-// TODO: replace the short lines below with your real card wording — these
-// five were written as stand-ins because the original cards are images.
-const WHY_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
-  { title: 'Three tailored diet options', body: 'Conventional, grain-free, or meat-based.',
-    icon: <><path d="M8 6h13M8 12h13M8 18h13" /><path d="M3 6h.01M3 12h.01M3 18h.01" /></> },
-  { title: 'Beyond the label', body: 'Recipes that go past what a bag claims.',
-    icon: <><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></> },
-  { title: '100+ human-grade ingredients', body: "Pick real foods you'd eat yourself.",
-    icon: <><path d="M3 9h18l-2 11H5L3 9z" /><path d="M8 9l4-6 4 6" /></> },
-  { title: 'Science-based formulation', body: 'Meets AAFCO minimum nutrient levels.',
-    icon: <><path d="M9 3h6M10 3v6L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-6-10V3" /></> },
-  { title: 'Full ingredient control', body: 'You choose it. FurTuner balances it.',
-    icon: <><path d="M4 8h10M18 8h2M4 16h2M10 16h10" /><circle cx="16" cy="8" r="2" /><circle cx="8" cy="16" r="2" /></> },
+// Why Choose FurTuner tiles on mobile: 5 equal-size tiles, tap to flip from the
+// front artwork (seta-cardN.svg) to the back artwork (setb-cardN.svg), same as the
+// desktop hover flip. Change WHY_LAYOUT to 'swipe' for a sideways strip instead.
+const WHY_LAYOUT: 'stack' | 'swipe' = 'stack'
+const WHY_TITLES = [
+  'Three tailored diet options',
+  'Beyond the label',
+  '100+ human-grade ingredients',
+  'Science-based formulation',
+  'Full ingredient control',
 ]
 
 // ══════════════════════════════════════════════
@@ -393,6 +404,16 @@ function App() {
   // Mobile test view only: swipeable diet-plan cards + their position dots.
   const dietCarRef = useRef<HTMLDivElement>(null)
   const [dietSlide, setDietSlide] = useState(0)
+  const [whyFlipped, setWhyFlipped] = useState<Record<number, boolean>>({})
+  const [whySlide, setWhySlide] = useState(0)
+  const whyRef = useRef<HTMLDivElement>(null)
+  const onWhyScroll = () => {
+    const el = whyRef.current
+    const first = el?.firstElementChild as HTMLElement | null | undefined
+    if (!el || !first) return
+    const w = first.offsetWidth + 12
+    setWhySlide(Math.min(WHY_TITLES.length - 1, Math.max(0, Math.round(el.scrollLeft / w))))
+  }
   const onDietScroll = () => {
     const el = dietCarRef.current
     const first = el?.firstElementChild as HTMLElement | null | undefined
@@ -689,19 +710,36 @@ function App() {
       <section className="why-section">
         <h2 className="section-title">Why Choose FurTuner?</h2>
         {isMobileTest ? (
-          <div className="dm-why">
-            {WHY_CARDS.map(c => (
-              <div key={c.title} className="dm-why-card">
-                <div className="dm-why-ic">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{c.icon}</svg>
-                </div>
-                <div>
-                  <b>{c.title}</b>
-                  <span>{c.body}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          <>
+            <div
+              className={`dm-why${WHY_LAYOUT === 'swipe' ? ' swipe' : ''}`}
+              ref={whyRef}
+              onScroll={WHY_LAYOUT === 'swipe' ? onWhyScroll : undefined}
+            >
+              {WHY_TITLES.map((title, i) => (
+                <button
+                  key={title}
+                  type="button"
+                  className={`dm-flip${whyFlipped[i] ? ' flipped' : ''}`}
+                  aria-pressed={!!whyFlipped[i]}
+                  aria-label={`${title}, tap to flip`}
+                  onClick={() => setWhyFlipped(f => ({ ...f, [i]: !f[i] }))}
+                >
+                  <div className="dm-flip-in">
+                    <div className="dm-face front">
+                      <img src={`/images/seta-card${i + 1}.svg`} alt={title} />
+                      <span className="dm-hint">Tap to flip</span>
+                    </div>
+                    <div className="dm-face back">
+                      <img src={`/images/setb-card${i + 1}.svg`} alt="" />
+                      <span className="dm-hint">Tap to flip back</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            {WHY_LAYOUT === 'swipe' && <div className="dm-count">{whySlide + 1} of {WHY_TITLES.length}</div>}
+          </>
         ) : (
         <div className="why-carousel">
           {/* Set A — displays statically at rest. */}
@@ -831,7 +869,14 @@ function App() {
           <>
             <div className="dm-car" ref={dietCarRef} onScroll={onDietScroll}>
               {DIET_PLANS.map(diet => (
-                <div key={diet.id} className="dm-card">
+                <div
+                  key={diet.id}
+                  className={`dm-card${DIET_PLANS[dietSlide]?.id === diet.id ? ' on' : ''}`}
+                  onClick={(e) => {
+                    e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+                    setDietSlide(DIET_PLANS.findIndex(d => d.id === diet.id))
+                  }}
+                >
                   <div className="dm-card-head">
                     <img src={diet.icon} alt={diet.alt} style={{ width: "48px", height: "48px", filter: "brightness(0) invert(1)" }} />
                     <p>{diet.label}</p>
