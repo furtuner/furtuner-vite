@@ -2012,6 +2012,10 @@ function ResultsPage({
                   if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                     ingFresh = ingFresh * (10.0 / 14.9);
                   }
+                  // EXCEPTION: Liver ingredients are shown at 80% — same as the on-screen table.
+                  if (r.ingredient.trim().toLowerCase().includes("liver")) {
+                    ingFresh = ingFresh * 0.8;
+                  }
                   return (
                     <tr key={i} style={{ background: i % 2 ? "#fff" : "#E0F2FF", borderBottom: "1px solid #A6CCE8" }}>
                       <td style={{ padding: "5px 8px" }}>{cleanIngredientName(r.ingredient)}</td>
@@ -2034,6 +2038,9 @@ function ResultsPage({
                       let ingFresh = wf < 1 ? ingDailyDM / (1 - wf) : ingDailyDM;
                       if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                         ingFresh = ingFresh * (10.0 / 14.9);
+                      }
+                      if (r.ingredient.trim().toLowerCase().includes("liver")) {
+                        ingFresh = ingFresh * 0.8;
                       }
                       return s + ingFresh * d;
                     }, 0);
