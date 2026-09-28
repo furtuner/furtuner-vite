@@ -2001,7 +2001,7 @@ function ResultsPage({
                 </tr>
               </thead>
               <tbody>
-                {breakdown.map((r, i) => {
+                {shuffledBreakdown.map((r, i) => {
                   if (Number(r.dm_g) <= 0) return null;
                   const frac = Number(r.dm_g) / totalDM;
                   const ingDailyDM = frac * dailyDM;
