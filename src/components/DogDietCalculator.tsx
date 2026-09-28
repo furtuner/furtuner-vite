@@ -19,6 +19,100 @@ import { createPortal } from "react-dom";
 const MOBILE_TEST_SECRET = "7d2132eae669";
 const MOBILE_TEST_BREAKPOINT = 640;
 
+// Extra polish for the mobile Profile step only (never applied to real customers,
+// same gate as everything else in the mobile view). Scoped to .dd-m-profile.
+const MOBILE_PROFILE_CSS = `
+.dd-m-profile input, .dd-m-profile select { height: 52px !important; font-size: 18px !important; border-radius: 14px !important; }
+.dd-m-profile select {
+  padding-right: 40px !important;
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23143C6F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+.dd-m-profile select option { font-size: 18px !important; }
+@media (max-width: 360px) {
+  .dd-m-profile input, .dd-m-profile select { font-size: 16px !important; padding-left: 10px !important; padding-right: 10px !important; }
+  .dd-m-profile select { padding-right: 32px !important; background-position: right 10px center; }
+  .dd-m-profile select option { font-size: 16px !important; }
+}
+`;
+
+const MOBILE_AAFCO_CSS = `
+.dd-m-aafco, .dd-m-aafco tbody { display: block; width: 100%; }
+.dd-m-aafco thead { display: none; }
+.dd-m-aafco tr.dd-sec { display: block; }
+.dd-m-aafco tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
+.dd-m-aafco tr.dd-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);
+  grid-template-areas: "name name status" "unit val min";
+  gap: 8px 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid #A6CCE8;
+}
+.dd-m-aafco tr.dd-row:last-child { border-bottom: 0; }
+.dd-m-aafco tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; }
+.dd-m-aafco td.dd-name { grid-area: name; font-size: 17px !important; font-weight: 700 !important; line-height: 1.25; }
+.dd-m-aafco td.dd-status { grid-area: status; text-align: right !important; }
+.dd-m-aafco td.dd-unit { grid-area: unit; }
+.dd-m-aafco td.dd-val { grid-area: val; }
+.dd-m-aafco td.dd-min { grid-area: min; }
+.dd-m-aafco tr.dd-row td { overflow-wrap: anywhere; }
+@media (max-width: 360px) {
+  .dd-m-aafco tr.dd-row { padding: 12px 10px; gap: 8px 6px; }
+  .dd-m-aafco tr.dd-row td { font-size: 15px !important; }
+  .dd-m-aafco td.dd-name { font-size: 16px !important; }
+}
+.dd-m-aafco td.dd-unit::before, .dd-m-aafco td.dd-val::before, .dd-m-aafco td.dd-min::before {
+  content: attr(data-label);
+  display: block;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3C6293;
+  margin-bottom: 2px;
+}
+`;
+
+const MOBILE_NUTR_CSS = `
+.dd-m-nutr, .dd-m-nutr tbody { display: block; width: 100%; }
+.dd-m-nutr thead { display: none; }
+.dd-m-nutr tr.dd-sec { display: block; }
+.dd-m-nutr tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
+.dd-m-nutr tr.dd-row {
+  display: grid;
+  grid-template-columns: minmax(0,0.7fr) minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas: "name name name" "unit val per";
+  gap: 8px 10px;
+  align-items: start;
+  padding: 12px 14px;
+  border-bottom: 1px solid #A6CCE8;
+}
+.dd-m-nutr tr.dd-row:last-child { border-bottom: 0; }
+.dd-m-nutr tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
+.dd-m-nutr td.dd-name { grid-area: name; font-size: 17px !important; font-weight: 700 !important; line-height: 1.25; }
+.dd-m-nutr td.dd-unit { grid-area: unit; }
+.dd-m-nutr td.dd-val { grid-area: val; }
+.dd-m-nutr td.dd-per { grid-area: per; }
+.dd-m-nutr td.dd-unit::before, .dd-m-nutr td.dd-val::before, .dd-m-nutr td.dd-per::before {
+  content: attr(data-label);
+  display: block;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3C6293;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+@media (max-width: 360px) {
+  .dd-m-nutr tr.dd-row { padding: 12px 10px; gap: 8px 6px; }
+  .dd-m-nutr tr.dd-row td { font-size: 15px !important; }
+  .dd-m-nutr td.dd-name { font-size: 16px !important; }
+}
+`;
+
 function useMobileTestView(): boolean {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -585,7 +679,8 @@ function ProfilePage({
   }
 
   return (
-    <div className="border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+    <div className={`border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+      {isMobileTest && <style>{MOBILE_PROFILE_CSS}</style>}
       <CardHeader
         title="Dog Profile"
         eyebrow="Step 1 of 3"
@@ -633,7 +728,7 @@ function ProfilePage({
           </div>
         </div>
 
-        <div className="md:pl-8 mt-8 md:mt-0" style={{ paddingLeft: "32px", marginTop: "0" }}>
+        <div className="md:pl-8 mt-8 md:mt-0" style={{ paddingLeft: isMobileTest ? 0 : "32px", marginTop: "0" }}>
           <SectionLabel>Reproductive Status &amp; Activity</SectionLabel>
           <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <Field label="Reproductive Status *" error={errors.repro}>
@@ -677,13 +772,13 @@ function ProfilePage({
               </Field>
             </div>
             {base && form.repro && form.activity && finalDen && (
-              <div className="flex items-center justify-between gap-4" style={{ marginTop: "28px", background: "#E0F2FF", borderRadius: "14px", padding: "20px 24px" }}>
+              <div className="flex items-center justify-between gap-4" style={{ marginTop: "28px", background: "#E0F2FF", borderRadius: "14px", padding: isMobileTest ? "16px 18px" : "20px 24px" }}>
                 <div>
-                  <p className="font-bold uppercase tracking-wider" style={{ color: "#DE7100", fontSize: "18px" }}>Daily Energy Need</p>
+                  <p className="font-bold uppercase tracking-wider" style={{ color: "#DE7100", fontSize: isMobileTest ? "14px" : "18px" }}>Daily Energy Need</p>
                   <p className="font-bold" style={{ color: "#143C6F", fontSize: "13px", marginTop: "4px" }}>{form.repro} · {form.activity}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-[40px] font-bold leading-none" style={{ color: "#143C6F" }}>{finalDen.toLocaleString()}</p>
+                  <p className="font-bold leading-none" style={{ color: "#143C6F", fontSize: isMobileTest ? "32px" : "40px" }}>{finalDen.toLocaleString()}</p>
                   <p className="font-semibold" style={{ color: "#DE7100", fontSize: "16px", marginTop: "6px" }}>kcal / day</p>
                 </div>
               </div>
@@ -691,7 +786,7 @@ function ProfilePage({
           </div>
         </div>
 
-        <div className="md:col-span-2 flex gap-3" style={{ marginTop: "36px" }}>
+        <div className="md:col-span-2 flex gap-3" style={{ marginTop: "36px", flexDirection: isMobileTest ? "column-reverse" : undefined }}>
           <button onClick={onBack} type="button"
             className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
             style={{
@@ -912,7 +1007,8 @@ function CatProfilePage({
   }
 
   return (
-    <div className="border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+    <div className={`border-[2px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ border: "2px solid #3C6293", borderRadius: "12px" }}>
+      {isMobileTest && <style>{MOBILE_PROFILE_CSS}</style>}
       <CardHeader
         title="Cat Profile"
         eyebrow="Step 1 of 3"
@@ -960,7 +1056,7 @@ function CatProfilePage({
           </div>
         </div>
 
-        <div className="md:pl-8 mt-8 md:mt-0" style={{ paddingLeft: "32px", marginTop: "0" }}>
+        <div className="md:pl-8 mt-8 md:mt-0" style={{ paddingLeft: isMobileTest ? 0 : "32px", marginTop: "0" }}>
           <SectionLabel>Reproductive Status</SectionLabel>
           <Field label="Reproductive Status *" error={errors.repro}>
             <PillGroup
@@ -1003,13 +1099,13 @@ function CatProfilePage({
             </div>
 
             {rer && form.repro.length > 0 && activeDen && (
-              <div className="flex items-center justify-between gap-4" style={{ marginTop: "28px", background: "#E0F2FF", borderRadius: "14px", padding: "20px 24px" }}>
+              <div className="flex items-center justify-between gap-4" style={{ marginTop: "28px", background: "#E0F2FF", borderRadius: "14px", padding: isMobileTest ? "16px 18px" : "20px 24px" }}>
                 <div>
-                  <p className="font-bold uppercase tracking-wider" style={{ color: "#DE7100", fontSize: "18px" }}>Daily Energy Need</p>
+                  <p className="font-bold uppercase tracking-wider" style={{ color: "#DE7100", fontSize: isMobileTest ? "14px" : "18px" }}>Daily Energy Need</p>
                   <p className="font-semibold" style={{ color: "#DE7100", fontSize: "13px", marginTop: "4px" }}>{form.repro.join(" + ")} adult</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-[40px] font-bold leading-none" style={{ color: "#143C6F" }}>{activeDen.toLocaleString()}</p>
+                  <p className="font-bold leading-none" style={{ color: "#143C6F", fontSize: isMobileTest ? "32px" : "40px" }}>{activeDen.toLocaleString()}</p>
                   <p className="font-semibold" style={{ color: "#DE7100", fontSize: "16px", marginTop: "6px" }}>kcal / day</p>
                 </div>
               </div>
@@ -1017,7 +1113,7 @@ function CatProfilePage({
           </div>
         </div>
 
-        <div className="md:col-span-2 flex gap-3" style={{ marginTop: "36px" }}>
+        <div className="md:col-span-2 flex gap-3" style={{ marginTop: "36px", flexDirection: isMobileTest ? "column-reverse" : undefined }}>
           <button onClick={onBack} type="button"
             className="bg-white border-[1.5px] border-[#A6CCE8] text-[#143C6F] hover:border-[#143C6F] transition"
             style={{
@@ -1388,7 +1484,7 @@ function IngredientsPage({
                                     flexDirection: "column",
                                     alignItems: "center",
                                     gap: "14px",
-                                    padding: "16px",
+                                    padding: "12px",
                                     borderRadius: "0 0 14px 14px",
                                     background: "#fff",
                                   }
@@ -1406,14 +1502,29 @@ function IngredientsPage({
                             }
                           >
                             <div
-                              style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                alignItems: "flex-start",
-                                justifyContent: "center",
-                                gap: isMobileTest ? "8px" : "12px",
-                                width: "100%",
-                              }}
+                              style={
+                                isMobileTest
+                                  ? {
+                                      // balance.it-style picker: soft grey tray holding a
+                                      // 2-column grid of uniform rounded boxes.
+                                      display: "grid",
+                                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                                      gap: "10px",
+                                      width: "100%",
+                                      boxSizing: "border-box",
+                                      padding: "12px",
+                                      background: "#F1F1F1",
+                                      borderRadius: "20px",
+                                    }
+                                  : {
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "flex-start",
+                                      justifyContent: "center",
+                                      gap: "12px",
+                                      width: "100%",
+                                    }
+                              }
                             >
                               {cat.items.map(name => {
                                 const isSel = selected.has(name);
@@ -1450,8 +1561,8 @@ function IngredientsPage({
                                   <button key={name} type="button" onClick={() => toggle(name, gn)}
                                     className="text-[15px] font-extrabold transition-all"
                                     style={{
-                                      flex: isMobileTest ? "0 0 calc(50% - 4px)" : "0 0 calc(33.333% - 8px)",
-                                      padding: isMobileTest ? "12px 8px" : "14px 16px",
+                                      flex: isMobileTest ? undefined : "0 0 calc(33.333% - 8px)",
+                                      padding: isMobileTest ? "10px 8px" : "14px 16px",
                                       background: isSel ? color : chipBg,
                                       color: isSel ? "#fff" : "#211915",
                                       textAlign: "center",
@@ -1460,10 +1571,24 @@ function IngredientsPage({
                                       justifyContent: "center",
                                       boxSizing: "border-box",
                                       lineHeight: 1.2,
-                                      borderRadius: "24px",
-                                      whiteSpace: allowWrap ? "normal" : "nowrap",
-                                      overflow: allowWrap ? "visible" : "hidden",
-                                      textOverflow: allowWrap ? "clip" : "ellipsis",
+                                      // Mobile: uniform rectangular box with a thin outline
+                                      // (balance.it look). Names wrap inside the box instead
+                                      // of being cut off with an ellipsis.
+                                      borderRadius: isMobileTest ? "14px" : "24px",
+                                      ...(isMobileTest
+                                        ? {
+                                            minHeight: "72px",
+                                            fontSize: "16px",
+                                            fontWeight: 700,
+                                            border: `1.5px solid ${isSel ? color : "rgba(33,25,21,0.22)"}`,
+                                            whiteSpace: "normal" as const,
+                                            overflowWrap: "anywhere" as const,
+                                          }
+                                        : {
+                                            whiteSpace: allowWrap ? ("normal" as const) : ("nowrap" as const),
+                                            overflow: allowWrap ? ("visible" as const) : ("hidden" as const),
+                                            textOverflow: allowWrap ? "clip" : "ellipsis",
+                                          }),
                                     }}
                                   >
                                     {driedSplit ? (
@@ -1485,7 +1610,8 @@ function IngredientsPage({
                                 onClick={() => toggleAll(gn)}
                                 className="text-[15px] font-extrabold transition-all"
                                 style={{
-                                  width: "calc(33.333% - 8px)",
+                                  width: isMobileTest ? "100%" : "calc(33.333% - 8px)",
+                                  minHeight: isMobileTest ? "56px" : undefined,
                                   padding: "14px 18px",
                                   background: "transparent",
                                   border: `1.5px solid ${color}`,
@@ -1495,7 +1621,7 @@ function IngredientsPage({
                                   alignItems: "center",
                                   justifyContent: "center",
                                   lineHeight: 1.2,
-                                  borderRadius: "24px",
+                                  borderRadius: isMobileTest ? "14px" : "24px",
                                 }}
                               >
                                 {cat.items.every(n => selected.has(n)) ? "✓ Both Selected" : "Select Both"}
@@ -1585,6 +1711,18 @@ function ResultsPage({
   restoredCustomer?: { fullName: string; email: string } | null;
 }) {
   const isMobileTest = useMobileTestView();
+  // Mobile test view only: which "prepare for N days" button is selected in the
+  // fresh-weight batch list. Remembers the last choice on this device.
+  const [batchDays, setBatchDays] = useState<number>(() => {
+    try {
+      const v = Number(window.localStorage.getItem("furtuner_batch_days"));
+      return [1, 3, 5, 7, 10, 15, 20, 25, 30].includes(v) ? v : 7;
+    } catch { return 7; }
+  });
+  function chooseBatchDays(d: number) {
+    setBatchDays(d);
+    try { window.localStorage.setItem("furtuner_batch_days", String(d)); } catch { /* ignore */ }
+  }
   const [feedPlanUnlocked, setFeedPlanUnlocked] = useState(!!initialFeedPlanUnlocked);
   const [reportEmail, setReportEmail] = useState("");
   const [emailSending, setEmailSending] = useState(false);
@@ -1912,6 +2050,19 @@ function ResultsPage({
       }, 0)
     : null;
   const dailyGramsStr = dailyGramsTotal != null ? dailyGramsTotal.toFixed(1) : "—";
+
+  // Same per-ingredient fresh-weight math (and the same Oyster / Liver exceptions)
+  // as the desktop batch table, used by the mobile day-picker list.
+  const batchFreshPerDay = (r: any): number => {
+    if (!dailyDM || !(totalDM > 0) || Number(r.dm_g) <= 0) return 0;
+    const frac = Number(r.dm_g) / totalDM;
+    const wf = Number(r.water_percent) / 100;
+    let ingFresh = wf < 1 ? (frac * dailyDM) / (1 - wf) : frac * dailyDM;
+    const nameLower = String(r.ingredient).trim().toLowerCase();
+    if (nameLower === "oyster canned") ingFresh = ingFresh * (10.0 / 14.9);
+    if (nameLower.includes("liver")) ingFresh = ingFresh * 0.8;
+    return ingFresh;
+  };
 
   return (
     <div style={{ border: "2px solid #3C6293", borderRadius: "13px 13px 0 0", overflow: "hidden" }}>
@@ -2299,15 +2450,16 @@ function ResultsPage({
         })()}
 
         {/* Overview & AAFCO — unified single table, always visible */}
-        <p className="text-[#143C6F] uppercase" style={{ fontSize: "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", letterSpacing: "0.02em" }}>Overview &amp; AAFCO</p>
+        <p className="text-[#143C6F] uppercase" style={{ fontSize: isMobileTest ? "20px" : "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", letterSpacing: "0.02em" }}>Overview &amp; AAFCO</p>
         <div>
             <div className="overflow-x-auto rounded-[12px] border border-[#A6CCE8] shadow-sm">
+              {isMobileTest && <style>{MOBILE_AAFCO_CSS}</style>}
               {/* On mobile, fixed % column widths at the desktop font size force the
                   header labels ("AAFCO Minimum", "Diet Value") to overlap each other
                   instead of wrapping — so on mobile we switch to a fixed pixel table
                   width with auto layout and let the wrapper above scroll it
                   horizontally, same pattern as the ingredient breakdown table below. */}
-              <table className="text-[13px] border-collapse" style={{ tableLayout: isMobileTest ? "auto" : "fixed", width: isMobileTest ? "640px" : "100%" }}>
+              <table className={`text-[13px] border-collapse${isMobileTest ? " dd-m-aafco" : ""}`} style={{ tableLayout: isMobileTest ? "auto" : "fixed", width: isMobileTest ? "100%" : "100%" }}>
                 <thead>
                   <tr className="bg-[#143C6F] text-white">
                     <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "160px" : "26%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "left", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Nutrient</th>
@@ -2325,8 +2477,8 @@ function ResultsPage({
                     .filter(section => section.rows.some(row => row.val != null))
                     .map(section => (
                     <React.Fragment key={section.cat}>
-                      <tr>
-                        <td colSpan={5} className="font-black uppercase tracking-wider" style={{ padding: "16px 18px", background: "#BEE2FB", color: "#143C6F", fontSize: "22px", fontWeight: 900, letterSpacing: "0.04em" }}>
+                      <tr className="dd-sec">
+                        <td colSpan={5} className="font-black uppercase tracking-wider" style={{ padding: isMobileTest ? "12px 14px" : "16px 18px", background: "#BEE2FB", color: "#143C6F", fontSize: isMobileTest ? "17px" : "22px", fontWeight: 900, letterSpacing: "0.04em" }}>
                           {section.cat}
                         </td>
                       </tr>
@@ -2351,12 +2503,12 @@ function ResultsPage({
                         else                 badge = <span className="text-[#AD0B39] font-bold" style={{ fontSize: "20px", textShadow: "0 0 8px rgba(173,11,57,0.65), 0 0 2px rgba(173,11,57,0.9)" }}>✗</span>;
                         const dietVal = row.val != null ? Number(row.val).toFixed(row.dec ?? 2) : "";
                         return (
-                          <tr key={row.label} className="border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
-                            <td style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
-                            <td style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
-                            <td className="font-mono font-semibold" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{dietVal}</td>
-                            <td className="font-mono" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{minVal != null ? minVal : ""}</td>
-                            <td style={{ padding: "12px 16px", textAlign: "center", fontSize: "15px" }}>{badge}</td>
+                          <tr key={row.label} className="dd-row border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
+                            <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
+                            <td className="dd-unit" data-label="Unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
+                            <td className="dd-val font-mono font-semibold" data-label="Diet value" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{dietVal}</td>
+                            <td className="dd-min font-mono" data-label="AAFCO minimum" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{minVal != null ? minVal : (isMobileTest ? "—" : "")}</td>
+                            <td className="dd-status" style={{ padding: "12px 16px", textAlign: "center", fontSize: "15px" }}>{badge}</td>
                           </tr>
                         );
                       })}
@@ -2461,7 +2613,53 @@ function ResultsPage({
                 </div>
 
                 {/* Fresh weight batch table */}
-                <p className="text-[#143C6F] uppercase" style={{ fontSize: "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "20px", letterSpacing: "0.02em" }}>Fresh weight to serve per batch (g)</p>
+                <p className="text-[#143C6F] uppercase" style={{ fontSize: isMobileTest ? "20px" : "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "20px", letterSpacing: "0.02em" }}>Fresh weight to serve per batch (g)</p>
+                {isMobileTest ? (
+                  <div style={{ marginBottom: "32px" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 700, color: "#3C6293", margin: "0 0 8px" }}>Prepare for how many days?</p>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: "8px", marginBottom: "16px" }}>
+                      {DAYS.map(d => (
+                        <button
+                          key={d}
+                          type="button"
+                          aria-pressed={batchDays === d}
+                          onClick={() => chooseBatchDays(d)}
+                          style={{
+                            height: "46px", padding: 0, borderRadius: "12px", fontSize: "17px", fontWeight: 700, cursor: "pointer",
+                            background: batchDays === d ? "#143C6F" : "#E0F2FF",
+                            color: batchDays === d ? "#fff" : "#211915",
+                            border: `1.5px solid ${batchDays === d ? "#143C6F" : "rgba(33,25,21,0.22)"}`,
+                          }}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ border: "1px solid #A6CCE8", borderRadius: "12px", overflow: "hidden" }}>
+                      <div style={{ background: "#143C6F", color: "#fff", display: "flex", justifyContent: "space-between", padding: "12px 14px", fontSize: "14px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                        <span>Ingredient</span>
+                        <span>{batchDays} {batchDays === 1 ? "day" : "days"}</span>
+                      </div>
+                      {shuffledBreakdown.map((r, i) => {
+                        if (Number(r.dm_g) <= 0) return null;
+                        return (
+                          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", padding: "13px 14px", borderBottom: "1px solid #A6CCE8", background: i % 2 ? "#F5FAFF" : "#fff" }}>
+                            <span style={{ fontSize: "16px", fontWeight: 600, color: "#211915", lineHeight: 1.25, minWidth: 0, overflowWrap: "anywhere" }}>{cleanIngredientName(r.ingredient)}</span>
+                            <span style={{ fontFamily: "monospace", fontSize: "20px", fontWeight: 700, color: "#143C6F", whiteSpace: "nowrap" }}>
+                              {(batchFreshPerDay(r) * batchDays).toFixed(1)}<span style={{ fontFamily: "inherit", fontSize: "13px", fontWeight: 600, color: "#3C6293", marginLeft: "3px" }}>g</span>
+                            </span>
+                          </div>
+                        );
+                      })}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px", background: "#143C6F", color: "#fff" }}>
+                        <span style={{ fontSize: "16px", fontWeight: 700 }}>Total</span>
+                        <span style={{ fontFamily: "monospace", fontSize: "22px", fontWeight: 700 }}>
+                          {breakdown.reduce((sum, r) => sum + batchFreshPerDay(r) * batchDays, 0).toFixed(1)} g
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
                 <div className="overflow-x-auto" style={{ marginBottom: "32px" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "800px" }}>
                     <thead>
@@ -2529,15 +2727,17 @@ function ResultsPage({
                     </tbody>
                   </table>
                 </div>
+                )}
 
                 {/* Diet Nutrient Composition — Dry Matter Basis + Per 1000 Kcal DM */}
-                <p className="text-[#143C6F] uppercase" style={{ fontSize: "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", marginTop: "32px", letterSpacing: "0.02em" }}>Diet Nutrient Composition</p>
+                <p className="text-[#143C6F] uppercase" style={{ fontSize: isMobileTest ? "20px" : "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", marginTop: "32px", letterSpacing: "0.02em" }}>Diet Nutrient Composition</p>
                 <div className="overflow-x-auto rounded-[12px] border border-[#A6CCE8] shadow-sm mb-6">
                   {/* Same mobile fix as the Overview & AAFCO table above: switch from
                       fixed % widths at desktop font size to a fixed pixel width with
                       auto layout, so headers like "Per 1000 Kcal DM" wrap/scroll
                       instead of overlapping "Dry Matter Basis". */}
-                  <table className="text-[13px] border-collapse" style={{ tableLayout: isMobileTest ? "auto" : "fixed", width: isMobileTest ? "560px" : "100%" }}>
+                  {isMobileTest && <style>{MOBILE_NUTR_CSS}</style>}
+                  <table className={`text-[13px] border-collapse${isMobileTest ? " dd-m-nutr" : ""}`} style={{ tableLayout: isMobileTest ? "auto" : "fixed", width: "100%" }}>
                     <thead>
                       <tr className="bg-[#143C6F] text-white">
                         <th className="uppercase tracking-wider" style={{ width: isMobileTest ? "160px" : "26%", padding: isMobileTest ? "12px 10px" : "16px 16px", textAlign: "left", fontSize: isMobileTest ? "14px" : "22px", fontWeight: 800 }}>Nutrient</th>
@@ -2551,8 +2751,8 @@ function ResultsPage({
                         .filter(section => section.rows.some(row => row.val != null))
                         .map(section => (
                         <React.Fragment key={section.cat}>
-                          <tr>
-                            <td colSpan={4} className="font-black uppercase tracking-wider" style={{ padding: "16px 18px", background: "#BEE2FB", color: "#143C6F", fontSize: "22px", fontWeight: 900, letterSpacing: "0.04em" }}>
+                          <tr className="dd-sec">
+                            <td colSpan={4} className="font-black uppercase tracking-wider" style={{ padding: isMobileTest ? "12px 14px" : "16px 18px", background: "#BEE2FB", color: "#143C6F", fontSize: isMobileTest ? "17px" : "22px", fontWeight: 900, letterSpacing: "0.04em" }}>
                               {section.cat}
                             </td>
                           </tr>
@@ -2565,13 +2765,13 @@ function ResultsPage({
                             );
                             const perKcalStr = perKcalVal != null ? perKcalVal.toFixed(row.dec ?? 2) : "—";
                             return (
-                              <tr key={row.label} className="border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
-                                <td style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
-                                <td style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
-                                <td className="font-mono font-semibold" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>
+                              <tr key={row.label} className="dd-row border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
+                                <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
+                                <td className="dd-unit" data-label="Unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
+                                <td className="dd-val font-mono font-semibold" data-label="Dry matter basis" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>
                                   {row.val != null ? Number(row.val).toFixed(row.dec ?? 2) : "—"}
                                 </td>
-                                <td className="font-mono" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{perKcalStr}</td>
+                                <td className="dd-per font-mono" data-label="Per 1000 kcal DM" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{perKcalStr}</td>
                               </tr>
                             );
                           })}
@@ -2699,10 +2899,11 @@ function ResultsPage({
 
 // ─── Shared UI helpers ────────────────────────────────────────────────────────
 function SectionLabel({ children }: { children: React.ReactNode }) {
+  const isMobileTest = useMobileTestView();
   return (
     <div
       className="text-[27px] font-bold uppercase tracking-wide text-[#FF9D36] border-b-[1.5px] border-[#3C6293]"
-      style={{ paddingBottom: "10px", marginBottom: "22px", borderBottom: "1.5px solid #3C6293" }}
+      style={{ paddingBottom: "10px", marginBottom: isMobileTest ? "16px" : "22px", borderBottom: "1.5px solid #3C6293", fontSize: isMobileTest ? "19px" : undefined }}
     >
       {children}
     </div>
@@ -2724,11 +2925,12 @@ function Field({
   labelFontSize?: string;
   labelNoWrap?: boolean;
 }) {
+  const isMobileTest = useMobileTestView();
   return (
     <div>
       <label
         className="block font-bold text-[#3C6293]"
-        style={{ marginBottom: "9px", fontSize: labelFontSize ?? "23px", whiteSpace: labelNoWrap ? "nowrap" : "normal" }}
+        style={{ marginBottom: isMobileTest ? "6px" : "9px", fontSize: labelFontSize ?? (isMobileTest ? "16px" : "23px"), whiteSpace: labelNoWrap ? "nowrap" : "normal" }}
       >
         {label}
       </label>
@@ -2745,11 +2947,13 @@ function PillGroup({
   options: { value: string; label: string }[];
   onChange: (v: string) => void;
 }) {
+  const isMobileTest = useMobileTestView();
   return (
     <div className="flex gap-2.5">
       {options.map(o => (
         <button
           key={o.value} type="button"
+          style={isMobileTest ? { height: "auto", minHeight: "56px", padding: "8px 10px", fontSize: "17px", lineHeight: 1.2, borderRadius: "14px" } : undefined}
           onClick={() => onChange(value === o.value ? "" : o.value)}
           className={`flex-1 h-[64px] rounded-[10px] text-[21px] font-bold transition-all ${
             value === o.value
@@ -2773,11 +2977,13 @@ function MultiPillGroup({
   options: { value: string; label: string }[];
   onToggle: (v: string) => void;
 }) {
+  const isMobileTest = useMobileTestView();
   return (
     <div className="flex gap-2.5">
       {options.map(o => (
         <button
           key={o.value} type="button"
+          style={isMobileTest ? { height: "auto", minHeight: "56px", padding: "8px 10px", fontSize: "17px", lineHeight: 1.2, borderRadius: "14px" } : undefined}
           aria-pressed={value.includes(o.value)}
           onClick={() => onToggle(o.value)}
           className={`flex-1 h-[64px] rounded-[10px] text-[21px] font-bold transition-all ${
