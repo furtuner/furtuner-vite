@@ -136,7 +136,7 @@ const HOME_MOBILE_CSS = `
 .expert-section { padding: 24px 16px !important; }
 .expert-inner { flex-direction: column !important; text-align: center; gap: 12px !important; }
 .expert-avatar { flex: none !important; width: 120px !important; height: auto !important; }
-.expert-text { font-size: 16px !important; line-height: 1.5 !important; text-align: left !important; }
+.expert-text { font-size: 16px !important; line-height: 1.5 !important; text-align: justify !important; text-justify: inter-word; hyphens: auto; -webkit-hyphens: auto; text-align-last: left; }
 .how-it-works-section { padding: 24px 0 32px !important; }
 .how-it-works-video-wrap { margin: 0 16px !important; max-width: none !important; }
 .how-it-works-video-wrap:fullscreen { width: 100vw; height: 100vh; height: 100dvh; max-width: none; margin: 0 !important; border-radius: 0; display: flex; align-items: center; justify-content: center; background: #000; }

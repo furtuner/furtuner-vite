@@ -43,24 +43,24 @@ const MOBILE_AAFCO_CSS = `
 .dd-m-aafco thead { display: none; }
 .dd-m-aafco tr.dd-sec { display: block; }
 .dd-m-aafco tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
-.dd-m-aafco tr.dd-colhead, .dd-m-aafco tr.dd-row { display: grid; grid-template-columns: minmax(0,1.9fr) minmax(0,0.85fr) minmax(0,1fr) minmax(0,0.95fr) 40px; align-items: stretch; padding: 0 4px; }
-.dd-m-aafco tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; }
-.dd-m-aafco tr.dd-colhead td { padding: 8px 5px !important; font-size: 11px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; overflow-wrap: anywhere; min-width: 0; }
-.dd-m-aafco tr.dd-colhead td:nth-child(3), .dd-m-aafco tr.dd-colhead td:nth-child(4) { justify-content: flex-end; text-align: right; }
+.dd-m-aafco tr.dd-colhead, .dd-m-aafco tr.dd-row { display: grid; grid-template-columns: minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.15fr) 52px; align-items: stretch; padding: 0 4px; }
+.dd-m-aafco tr.dd-colhead { background: #EAF3FC; border-bottom: 1.5px solid #A6CCE8; }
+.dd-m-aafco tr.dd-colhead td { padding: 10px 5px !important; font-size: 15px !important; font-weight: 800; color: #143C6F; line-height: 1.2; display: flex; align-items: center; text-align: left; overflow-wrap: anywhere; min-width: 0; }
+.dd-m-aafco tr.dd-colhead td:nth-child(3), .dd-m-aafco tr.dd-colhead td:nth-child(4), .dd-m-aafco tr.dd-colhead td:nth-child(5) { justify-content: center; text-align: center; }
 .dd-m-aafco tr.dd-colhead td + td, .dd-m-aafco tr.dd-row td + td { border-left: 1px solid #E1ECF6; }
 .dd-m-aafco tr.dd-row { border-bottom: 1px solid #E5EEF7; }
 .dd-m-aafco tr.dd-row:last-child { border-bottom: 0; }
 .dd-m-aafco tr.dd-row td { display: flex; align-items: center; padding: 10px 5px !important; font-size: 14px !important; min-width: 0; overflow-wrap: anywhere; text-align: left !important; }
 .dd-m-aafco tr.dd-row td.dd-name { font-weight: 600 !important; line-height: 1.25; }
 .dd-m-aafco tr.dd-row td.dd-unit { color: #5b6b7a !important; font-size: 12px !important; line-height: 1.2; }
-.dd-m-aafco tr.dd-row td.dd-val, .dd-m-aafco tr.dd-row td.dd-min { justify-content: flex-end; text-align: right !important; font-weight: 700 !important; color: #143C6F !important; }
+.dd-m-aafco tr.dd-row td.dd-val, .dd-m-aafco tr.dd-row td.dd-min { justify-content: center; text-align: center !important; font-weight: 700 !important; color: #143C6F !important; }
 .dd-m-aafco tr.dd-row td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
-.dd-m-aafco tr.dd-colhead td:nth-child(5) { justify-content: center; padding: 8px 0 !important; font-size: 10px !important; }
+.dd-m-aafco tr.dd-colhead td:nth-child(5) { justify-content: center; padding: 10px 0 !important; }
 .dd-m-aafco tr.dd-row td.dd-status { justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
 @media (max-width: 360px) {
   .dd-m-aafco tr.dd-row td { font-size: 13px !important; padding: 10px 4px !important; }
   .dd-m-aafco tr.dd-row td.dd-unit { font-size: 11px !important; }
-  .dd-m-aafco tr.dd-colhead td { font-size: 10px !important; padding: 8px 4px !important; }
+  .dd-m-aafco tr.dd-colhead td { font-size: 13px !important; padding: 9px 4px !important; }
 }
 `;
 
@@ -69,22 +69,22 @@ const MOBILE_NUTR_CSS = `
 .dd-m-nutr thead { display: none; }
 .dd-m-nutr tr.dd-sec { display: block; }
 .dd-m-nutr tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
-.dd-m-nutr tr.dd-colhead, .dd-m-nutr tr.dd-row { display: grid; grid-template-columns: minmax(0,1.9fr) minmax(0,0.85fr) minmax(0,1.1fr) minmax(0,1.1fr); align-items: stretch; padding: 0 4px; }
-.dd-m-nutr tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; }
-.dd-m-nutr tr.dd-colhead td { padding: 8px 5px !important; font-size: 11px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; overflow-wrap: anywhere; min-width: 0; }
-.dd-m-nutr tr.dd-colhead td:nth-child(3), .dd-m-nutr tr.dd-colhead td:nth-child(4) { justify-content: flex-end; text-align: right; }
+.dd-m-nutr tr.dd-colhead, .dd-m-nutr tr.dd-row { display: grid; grid-template-columns: minmax(0,1.7fr) minmax(0,0.8fr) minmax(0,1.15fr) minmax(0,1.15fr); align-items: stretch; padding: 0 4px; }
+.dd-m-nutr tr.dd-colhead { background: #EAF3FC; border-bottom: 1.5px solid #A6CCE8; }
+.dd-m-nutr tr.dd-colhead td { padding: 10px 5px !important; font-size: 15px !important; font-weight: 800; color: #143C6F; line-height: 1.2; display: flex; align-items: center; text-align: left; overflow-wrap: anywhere; min-width: 0; }
+.dd-m-nutr tr.dd-colhead td:nth-child(3), .dd-m-nutr tr.dd-colhead td:nth-child(4) { justify-content: center; text-align: center; }
 .dd-m-nutr tr.dd-colhead td + td, .dd-m-nutr tr.dd-row td + td { border-left: 1px solid #E1ECF6; }
 .dd-m-nutr tr.dd-row { border-bottom: 1px solid #E5EEF7; }
 .dd-m-nutr tr.dd-row:last-child { border-bottom: 0; }
 .dd-m-nutr tr.dd-row td { display: flex; align-items: center; padding: 10px 5px !important; font-size: 14px !important; min-width: 0; overflow-wrap: anywhere; text-align: left !important; }
 .dd-m-nutr tr.dd-row td.dd-name { font-weight: 600 !important; line-height: 1.25; }
 .dd-m-nutr tr.dd-row td.dd-unit { color: #5b6b7a !important; font-size: 12px !important; line-height: 1.2; }
-.dd-m-nutr tr.dd-row td.dd-val, .dd-m-nutr tr.dd-row td.dd-per { justify-content: flex-end; text-align: right !important; font-weight: 700 !important; color: #143C6F !important; }
+.dd-m-nutr tr.dd-row td.dd-val, .dd-m-nutr tr.dd-row td.dd-per { justify-content: center; text-align: center !important; font-weight: 700 !important; color: #143C6F !important; }
 .dd-m-nutr tr.dd-row td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
 @media (max-width: 360px) {
   .dd-m-nutr tr.dd-row td { font-size: 13px !important; padding: 10px 4px !important; }
   .dd-m-nutr tr.dd-row td.dd-unit { font-size: 11px !important; }
-  .dd-m-nutr tr.dd-colhead td { font-size: 10px !important; padding: 8px 4px !important; }
+  .dd-m-nutr tr.dd-colhead td { font-size: 13px !important; padding: 9px 4px !important; }
 }
 `;
 
