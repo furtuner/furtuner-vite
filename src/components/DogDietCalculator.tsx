@@ -1915,15 +1915,26 @@ function ResultsPage({
     const lower = name.toLowerCase();
     if (lower.includes("eggshell")) return formatIngredientName("Eggshells / Calcium Carbonate");
     if (lower.includes("oyster")) return formatIngredientName("Oyster");
+    // Diet Report (on screen and printed): brewer's / dried yeast is labelled "nutritional yeast".
+    // Display label only — the ingredient's data and all calculations are unchanged, and the
+    // ingredient picker screen still uses the original name.
+    if (/brewer/i.test(name) && /yeast/i.test(name)) return formatIngredientName("Nutritional yeast");
     return formatIngredientName(name);
   }
 
-  // Printed report only: brewer's / dried yeast is shown as "Nutritional yeast".
-  // (Display label only — the ingredient's data and all calculations are unchanged.)
+  // Kept so the printed report reads the same as the on-screen report.
   function printIngredientName(name: string): string {
-    if (/brewer/i.test(name) && /yeast/i.test(name)) return "Nutritional yeast";
     return cleanIngredientName(name);
   }
+
+  // Brazil nut / oyster note shown under the Total row of the fresh-weight table
+  // (on screen and in the printed report), only when oyster is in the recipe.
+  const hasOysterInRecipe = breakdown.some(r => Number(r.dm_g) > 0 && r.ingredient.toLowerCase().includes("oyster"));
+  const screenOysterNote = hasOysterInRecipe ? (
+    <p style={{ fontSize: isMobileTest ? "14px" : "16px", color: "#211915", background: "#FFDCB7", borderLeft: "4px solid #FA9A36", borderRadius: "0 8px 8px 0", padding: isMobileTest ? "10px 12px" : "12px 16px", margin: isMobileTest ? "12px 0 0" : "0 0 32px", lineHeight: 1.5 }}>
+      <strong>Note:</strong> Brazil nut may replace oyster at the rate of 1 gram of Brazil nut for every 5 grams of oyster.
+    </p>
+  ) : null;
 
   const r = result as unknown as Record<string, number | null>;
 
@@ -2697,9 +2708,11 @@ function ResultsPage({
                         </span>
                       </div>
                     </div>
+                    {screenOysterNote}
                   </div>
                 ) : (
-                <div className="overflow-x-auto" style={{ marginBottom: "32px" }}>
+                <>
+                <div className="overflow-x-auto" style={{ marginBottom: hasOysterInRecipe ? "8px" : "32px" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "800px" }}>
                     <thead>
                       <tr style={{ background: "#143C6F", color: "#fff" }}>
@@ -2766,6 +2779,8 @@ function ResultsPage({
                     </tbody>
                   </table>
                 </div>
+                {screenOysterNote}
+                </>
                 )}
 
                 {/* Diet Nutrient Composition — Dry Matter Basis + Per 1000 Kcal DM */}
