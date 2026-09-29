@@ -125,7 +125,7 @@ const HOME_MOBILE_CSS = `
 .hero-right { order: 3; width: 100%; flex: none !important; min-width: 0 !important; align-self: stretch !important; }
 .hero-img { aspect-ratio: auto !important; height: auto !important; object-fit: contain !important; transform: none !important; }
 .hero-subtitle-group { order: 4; max-width: 100% !important; gap: 14px !important; }
-.hero-subtitle { font-size: 17px !important; line-height: 1.55 !important; text-align: left !important; color: #B85C00 !important; }
+.hero-subtitle { font-size: 17px !important; line-height: 1.55 !important; text-align: justify !important; text-justify: inter-word; hyphens: auto; -webkit-hyphens: auto; text-align-last: left; color: #B85C00 !important; }
 .hero-subtitle--accent { background: #E0F2FF; color: #143C6F !important; padding: 14px 16px; border-radius: 16px; }
 .hero-subtitle--accent strong { color: #143C6F; }
 
@@ -487,11 +487,10 @@ function App() {
     }
     return cleanup
   }, [])
-  // ── Mobile test view: tap play → video goes fullscreen; when it ends, fullscreen
+  // ── Tap play → video goes fullscreen (web and mobile); when it ends, fullscreen
   // closes and the page returns to where the video was started. Works in portrait
   // and landscape (the browser rotates the fullscreen view with the phone).
   const enterVideoFullscreen = () => {
-    if (!isMobileTest) return
     const videoEl = howItWorksVideoRef.current as any
     const wrapEl = howItWorksWrapRef.current as any
     if (!videoEl || !wrapEl) return
@@ -512,7 +511,6 @@ function App() {
   }
 
   const exitVideoFullscreen = () => {
-    if (!isMobileTest) return
     const videoEl = howItWorksVideoRef.current as any
     const doc = document as any
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
@@ -521,7 +519,6 @@ function App() {
   }
 
   useEffect(() => {
-    if (!isMobileTest) return
     const videoEl = howItWorksVideoRef.current as any
     const restore = () => {
       const doc = document as any
@@ -541,7 +538,7 @@ function App() {
       document.removeEventListener('webkitfullscreenchange', restore)
       if (videoEl) videoEl.removeEventListener('webkitendfullscreen', restore)
     }
-  }, [isMobileTest])
+  }, [])
 
   // "Why Choose FurTuner" cards: Set A displays statically at rest. Hovering
   // an individual card shows a flip overlay on top of it (Set A front,
