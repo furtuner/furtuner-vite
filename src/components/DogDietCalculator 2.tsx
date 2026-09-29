@@ -16,6 +16,7 @@ import { createPortal } from "react-dom";
 //      updates it without needing a reload)
 // Real customers — including ones on an actual phone, without the secret —
 // always get the exact current desktop-fixed layout, completely unchanged.
+const MOBILE_TEST_SECRET = "7d2132eae669";
 const MOBILE_TEST_BREAKPOINT = 640;
 
 // Extra polish for the mobile Profile step only (never applied to real customers,
@@ -88,21 +89,26 @@ const MOBILE_NUTR_CSS = `
 `;
 
 function useMobileTestView(): boolean {
-  // Live for everyone: real phones (narrow portrait, or short landscape) get the
-  // mobile layout. The initial value is computed up front so a phone never flashes
-  // the desktop layout first.
-  const compute = () => {
-    if (typeof window === "undefined") return false;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    // Portrait phones: narrow width. Landscape phones are wider (up to ~930px) but
-    // short; the height cap catches them without catching a normal desktop window.
-    return w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930);
-  };
-  const [isMobile, setIsMobile] = useState<boolean>(compute);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(compute());
+    const hasSecret =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
+    if (!hasSecret) return; // never even attaches a listener for real customers
+
+    const check = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // Portrait phones: narrow width, same as before. Landscape phones
+      // are wider (up to ~930px on the largest current devices) but much
+      // shorter, so a width-only check missed them entirely — rotating a
+      // phone sideways used to silently fall back to the desktop-scaled
+      // layout. The height cap catches landscape phones without also
+      // catching a plain desktop browser window resized to a similar
+      // width (those are almost never under ~500px tall).
+      setIsMobile(w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930));
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);

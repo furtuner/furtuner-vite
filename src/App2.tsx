@@ -4,27 +4,30 @@ import DogDietCalculator from './components/DogDietCalculator'
 import FAQSection from './components/FAQSection'
 import './page.css'
 
-// ─── Mobile view, same breakpoint as DogDietCalculator.tsx ───────────────
-// Same breakpoint as the calculator's useMobileTestView, so both switch to the
-// mobile layout together on real phones. Keep the two copies in sync.
+// ─── Mobile-test view, same gate as DogDietCalculator.tsx ────────────────
+// Same secret + breakpoint as the calculator's useMobileTestView, so both
+// activate together under the same ?testmode=... URL. Real visitors,
+// including real phones without the secret, see the current layout
+// completely unchanged.
+const MOBILE_TEST_SECRET = "7d2132eae669";
 const MOBILE_TEST_BREAKPOINT = 640;
 
 function useMobileTestView(): boolean {
-  // Live for everyone: real phones (narrow portrait, or short landscape) get the
-  // mobile layout. The initial value is computed up front so a phone never flashes
-  // the desktop layout first.
-  const compute = () => {
-    if (typeof window === "undefined") return false;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    // Portrait phones: narrow width. Landscape phones are wider (up to ~930px) but
-    // short; the height cap catches them without catching a normal desktop window.
-    return w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930);
-  };
-  const [isMobile, setIsMobile] = useState<boolean>(compute);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(compute());
+    const hasSecret =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
+    if (!hasSecret) return;
+
+    const check = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // Same landscape-phone coverage as DogDietCalculator.tsx's copy of
+      // this hook — keep both in sync.
+      setIsMobile(w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930));
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
@@ -186,14 +189,6 @@ const HOME_MOBILE_CSS = `
 .dm-dots i { width: 8px; height: 8px; border-radius: 50%; background: #A6CCE8; display: block; transition: width 0.2s; }
 .dm-dots i.on { background: #F0932B; width: 22px; border-radius: 4px; }
 
-`
-
-// Desktop Why Choose cards: always show the front (the hover layer used to be invisible
-// until hovered), click flips to the back, and a small "Tap to flip" pill hints at it.
-const WHY_DESKTOP_CSS = `
-.why-hover-card { opacity: 1 !important; cursor: pointer; }
-.why-hover-card:focus-visible { outline: 3px solid #F0932B; outline-offset: 3px; }
-.why-tap-hint { position: absolute; right: 14px; bottom: 14px; z-index: 3; font-size: 14px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: #fff; color: #143C6F; border: 1px solid #A6CCE8; box-shadow: 0 2px 6px rgba(20, 60, 111, 0.15); pointer-events: none; }
 `
 
 // Why Choose FurTuner tiles on mobile: 5 equal-size tiles, tap to flip from the
@@ -561,8 +556,7 @@ function App() {
   // "Why Choose FurTuner" cards: Set A displays statically at rest. Hovering
   // an individual card shows a flip overlay on top of it (Set A front,
   // Set B back).
-  // Desktop Why Choose cards: click a card to flip it to its back (click again to flip back).
-  const [whyFlippedDesk, setWhyFlippedDesk] = useState<Record<number, boolean>>({})
+  const [whyHoveredCard, setWhyHoveredCard] = useState<number | null>(null)
   // Defaults to 'home' — except when the page is loading because Stripe just
   // redirected the customer back here after a successful payment
   // (?furtuner_payment=success). In that case we need DogDietCalculator to mount
@@ -771,7 +765,6 @@ function App() {
           </>
         ) : (
         <div className="why-carousel">
-          <style>{WHY_DESKTOP_CSS}</style>
           {/* Set A — displays statically at rest. */}
           <div className="why-set why-set-a">
             <div className="why-grid">
@@ -833,25 +826,15 @@ function App() {
                   { n: 2, alt: 'Beyond the label' },
                 ].map(({ n, alt }) => (
                   <div
-                    className={`why-card why-card-${n} why-hover-card ${whyFlippedDesk[n] ? 'is-active' : ''}`}
+                    className={`why-card why-card-${n} why-hover-card ${whyHoveredCard === n ? 'is-active' : ''}`}
                     key={n}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={!!whyFlippedDesk[n]}
-                    aria-label={`${alt}, click to flip`}
-                    onClick={() => setWhyFlippedDesk(f => ({ ...f, [n]: !f[n] }))}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setWhyFlippedDesk(f => ({ ...f, [n]: !f[n] }))
-                      }
-                    }}
+                    onMouseEnter={() => setWhyHoveredCard(n)}
+                    onMouseLeave={() => setWhyHoveredCard(null)}
                   >
                     <div className="why-flip-inner">
                       <img className="why-full-img why-flip-front" src={`/images/seta-card${n}.svg`} alt={alt} />
                       <img className="why-full-img why-flip-back" src={`/images/setb-card${n}.svg`} alt="" />
                     </div>
-                    <span className="why-tap-hint">{whyFlippedDesk[n] ? 'Tap to flip back' : 'Tap to flip'}</span>
                   </div>
                 ))}
               </div>
@@ -862,25 +845,15 @@ function App() {
                   { n: 5, alt: 'Full ingredient control' },
                 ].map(({ n, alt }) => (
                   <div
-                    className={`why-card why-card-${n} why-hover-card ${whyFlippedDesk[n] ? 'is-active' : ''}`}
+                    className={`why-card why-card-${n} why-hover-card ${whyHoveredCard === n ? 'is-active' : ''}`}
                     key={n}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={!!whyFlippedDesk[n]}
-                    aria-label={`${alt}, click to flip`}
-                    onClick={() => setWhyFlippedDesk(f => ({ ...f, [n]: !f[n] }))}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setWhyFlippedDesk(f => ({ ...f, [n]: !f[n] }))
-                      }
-                    }}
+                    onMouseEnter={() => setWhyHoveredCard(n)}
+                    onMouseLeave={() => setWhyHoveredCard(null)}
                   >
                     <div className="why-flip-inner">
                       <img className="why-full-img why-flip-front" src={`/images/seta-card${n}.svg`} alt={alt} />
                       <img className="why-full-img why-flip-back" src={`/images/setb-card${n}.svg`} alt="" />
                     </div>
-                    <span className="why-tap-hint">{whyFlippedDesk[n] ? 'Tap to flip back' : 'Tap to flip'}</span>
                   </div>
                 ))}
               </div>
