@@ -1983,6 +1983,7 @@ function ResultsPage({
   // Unified table sections
   // perKcal: "x1000" for all nutrient rows, null for no calc
   const aafco = (result as any).aafco_percent_of_minimum ?? {};
+  const VITAMIN_A_FACTOR = 0.75;
 
   const unifiedSections = [
     { cat: "Proximates", rows: [
@@ -2024,7 +2025,10 @@ function ResultsPage({
       { label: "Selenium (Se)",   unit: "mg/kg DM", val: r["se_mg_kg"] ?? null,   min: petType === "cat" ? 0.3  : 0.35, dec: 2, aafcoPct: aafco["Se"], perKcal: "x1000" as const },
     ]},
     { cat: "Vitamins", rows: [
-      { label: "Vitamin A",             unit: "IU/kg DM", val: r["vitamin_a_iu_kg"] ?? null,        min: petType === "cat" ? 3332  : 5000,  dec: 0, aafcoPct: aafco["Vitamin_A"], perKcal: "x1000" as const },
+      // Vitamin A is reported at 75% of the backend value. The same factor is applied to
+      // the % of AAFCO minimum; the per-1000-kcal column and the status badge are both
+      // derived from these two values, so all four stay consistent.
+      { label: "Vitamin A",             unit: "IU/kg DM", val: r["vitamin_a_iu_kg"] != null ? Number(r["vitamin_a_iu_kg"]) * VITAMIN_A_FACTOR : null,        min: petType === "cat" ? 3332  : 5000,  dec: 0, aafcoPct: aafco["Vitamin_A"] != null ? Number(aafco["Vitamin_A"]) * VITAMIN_A_FACTOR : undefined, perKcal: "x1000" as const },
       { label: "Vitamin D",             unit: "IU/kg DM", val: r["vitamin_d_iu_kg"] ?? null,        min: petType === "cat" ? 280   : 500,   dec: 0, aafcoPct: aafco["Vitamin_D"], perKcal: "x1000" as const },
       { label: "Vitamin E",             unit: "mg/kg DM", val: r["vitamin_e_iu_kg"] ?? null,        min: petType === "cat" ? 28    : 45,    dec: 1, aafcoPct: aafco["Vitamin_E"], perKcal: "x1000" as const },
       { label: "Thiamine (B1)",         unit: "mg/kg DM", val: r["thiamin_mg_kg"] ?? null,          min: petType === "cat" ? 4.6   : 2.25,  dec: 2, aafcoPct: aafco["Thiamin"], perKcal: "x1000" as const },
@@ -2054,7 +2058,7 @@ function ResultsPage({
         let ingFresh = wf < 1 ? (frac * dailyDM) / (1 - wf) : frac * dailyDM;
         const nameLower = r.ingredient.trim().toLowerCase();
         if (nameLower === "oyster canned") ingFresh = ingFresh * (10.0 / 14.9);
-        if (nameLower.includes("liver")) ingFresh = ingFresh * 0.8;
+        if (nameLower.includes("liver")) ingFresh = ingFresh * 0.77;
         return sum + ingFresh;
       }, 0)
     : null;
@@ -2069,7 +2073,7 @@ function ResultsPage({
     let ingFresh = wf < 1 ? (frac * dailyDM) / (1 - wf) : frac * dailyDM;
     const nameLower = String(r.ingredient).trim().toLowerCase();
     if (nameLower === "oyster canned") ingFresh = ingFresh * (10.0 / 14.9);
-    if (nameLower.includes("liver")) ingFresh = ingFresh * 0.8;
+    if (nameLower.includes("liver")) ingFresh = ingFresh * 0.77;
     return ingFresh;
   };
 
@@ -2172,9 +2176,9 @@ function ResultsPage({
                   if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                     ingFresh = ingFresh * (10.0 / 14.9);
                   }
-                  // EXCEPTION: Liver ingredients are shown at 80% — same as the on-screen table.
+                  // EXCEPTION: Liver ingredients are shown at 77% — same as the on-screen table.
                   if (r.ingredient.trim().toLowerCase().includes("liver")) {
-                    ingFresh = ingFresh * 0.8;
+                    ingFresh = ingFresh * 0.77;
                   }
                   return (
                     <tr key={i} style={{ background: i % 2 ? "#fff" : "#E0F2FF", borderBottom: "1px solid #A6CCE8" }}>
@@ -2200,7 +2204,7 @@ function ResultsPage({
                         ingFresh = ingFresh * (10.0 / 14.9);
                       }
                       if (r.ingredient.trim().toLowerCase().includes("liver")) {
-                        ingFresh = ingFresh * 0.8;
+                        ingFresh = ingFresh * 0.77;
                       }
                       return s + ingFresh * d;
                     }, 0);
@@ -2735,11 +2739,11 @@ function ResultsPage({
                         if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                           ingFresh = ingFresh * (10.0 / 14.9);
                         }
-                        // EXCEPTION: Liver ingredients are shown at 80% of the
+                        // EXCEPTION: Liver ingredients are shown at 77% of the
                         // computed fresh-weight value in this final report table.
                         const ingLower = r.ingredient.trim().toLowerCase();
                         if (ingLower.includes("liver")) {
-                          ingFresh = ingFresh * 0.8;
+                          ingFresh = ingFresh * 0.77;
                         }
                         return (
                           <tr key={i} style={{ background: "#E0F2FF", borderBottom: "2px solid #3C6293" }}>
@@ -2765,11 +2769,11 @@ function ResultsPage({
                             if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                               ingFresh = ingFresh * (10.0 / 14.9);
                             }
-                            // EXCEPTION: Liver ingredients are shown at 80% of the
+                            // EXCEPTION: Liver ingredients are shown at 77% of the
                             // computed fresh-weight value in this final report table.
                             const ingLowerTot = r.ingredient.trim().toLowerCase();
                             if (ingLowerTot.includes("liver")) {
-                              ingFresh = ingFresh * 0.8;
+                              ingFresh = ingFresh * 0.77;
                             }
                             return s + ingFresh * d;
                           }, 0);
