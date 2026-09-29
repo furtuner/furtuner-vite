@@ -126,6 +126,8 @@ const HOME_MOBILE_CSS = `
 .hero-subtitle--accent { background: #E0F2FF; color: #143C6F !important; padding: 14px 16px; border-radius: 16px; }
 .hero-subtitle--accent strong { color: #143C6F; }
 
+.hero-bg-section { height: auto !important; margin: 4px 0 !important; }
+.hero-bg-full { height: auto !important; object-fit: contain !important; }
 .section-title { font-size: 26px !important; margin-bottom: 16px !important; }
 .why-section { padding: 32px 16px 16px !important; }
 .plans-section { padding: 32px 0 24px !important; }
@@ -442,6 +444,7 @@ function App() {
   // when it ends (or fullscreen is closed) the visitor lands back on that spot.
   const savedScrollRef = useRef<number | null>(null)
   const fsSwapRef = useRef(false)
+  const prevFsRef = useRef<Element | null>(null)
 
   useEffect(() => {
     const videoEl = howItWorksVideoRef.current
@@ -454,6 +457,16 @@ function App() {
     // fullscreening the wrapper div instead, which contains both the video
     // and the caption overlay together.
     const onFullscreenChange = () => {
+      const current = document.fullscreenElement
+      const previous = prevFsRef.current
+      prevFsRef.current = current
+      // The four-corner button on the player only knows about the <video>. Pressed while we
+      // are already fullscreen on the wrapper, it switches fullscreen to the <video> — that
+      // click means "minimize", so leave fullscreen instead of swapping back in.
+      if (current === videoEl && previous === wrapEl) {
+        document.exitFullscreen().catch(() => {})
+        return
+      }
       if (document.fullscreenElement === videoEl) {
         fsSwapRef.current = true
         document.exitFullscreen().then(() => {
