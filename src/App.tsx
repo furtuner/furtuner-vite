@@ -518,6 +518,19 @@ function App() {
     else if (videoEl && videoEl.webkitDisplayingFullscreen && videoEl.webkitExitFullscreen) videoEl.webkitExitFullscreen()
   }
 
+  // When the video finishes: leave fullscreen, then reset the player to the start
+  // (first frame, paused, captions cleared) so it is ready to play again.
+  const onVideoEnded = () => {
+    exitVideoFullscreen()
+    const v = howItWorksVideoRef.current
+    if (v) {
+      v.pause()
+      v.currentTime = 0
+      v.load()
+    }
+    setCurrentCaption('')
+  }
+
   useEffect(() => {
     const videoEl = howItWorksVideoRef.current as any
     const restore = () => {
@@ -1007,7 +1020,7 @@ function App() {
               controls
               playsInline
               onPlay={enterVideoFullscreen}
-              onEnded={exitVideoFullscreen}
+              onEnded={onVideoEnded}
               preload="metadata"
               poster="/images/how-furtuner-works-poster.jpg"
             >
