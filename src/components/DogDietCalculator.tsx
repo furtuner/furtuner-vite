@@ -88,15 +88,16 @@ const MOBILE_NUTR_CSS = `
 `;
 
 function useMobileTestView(): boolean {
-  // Live for everyone: real phones (narrow portrait, or short landscape) get the
-  // mobile layout. The initial value is computed up front so a phone never flashes
-  // the desktop layout first.
+  // Live for everyone: real phones get the mobile layout. Width-based on purpose, and kept
+  // in sync with index.html's viewport tag + .ft-responsive class: if a visitor picks
+  // "Request Desktop Site" the browser reports ~980px, so all three switch to the desktop
+  // layout together.
+  //  * Landscape phones are wider (up to ~930px) but short; the height cap catches them
+  //    without catching a normal desktop window.
   const compute = () => {
     if (typeof window === "undefined") return false;
     const w = window.innerWidth;
     const h = window.innerHeight;
-    // Portrait phones: narrow width. Landscape phones are wider (up to ~930px) but
-    // short; the height cap catches them without catching a normal desktop window.
     return w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930);
   };
   const [isMobile, setIsMobile] = useState<boolean>(compute);
@@ -105,7 +106,11 @@ function useMobileTestView(): boolean {
     const check = () => setIsMobile(compute());
     check();
     window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    window.addEventListener("orientationchange", check);
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("orientationchange", check);
+    };
   }, []);
 
   return isMobile;

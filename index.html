@@ -3,54 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
-    <!-- Responsive design is INTENTIONALLY gated behind the same secret
-         used to reveal the "Skip Payment (Testing)" button — real customers
-         must keep seeing the exact current scaled-desktop layout; only
-         visits with ?testmode=<secret> get the real responsive experience.
+    <!-- Responsive (mobile) layout — live for everyone.
 
-         Gating is done TWO ways together, because either one alone has a
-         gap:
-           1. The viewport tag itself (width=1280 vs device-width) — this
-              is what makes the responsive CSS trigger at the *intended*
-              breakpoints for a real phone.
-           2. An .ft-responsive class on <html>, which every new/changed
-              rule in page.css's RESPONSIVE section is scoped under. This
-              is the one that actually matters for security-of-behavior:
-              mobile browsers' "Request Desktop Site" feature overrides a
-              page's own viewport tag with an internal ~980px default,
-              regardless of what this page asks for — which used to make
-              the responsive CSS fire accidentally for ordinary customers
-              who toggled that browser feature, since 980px falls under
-              our 1100px breakpoint. The class isn't a viewport report at
-              all, so no browser feature can flip it on by accident — only
-              this script, only when the secret matches.
+         Two pieces, set before the browser starts layout so there is no flash:
+           1. The viewport tag. Real phones (short screen side <= 500px) get
+              width=device-width so the page lays out at the phone's own width and
+              the mobile layout can switch on. Every other device (desktop, tablet)
+              keeps width=1280 exactly as before. Visits with ?testmode=<secret> always
+              get device-width so the mobile view can be tried in a desktop browser.
+           2. An .ft-responsive class on <html>, which the responsive rules in page.css
+              are scoped under. It follows the CURRENT window size (kept in sync on
+              resize / rotate), so a mobile browser's "Request Desktop Site" — which
+              overrides the viewport tag with its own ~980px canvas — cleanly switches
+              back to the desktop layout instead of leaving a half-mobile page.
 
-         Both are written/set before the browser starts layout — no
-         flash/reflow. Keep this testmode value in sync with
-         DogDietCalculator.tsx's own copy of the same secret if it's ever
-         rotated. -->
+         Same thresholds as the useMobileTestView hook in DogDietCalculator.tsx and
+         App.tsx (<= 640px wide, or <= 930px wide and <= 500px tall): keep all three
+         in sync if this is ever changed. -->
     <script>
       (function () {
         var isTestMode = new URLSearchParams(window.location.search).get("testmode") === "7d2132eae669";
+        var shortSide = Math.min(window.screen.width, window.screen.height);
+        var isPhone = shortSide <= 500;
         document.write(
           '<meta name="viewport" content="' +
-          (isTestMode ? "width=device-width, initial-scale=1" : "width=1280") +
+          (isTestMode || isPhone ? "width=device-width, initial-scale=1" : "width=1280") +
           '">'
         );
-        if (!isTestMode) return; // real customers: nothing else to set up
 
-        // Keep .ft-responsive in sync with the CURRENT effective viewport at
-        // all times, not just once at initial load. Previously this class
-        // was set once here and never touched again — so toggling a mobile
-        // browser's "Request Desktop Site" (which overrides the viewport
-        // meta tag above with the browser's own ~980px default, regardless
-        // of what this page requests) left the class stuck "on": mobile CSS
-        // kept partially applying, just rendered in that wider canvas and
-        // shrunk to fit — which looks like the mobile view zoomed out,
-        // instead of properly switching to the real desktop layout. Same
-        // width/height thresholds as the useMobileTestView hook in
-        // DogDietCalculator.tsx and App.tsx — keep all three in sync if
-        // this is ever changed.
         function updateResponsiveClass() {
           var w = window.innerWidth;
           var h = window.innerHeight;
@@ -59,6 +39,7 @@
         }
         updateResponsiveClass();
         window.addEventListener("resize", updateResponsiveClass);
+        window.addEventListener("orientationchange", updateResponsiveClass);
       })();
     </script>
     <title>FurTuner — Science-Based Pet Nutrition</title>
