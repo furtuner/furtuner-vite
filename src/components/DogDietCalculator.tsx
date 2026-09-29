@@ -47,23 +47,23 @@ const MOBILE_AAFCO_CSS = `
 .dd-m-aafco tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; padding: 0 14px; }
 .dd-m-aafco tr.dd-colhead td { padding: 8px 10px !important; font-size: 12px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; }
 .dd-m-aafco tr.dd-colhead td:first-child { padding-left: 0 !important; }
-.dd-m-aafco tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #DCE9F4; }
+.dd-m-aafco tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #C9DDF0; }
 .dd-m-aafco tr.dd-colhead td:last-child { padding-right: 0 !important; }
 .dd-m-aafco tr.dd-row { grid-template-areas: "name name status" "unit val min"; row-gap: 6px; column-gap: 0; align-items: center; padding: 10px 14px; border-bottom: 1px solid #E5EEF7; }
 .dd-m-aafco tr.dd-row:last-child { border-bottom: 0; }
 .dd-m-aafco tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
-.dd-m-aafco td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
-.dd-m-aafco td.dd-status { grid-area: status; text-align: right !important; }
-.dd-m-aafco td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
-.dd-m-aafco td.dd-val, .dd-m-aafco td.dd-min { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #DCE9F4; }
-.dd-m-aafco td.dd-val { grid-area: val; padding: 0 10px !important; }
-.dd-m-aafco td.dd-min { grid-area: min; padding: 0 0 0 10px !important; }
-.dd-m-aafco td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
+.dd-m-aafco tr.dd-row td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
+.dd-m-aafco tr.dd-row td.dd-status { grid-area: status; text-align: right !important; }
+.dd-m-aafco tr.dd-row td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
+.dd-m-aafco tr.dd-row td.dd-val, .dd-m-aafco tr.dd-row td.dd-min { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #C9DDF0; }
+.dd-m-aafco tr.dd-row td.dd-val { grid-area: val; padding: 0 10px !important; }
+.dd-m-aafco tr.dd-row td.dd-min { grid-area: min; padding: 0 0 0 10px !important; }
+.dd-m-aafco tr.dd-row td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
 @media (max-width: 360px) {
   .dd-m-aafco tr.dd-row td { font-size: 15px !important; }
   .dd-m-aafco tr.dd-colhead td { font-size: 11px !important; padding: 8px 6px !important; }
-  .dd-m-aafco td.dd-val { padding: 0 6px !important; }
-  .dd-m-aafco td.dd-min { padding: 0 0 0 6px !important; }
+  .dd-m-aafco tr.dd-row td.dd-val { padding: 0 6px !important; }
+  .dd-m-aafco tr.dd-row td.dd-min { padding: 0 0 0 6px !important; }
 }
 `;
 
@@ -76,22 +76,22 @@ const MOBILE_NUTR_CSS = `
 .dd-m-nutr tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; padding: 0 14px; }
 .dd-m-nutr tr.dd-colhead td { padding: 8px 10px !important; font-size: 12px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; }
 .dd-m-nutr tr.dd-colhead td:first-child { padding-left: 0 !important; }
-.dd-m-nutr tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #DCE9F4; }
+.dd-m-nutr tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #C9DDF0; }
 .dd-m-nutr tr.dd-colhead td:last-child { padding-right: 0 !important; }
 .dd-m-nutr tr.dd-row { grid-template-areas: "name name name" "unit val per"; row-gap: 6px; column-gap: 0; align-items: center; padding: 10px 14px; border-bottom: 1px solid #E5EEF7; }
 .dd-m-nutr tr.dd-row:last-child { border-bottom: 0; }
 .dd-m-nutr tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
-.dd-m-nutr td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
-.dd-m-nutr .dd-m-nutr td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
-.dd-m-nutr td.dd-val, .dd-m-nutr td.dd-per { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #DCE9F4; }
-.dd-m-nutr td.dd-val { grid-area: val; padding: 0 10px !important; }
-.dd-m-nutr td.dd-per { grid-area: per; padding: 0 0 0 10px !important; }
-.dd-m-nutr td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
+.dd-m-nutr tr.dd-row td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
+.dd-m-nutr .dd-m-nutr tr.dd-row td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
+.dd-m-nutr tr.dd-row td.dd-val, .dd-m-nutr tr.dd-row td.dd-per { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #C9DDF0; }
+.dd-m-nutr tr.dd-row td.dd-val { grid-area: val; padding: 0 10px !important; }
+.dd-m-nutr tr.dd-row td.dd-per { grid-area: per; padding: 0 0 0 10px !important; }
+.dd-m-nutr tr.dd-row td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
 @media (max-width: 360px) {
   .dd-m-nutr tr.dd-row td { font-size: 15px !important; }
   .dd-m-nutr tr.dd-colhead td { font-size: 11px !important; padding: 8px 6px !important; }
-  .dd-m-nutr td.dd-val { padding: 0 6px !important; }
-  .dd-m-nutr td.dd-per { padding: 0 0 0 6px !important; }
+  .dd-m-nutr tr.dd-row td.dd-val { padding: 0 6px !important; }
+  .dd-m-nutr tr.dd-row td.dd-per { padding: 0 0 0 6px !important; }
 }
 `;
 
@@ -1159,6 +1159,15 @@ function IngredientsPage({
   const [error, setError] = useState("");
   const isMobileTest = useMobileTestView();
   const [valError, setValError] = useState("");
+  // Mobile test view: bump this every time a validation message is shown so the page
+  // scrolls down to it (the message sits below the Calculate Diet button).
+  const [valErrTick, setValErrTick] = useState(0);
+  const valErrRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isMobileTest || !valErrTick) return;
+    const t = setTimeout(() => valErrRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+    return () => clearTimeout(t);
+  }, [valErrTick, isMobileTest]);
 
   useEffect(() => {
     function applyFlat(flat: IngredientItem[]) {
@@ -1273,6 +1282,7 @@ function IngredientsPage({
     )];
     if (missing.length > 0) {
       setValError(`Please select at least one item from: ${missing.join(", ")}`);
+      setValErrTick(t => t + 1);
       return;
     }
     const vegAEntry = Object.entries(categories).find(([k]) => /vegetable a/i.test(k));
@@ -1282,6 +1292,7 @@ function IngredientsPage({
       const vegB = vegBEntry[1].selected.length;
       if (vegA + vegB < 2) {
         setValError("Please select at least 2 vegetables");
+        setValErrTick(t => t + 1);
         return;
       }
     }
@@ -1654,8 +1665,9 @@ function IngredientsPage({
             </div>
             {valError && (
               <div
+                ref={valErrRef}
                 className="bg-[#FDEBEC] border-[1.5px] border-[#B02424] rounded-[12px] text-[#AD0B39] font-bold text-center"
-                style={{ padding: "24px 28px", fontSize: "20px", lineHeight: 1.5, marginTop: "24px" }}
+                style={{ padding: isMobileTest ? "14px 16px" : "24px 28px", fontSize: isMobileTest ? "16px" : "20px", lineHeight: 1.5, marginTop: isMobileTest ? "16px" : "24px" }}
               >
                 ❌ {valError}
               </div>
@@ -2438,6 +2450,19 @@ function ResultsPage({
         {/* Overview & AAFCO — unified single table, always visible */}
         <p className="text-[#143C6F] uppercase" style={{ fontSize: isMobileTest ? "20px" : "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", letterSpacing: "0.02em" }}>Overview &amp; AAFCO</p>
         <div>
+            {isMobileTest && (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px", margin: "0 0 10px", padding: "8px 10px", background: "#F5FAFF", border: "1px solid #DCE9F4", borderRadius: "10px", flexWrap: "wrap", rowGap: "4px" }}>
+                {[
+                  { icon: "✓", label: "Meets minimum", color: "#2E7D32" },
+                  { icon: "⚠", label: "Within 10%", color: "#D9791A" },
+                  { icon: "✗", label: "Below min", color: "#AD0B39" },
+                ].map(({ icon, label, color }) => (
+                  <span key={icon} style={{ display: "inline-flex", alignItems: "center", gap: "5px", whiteSpace: "nowrap", fontSize: "12px", fontWeight: 700, color: "#211915" }}>
+                    <span style={{ fontSize: "16px", fontWeight: 900, color, lineHeight: 1 }}>{icon}</span>{label}
+                  </span>
+                ))}
+              </div>
+            )}
             <div className="overflow-x-auto rounded-[12px] border border-[#A6CCE8] shadow-sm">
               {isMobileTest && <style>{MOBILE_AAFCO_CSS}</style>}
               {/* On mobile, fixed % column widths at the desktop font size force the
@@ -2506,6 +2531,8 @@ function ResultsPage({
                 </tbody>
               </table>
             </div>
+            {!isMobileTest && (
+            <>
             <div style={{ height: "1px", background: "#A6CCE8", margin: "40px 0" }}></div>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "48px", flexWrap: "wrap", padding: "36px 20px" }}>
               {[
@@ -2519,6 +2546,8 @@ function ResultsPage({
                 </div>
               ))}
             </div>
+            </>
+            )}
         </div>
         </>
         )}

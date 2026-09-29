@@ -152,16 +152,23 @@ const HOME_MOBILE_CSS = `
 .calculator-page { padding: 8px 4px 0 !important; }
 .calculator-page > div:first-child { margin-bottom: 12px !important; }
 .dm-why { display: flex; flex-direction: column; gap: 12px; }
-.dm-why.swipe { flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; }
+.dm-why.swipe { align-items: flex-start; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; }
 .dm-why.swipe::-webkit-scrollbar { display: none; }
-.dm-flip { perspective: 1000px; aspect-ratio: 4 / 5; border: none; background: none; padding: 0; cursor: pointer; display: block; width: 100%; flex: 0 0 auto; -webkit-tap-highlight-color: transparent; }
+.dm-flip { perspective: 1000px; border: none; background: none; padding: 0; cursor: pointer; display: block; width: 100%; flex: 0 0 auto; -webkit-tap-highlight-color: transparent; }
 .dm-why.swipe .dm-flip { width: 78%; scroll-snap-align: center; }
-.dm-flip-in { position: relative; width: 100%; height: 100%; transition: transform 0.55s ease; transform-style: preserve-3d; }
+.dm-flip-in { position: relative; display: grid; width: 100%; transition: transform 0.55s ease; transform-style: preserve-3d; }
 .dm-flip.flipped .dm-flip-in { transform: rotateY(180deg); }
-.dm-face { position: absolute; inset: 0; border-radius: 26px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #EAF4FB; display: flex; align-items: center; justify-content: center; }
-.dm-face img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.dm-face { position: relative; grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.dm-face img { width: 100%; height: auto; display: block; }
 .dm-face.back { transform: rotateY(180deg); }
 .dm-hint { position: absolute; right: 12px; bottom: 12px; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: #fff; color: #143C6F; border: 1px solid #A6CCE8; pointer-events: none; }
+.how-it-works-caption-overlay { font-size: 12px !important; max-width: 92% !important; padding: 2px 8px !important; }
+.how-it-works-video-wrap:fullscreen .how-it-works-caption-overlay { font-size: 17px !important; bottom: 6% !important; max-width: 92% !important; padding: 3px 10px !important; }
+.how-it-works-video-wrap:-webkit-full-screen .how-it-works-caption-overlay { font-size: 17px !important; bottom: 6% !important; max-width: 92% !important; padding: 3px 10px !important; }
+@media (orientation: portrait) {
+  .how-it-works-video-wrap:fullscreen .how-it-works-caption-overlay { top: calc(50% + 28vw + 12px) !important; bottom: auto !important; }
+  .how-it-works-video-wrap:-webkit-full-screen .how-it-works-caption-overlay { top: calc(50% + 28vw + 12px) !important; bottom: auto !important; }
+}
 .dm-count { text-align: center; font-size: 13px; font-weight: 700; color: #3C6293; margin-top: 10px; }
 @media (prefers-reduced-motion: reduce) { .dm-flip-in { transition: none; } }
 
