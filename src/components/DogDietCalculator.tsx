@@ -1918,6 +1918,13 @@ function ResultsPage({
     return formatIngredientName(name);
   }
 
+  // Printed report only: brewer's / dried yeast is shown as "Nutritional yeast".
+  // (Display label only — the ingredient's data and all calculations are unchanged.)
+  function printIngredientName(name: string): string {
+    if (/brewer/i.test(name) && /yeast/i.test(name)) return "Nutritional yeast";
+    return cleanIngredientName(name);
+  }
+
   const r = result as unknown as Record<string, number | null>;
 
   // Calorie % from energy (pie chart formula)
@@ -2132,7 +2139,7 @@ function ResultsPage({
 
             {/* Fresh weight to serve per batch (g) */}
             <p style={{ color: "#143C6F", textTransform: "uppercase", fontSize: "16px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "6px", marginBottom: "12px" }}>Fresh weight to serve per batch (g)</p>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", marginBottom: "24px" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", marginBottom: breakdown.some(r => Number(r.dm_g) > 0 && r.ingredient.toLowerCase().includes("oyster")) ? "8px" : "24px" }}>
               <thead>
                 <tr style={{ background: "#143C6F", color: "#fff" }}>
                   <th style={{ padding: "8px 8px", textAlign: "left", fontSize: "13px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.03em" }}>Ingredient</th>
@@ -2160,7 +2167,7 @@ function ResultsPage({
                   }
                   return (
                     <tr key={i} style={{ background: i % 2 ? "#fff" : "#E0F2FF", borderBottom: "1px solid #A6CCE8" }}>
-                      <td style={{ padding: "5px 8px" }}>{cleanIngredientName(r.ingredient)}</td>
+                      <td style={{ padding: "5px 8px" }}>{printIngredientName(r.ingredient)}</td>
                       <td style={{ padding: "5px 8px", textAlign: "center", color: "#3C6293" }}>grams</td>
                       {DAYS.map(d => (
                         <td key={d} style={{ padding: "5px 6px", textAlign: "right", fontFamily: "monospace" }}>{(ingFresh * d).toFixed(1)}</td>
@@ -2191,6 +2198,11 @@ function ResultsPage({
                 </tr>
               </tbody>
             </table>
+            {breakdown.some(r => Number(r.dm_g) > 0 && r.ingredient.toLowerCase().includes("oyster")) && (
+              <p style={{ fontSize: "11px", color: "#211915", background: "#FFDCB7", borderLeft: "4px solid #FA9A36", borderRadius: "0 8px 8px 0", padding: "9px 12px", margin: "0 0 24px", lineHeight: 1.5, breakInside: "avoid" }}>
+                <strong>Note:</strong> Brazil nut may replace oyster at the rate of 1 gram of Brazil nut for every 5 grams of oyster.
+              </p>
+            )}
 
             {/* Diet Nutrient Composition */}
             <p style={{ color: "#143C6F", textTransform: "uppercase", fontSize: "16px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "6px", marginBottom: "12px" }}>Diet Nutrient Composition</p>
@@ -2309,7 +2321,7 @@ function ResultsPage({
                   title: "Step 5: Mix all ingredients together",
                   body: [
                     "Once the meats, grains, and vegetables have cooled, place all ingredients (including fruits if used) in a large mixing container.",
-                    "Add any additional ingredients included in the recipe (e.g. brewer's yeast, dried kelp, eggshell powder). It's recommended to mix these with water first to ensure an even distribution.",
+                    "Add any additional ingredients included in the recipe (e.g. nutritional yeast, dried kelp, eggshell powder). It's recommended to mix these with water first to ensure an even distribution.",
                     "Mix thoroughly to ensure uniform distribution of ingredients.",
                   ],
                 },
