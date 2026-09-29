@@ -607,6 +607,12 @@ function App() {
   }
 
   const goCalculator = () => {
+    // Mobile test view: opening "Build Your Diet" always starts a brand-new calculator.
+    // Without this, the calculator's "resume where you left off" snapshot (kept for forced
+    // page reloads) brought people straight back to their old Overview & AAFCO results.
+    if (isMobileTest) {
+      try { sessionStorage.removeItem('furtunerWizardState') } catch { /* ignore */ }
+    }
     setCalculatorInstance(n => n + 1)
     setView('calculator')
     setMobileMenuOpen(false)
