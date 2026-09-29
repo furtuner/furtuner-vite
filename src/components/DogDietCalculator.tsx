@@ -43,27 +43,24 @@ const MOBILE_AAFCO_CSS = `
 .dd-m-aafco thead { display: none; }
 .dd-m-aafco tr.dd-sec { display: block; }
 .dd-m-aafco tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
-.dd-m-aafco tr.dd-colhead, .dd-m-aafco tr.dd-row { display: grid; grid-template-columns: minmax(0,0.85fr) minmax(0,1fr) minmax(0,1fr); }
-.dd-m-aafco tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; padding: 0 14px; }
-.dd-m-aafco tr.dd-colhead td { padding: 8px 10px !important; font-size: 12px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; }
-.dd-m-aafco tr.dd-colhead td:first-child { padding-left: 0 !important; }
-.dd-m-aafco tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #C9DDF0; }
-.dd-m-aafco tr.dd-colhead td:last-child { padding-right: 0 !important; }
-.dd-m-aafco tr.dd-row { grid-template-areas: "name name status" "unit val min"; row-gap: 6px; column-gap: 0; align-items: center; padding: 10px 14px; border-bottom: 1px solid #E5EEF7; }
+.dd-m-aafco tr.dd-colhead, .dd-m-aafco tr.dd-row { display: grid; grid-template-columns: minmax(0,1.9fr) minmax(0,0.85fr) minmax(0,1fr) minmax(0,0.95fr) 40px; align-items: stretch; padding: 0 4px; }
+.dd-m-aafco tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; }
+.dd-m-aafco tr.dd-colhead td { padding: 8px 5px !important; font-size: 11px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; overflow-wrap: anywhere; min-width: 0; }
+.dd-m-aafco tr.dd-colhead td:nth-child(3), .dd-m-aafco tr.dd-colhead td:nth-child(4) { justify-content: flex-end; text-align: right; }
+.dd-m-aafco tr.dd-colhead td + td, .dd-m-aafco tr.dd-row td + td { border-left: 1px solid #E1ECF6; }
+.dd-m-aafco tr.dd-row { border-bottom: 1px solid #E5EEF7; }
 .dd-m-aafco tr.dd-row:last-child { border-bottom: 0; }
-.dd-m-aafco tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
-.dd-m-aafco tr.dd-row td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
-.dd-m-aafco tr.dd-row td.dd-status { grid-area: status; text-align: right !important; }
-.dd-m-aafco tr.dd-row td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
-.dd-m-aafco tr.dd-row td.dd-val, .dd-m-aafco tr.dd-row td.dd-min { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #C9DDF0; }
-.dd-m-aafco tr.dd-row td.dd-val { grid-area: val; padding: 0 10px !important; }
-.dd-m-aafco tr.dd-row td.dd-min { grid-area: min; padding: 0 0 0 10px !important; }
+.dd-m-aafco tr.dd-row td { display: flex; align-items: center; padding: 10px 5px !important; font-size: 14px !important; min-width: 0; overflow-wrap: anywhere; text-align: left !important; }
+.dd-m-aafco tr.dd-row td.dd-name { font-weight: 600 !important; line-height: 1.25; }
+.dd-m-aafco tr.dd-row td.dd-unit { color: #5b6b7a !important; font-size: 12px !important; line-height: 1.2; }
+.dd-m-aafco tr.dd-row td.dd-val, .dd-m-aafco tr.dd-row td.dd-min { justify-content: flex-end; text-align: right !important; font-weight: 700 !important; color: #143C6F !important; }
 .dd-m-aafco tr.dd-row td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
+.dd-m-aafco tr.dd-colhead td:nth-child(5) { justify-content: center; padding: 8px 0 !important; font-size: 10px !important; }
+.dd-m-aafco tr.dd-row td.dd-status { justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
 @media (max-width: 360px) {
-  .dd-m-aafco tr.dd-row td { font-size: 15px !important; }
-  .dd-m-aafco tr.dd-colhead td { font-size: 11px !important; padding: 8px 6px !important; }
-  .dd-m-aafco tr.dd-row td.dd-val { padding: 0 6px !important; }
-  .dd-m-aafco tr.dd-row td.dd-min { padding: 0 0 0 6px !important; }
+  .dd-m-aafco tr.dd-row td { font-size: 13px !important; padding: 10px 4px !important; }
+  .dd-m-aafco tr.dd-row td.dd-unit { font-size: 11px !important; }
+  .dd-m-aafco tr.dd-colhead td { font-size: 10px !important; padding: 8px 4px !important; }
 }
 `;
 
@@ -72,26 +69,22 @@ const MOBILE_NUTR_CSS = `
 .dd-m-nutr thead { display: none; }
 .dd-m-nutr tr.dd-sec { display: block; }
 .dd-m-nutr tr.dd-sec td { display: block; width: 100%; box-sizing: border-box; }
-.dd-m-nutr tr.dd-colhead, .dd-m-nutr tr.dd-row { display: grid; grid-template-columns: minmax(0,0.85fr) minmax(0,1fr) minmax(0,1fr); }
-.dd-m-nutr tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; padding: 0 14px; }
-.dd-m-nutr tr.dd-colhead td { padding: 8px 10px !important; font-size: 12px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; }
-.dd-m-nutr tr.dd-colhead td:first-child { padding-left: 0 !important; }
-.dd-m-nutr tr.dd-colhead td:nth-child(n+2) { justify-content: flex-end; text-align: right; border-left: 1px solid #C9DDF0; }
-.dd-m-nutr tr.dd-colhead td:last-child { padding-right: 0 !important; }
-.dd-m-nutr tr.dd-row { grid-template-areas: "name name name" "unit val per"; row-gap: 6px; column-gap: 0; align-items: center; padding: 10px 14px; border-bottom: 1px solid #E5EEF7; }
+.dd-m-nutr tr.dd-colhead, .dd-m-nutr tr.dd-row { display: grid; grid-template-columns: minmax(0,1.9fr) minmax(0,0.85fr) minmax(0,1.1fr) minmax(0,1.1fr); align-items: stretch; padding: 0 4px; }
+.dd-m-nutr tr.dd-colhead { background: #F5FAFF; border-bottom: 1px solid #A6CCE8; }
+.dd-m-nutr tr.dd-colhead td { padding: 8px 5px !important; font-size: 11px !important; font-weight: 700; color: #3C6293; line-height: 1.2; display: flex; align-items: flex-end; text-align: left; overflow-wrap: anywhere; min-width: 0; }
+.dd-m-nutr tr.dd-colhead td:nth-child(3), .dd-m-nutr tr.dd-colhead td:nth-child(4) { justify-content: flex-end; text-align: right; }
+.dd-m-nutr tr.dd-colhead td + td, .dd-m-nutr tr.dd-row td + td { border-left: 1px solid #E1ECF6; }
+.dd-m-nutr tr.dd-row { border-bottom: 1px solid #E5EEF7; }
 .dd-m-nutr tr.dd-row:last-child { border-bottom: 0; }
-.dd-m-nutr tr.dd-row td { padding: 0 !important; text-align: left !important; font-size: 16px !important; min-width: 0; overflow-wrap: anywhere; }
-.dd-m-nutr tr.dd-row td.dd-name { grid-area: name; font-weight: 600 !important; line-height: 1.3; }
-.dd-m-nutr .dd-m-nutr tr.dd-row td.dd-unit { grid-area: unit; color: #5b6b7a !important; font-size: 15px !important; }
-.dd-m-nutr tr.dd-row td.dd-val, .dd-m-nutr tr.dd-row td.dd-per { text-align: right !important; font-weight: 700 !important; color: #143C6F !important; border-left: 1px solid #C9DDF0; }
-.dd-m-nutr tr.dd-row td.dd-val { grid-area: val; padding: 0 10px !important; }
-.dd-m-nutr tr.dd-row td.dd-per { grid-area: per; padding: 0 0 0 10px !important; }
+.dd-m-nutr tr.dd-row td { display: flex; align-items: center; padding: 10px 5px !important; font-size: 14px !important; min-width: 0; overflow-wrap: anywhere; text-align: left !important; }
+.dd-m-nutr tr.dd-row td.dd-name { font-weight: 600 !important; line-height: 1.25; }
+.dd-m-nutr tr.dd-row td.dd-unit { color: #5b6b7a !important; font-size: 12px !important; line-height: 1.2; }
+.dd-m-nutr tr.dd-row td.dd-val, .dd-m-nutr tr.dd-row td.dd-per { justify-content: flex-end; text-align: right !important; font-weight: 700 !important; color: #143C6F !important; }
 .dd-m-nutr tr.dd-row td.dd-dim { color: #8896a3 !important; font-weight: 400 !important; }
 @media (max-width: 360px) {
-  .dd-m-nutr tr.dd-row td { font-size: 15px !important; }
-  .dd-m-nutr tr.dd-colhead td { font-size: 11px !important; padding: 8px 6px !important; }
-  .dd-m-nutr tr.dd-row td.dd-val { padding: 0 6px !important; }
-  .dd-m-nutr tr.dd-row td.dd-per { padding: 0 0 0 6px !important; }
+  .dd-m-nutr tr.dd-row td { font-size: 13px !important; padding: 10px 4px !important; }
+  .dd-m-nutr tr.dd-row td.dd-unit { font-size: 11px !important; }
+  .dd-m-nutr tr.dd-colhead td { font-size: 10px !important; padding: 8px 4px !important; }
 }
 `;
 
@@ -2374,10 +2367,19 @@ function ResultsPage({
 
               {/* COL 1: Selected — 2-column grid */}
               <div>
-                <p className="text-[#211915]" style={{ fontSize: "20px", fontWeight: 600, marginBottom: "16px" }}>Selected</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {nonFixed.map(r => (
-                    <span key={r.ingredient} className="bg-[#BEE2FB] text-[#211915] text-[14px] font-bold px-4 py-3 rounded-full text-center">
+                <p className="text-[#211915]" style={{ fontSize: isMobileTest ? "18px" : "20px", fontWeight: 600, marginBottom: isMobileTest ? "10px" : "16px" }}>Selected</p>
+                <div className="grid grid-cols-2 gap-3" style={isMobileTest ? { gap: "8px" } : undefined}>
+                  {nonFixed.map((r, idx) => (
+                    <span
+                      key={r.ingredient}
+                      className="bg-[#BEE2FB] text-[#211915] text-[14px] font-bold px-4 py-3 rounded-full text-center"
+                      style={isMobileTest ? {
+                        display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box",
+                        minHeight: "56px", padding: "10px 8px", borderRadius: "14px", fontSize: "16px", lineHeight: 1.2,
+                        border: "1.5px solid rgba(33,25,21,0.22)", overflowWrap: "anywhere",
+                        gridColumn: nonFixed.length % 2 === 1 && idx === nonFixed.length - 1 ? "1 / -1" : undefined,
+                      } : undefined}
+                    >
                       {cleanIngredientName(r.ingredient)}
                     </span>
                   ))}
@@ -2386,7 +2388,7 @@ function ResultsPage({
 
               {/* COL 2: Additional Ingredients — 3-column grid */}
               <div>
-                <p className="text-[#211915]" style={{ fontSize: "20px", fontWeight: 600, marginBottom: "12px" }}>Possible Additions for Diet Balancing</p>
+                <p className="text-[#211915]" style={{ fontSize: isMobileTest ? "18px" : "20px", fontWeight: 600, marginBottom: "12px" }}>Possible Additions for Diet Balancing</p>
                 <div style={{ background: "#FBEAEC", border: "1.5px solid #E7B8C0", borderRadius: "10px", padding: "12px 16px", marginBottom: "16px", display: "flex", gap: "10px", alignItems: "flex-start" }}>
                   <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: "20px", height: "20px", borderRadius: "50%", background: "#7A1F2B", color: "#fff", fontSize: "12px", fontWeight: 700, marginTop: "1px" }}>i</span>
                   <p
@@ -2397,8 +2399,8 @@ function ResultsPage({
                     FurTuner may automatically select some of the ingredients below to ensure a complete and balanced diet based on your selected ingredients.
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-3" style={{ alignItems: "start", gridTemplateColumns: isMobileTest ? "repeat(2, 1fr)" : undefined }}>
-                  {shuffledFixed.map(r => {
+                <div className="grid grid-cols-3 gap-3" style={{ alignItems: isMobileTest ? "stretch" : "start", gridTemplateColumns: isMobileTest ? "repeat(2, minmax(0, 1fr))" : undefined, gap: isMobileTest ? "8px" : undefined }}>
+                  {shuffledFixed.map((r, idx) => {
                     const name = cleanIngredientName(r.ingredient);
                     // Same mobile-aware wrap threshold as the main ingredient
                     // picker pills — these orange pills were still using the
@@ -2426,6 +2428,12 @@ function ResultsPage({
                           whiteSpace: allowWrap ? "normal" : "nowrap",
                           overflow: allowWrap ? "visible" : "hidden",
                           textOverflow: allowWrap ? "clip" : "ellipsis",
+                          ...(isMobileTest ? {
+                            minHeight: "56px", borderRadius: "14px", fontSize: "16px", padding: "10px 8px",
+                            border: "1.5px solid rgba(33,25,21,0.22)",
+                            whiteSpace: "normal" as const, overflow: "visible" as const, textOverflow: "clip" as const, overflowWrap: "anywhere" as const,
+                            gridColumn: shuffledFixed.length % 2 === 1 && idx === shuffledFixed.length - 1 ? "1 / -1" : undefined,
+                          } : {}),
                         }}
                       >
                         {driedSplit ? (
@@ -2451,15 +2459,16 @@ function ResultsPage({
         <p className="text-[#143C6F] uppercase" style={{ fontSize: isMobileTest ? "20px" : "26px", fontWeight: 700, borderBottom: "1.5px solid #211915", paddingBottom: "10px", marginBottom: "24px", letterSpacing: "0.02em" }}>Overview &amp; AAFCO</p>
         <div>
             {isMobileTest && (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px", margin: "0 0 10px", padding: "8px 10px", background: "#F5FAFF", border: "1px solid #DCE9F4", borderRadius: "10px", flexWrap: "wrap", rowGap: "4px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", margin: "0 0 12px", background: "#F5FAFF", border: "1px solid #DCE9F4", borderRadius: "12px", overflow: "hidden" }}>
                 {[
-                  { icon: "✓", label: "Meets minimum", color: "#2E7D32" },
-                  { icon: "⚠", label: "Within 10%", color: "#D9791A" },
-                  { icon: "✗", label: "Below min", color: "#AD0B39" },
-                ].map(({ icon, label, color }) => (
-                  <span key={icon} style={{ display: "inline-flex", alignItems: "center", gap: "5px", whiteSpace: "nowrap", fontSize: "12px", fontWeight: 700, color: "#211915" }}>
-                    <span style={{ fontSize: "16px", fontWeight: 900, color, lineHeight: 1 }}>{icon}</span>{label}
-                  </span>
+                  { icon: "✓", label: "Meets minimum", color: "#2E7D32", glow: "46,125,50" },
+                  { icon: "⚠", label: "Within 10%\nof minimum", color: "#FF9D36", glow: "255,157,54" },
+                  { icon: "✗", label: "Below minimum", color: "#AD0B39", glow: "173,11,57" },
+                ].map(({ icon, label, color, glow }, i) => (
+                  <div key={icon} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: "4px", padding: "10px 6px", borderLeft: i > 0 ? "1px solid #DCE9F4" : "none" }}>
+                    <span style={{ fontSize: "26px", fontWeight: 900, color, lineHeight: 1, textShadow: `0 0 10px rgba(${glow},0.65), 0 0 2px rgba(${glow},0.9)` }}>{icon}</span>
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#211915", textAlign: "center", lineHeight: 1.25, whiteSpace: "pre-line" }}>{label}</span>
+                  </div>
                 ))}
               </div>
             )}
@@ -2494,7 +2503,7 @@ function ResultsPage({
                         </td>
                       </tr>
                       {isMobileTest && (
-                        <tr className="dd-colhead"><td>Unit</td><td>Diet value</td><td>AAFCO minimum</td></tr>
+                        <tr className="dd-colhead"><td>Nutrient</td><td>Unit</td><td>Diet value</td><td>AAFCO minimum</td><td>Status</td></tr>
                       )}
                       {section.rows
                         .filter(row => row.val != null)
@@ -2518,7 +2527,7 @@ function ResultsPage({
                         const dietVal = row.val != null ? Number(row.val).toFixed(row.dec ?? 2) : "";
                         return (
                           <tr key={row.label} className="dd-row border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
-                            <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
+                            <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{isMobileTest ? String(row.label).replace(/\s*\(kcal\/kg\)\s*$/i, "") : row.label}</td>
                             <td className="dd-unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
                             <td className="dd-val font-mono font-semibold" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{dietVal}</td>
                             <td className={`dd-min font-mono${minVal == null ? " dd-dim" : ""}`} style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{minVal != null ? minVal : (isMobileTest ? "—" : "")}</td>
@@ -2775,7 +2784,7 @@ function ResultsPage({
                             </td>
                           </tr>
                           {isMobileTest && (
-                            <tr className="dd-colhead"><td>Unit</td><td>Dry matter basis</td><td>Per 1000 kcal DM</td></tr>
+                            <tr className="dd-colhead"><td>Nutrient</td><td>Unit</td><td>Dry matter basis</td><td>Per 1000 kcal DM</td></tr>
                           )}
                           {section.rows
                             .filter(row => row.val != null)
@@ -2787,7 +2796,7 @@ function ResultsPage({
                             const perKcalStr = perKcalVal != null ? perKcalVal.toFixed(row.dec ?? 2) : "—";
                             return (
                               <tr key={row.label} className="dd-row border-b border-[#A6CCE8] last:border-0 hover:bg-[#FFDCB7]/20 transition">
-                                <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.label}</td>
+                                <td className="dd-name" style={{ padding: "12px 16px", textAlign: "left", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{isMobileTest ? String(row.label).replace(/\s*\(kcal\/kg\)\s*$/i, "") : row.label}</td>
                                 <td className="dd-unit" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>{row.unit}</td>
                                 <td className="dd-val font-mono font-semibold" style={{ padding: "12px 16px", textAlign: "center", color: "#211915", fontSize: "15px", fontWeight: 600 }}>
                                   {row.val != null ? Number(row.val).toFixed(row.dec ?? 2) : "—"}
