@@ -10,15 +10,16 @@ import './page.css'
 const MOBILE_TEST_BREAKPOINT = 640;
 
 function useMobileTestView(): boolean {
-  // Live for everyone: real phones (narrow portrait, or short landscape) get the
-  // mobile layout. The initial value is computed up front so a phone never flashes
-  // the desktop layout first.
+  // Live for everyone: real phones get the mobile layout. Width-based on purpose, and kept
+  // in sync with index.html's viewport tag + .ft-responsive class: if a visitor picks
+  // "Request Desktop Site" the browser reports ~980px, so all three switch to the desktop
+  // layout together.
+  //  * Landscape phones are wider (up to ~930px) but short; the height cap catches them
+  //    without catching a normal desktop window.
   const compute = () => {
     if (typeof window === "undefined") return false;
     const w = window.innerWidth;
     const h = window.innerHeight;
-    // Portrait phones: narrow width. Landscape phones are wider (up to ~930px) but
-    // short; the height cap catches them without catching a normal desktop window.
     return w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930);
   };
   const [isMobile, setIsMobile] = useState<boolean>(compute);
@@ -27,7 +28,11 @@ function useMobileTestView(): boolean {
     const check = () => setIsMobile(compute());
     check();
     window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    window.addEventListener("orientationchange", check);
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("orientationchange", check);
+    };
   }, []);
 
   return isMobile;
@@ -126,7 +131,7 @@ const HOME_MOBILE_CSS = `
 .hero-subtitle--accent { background: #E0F2FF; color: #143C6F !important; padding: 14px 16px; border-radius: 16px; }
 .hero-subtitle--accent strong { color: #143C6F; }
 
-.hero-bg-section { height: auto !important; margin: 4px 0 !important; }
+.hero-bg-section { height: auto !important; min-height: 0 !important; margin: 0 !important; }
 .hero-bg-full { height: auto !important; object-fit: contain !important; }
 .section-title { font-size: 26px !important; margin-bottom: 16px !important; }
 .why-section { padding: 32px 16px 16px !important; }
@@ -463,8 +468,19 @@ function App() {
       // The four-corner button on the player only knows about the <video>. Pressed while we
       // are already fullscreen on the wrapper, it switches fullscreen to the <video> — that
       // click means "minimize", so leave fullscreen instead of swapping back in.
-      if (current === videoEl && previous === wrapEl) {
-        document.exitFullscreen().catch(() => {})
+      let wrapperStillFullscreen = false
+      try { wrapperStillFullscreen = wrapEl.matches(':fullscreen') } catch { /* older browsers */ }
+      if (current === videoEl && (previous === wrapEl || wrapperStillFullscreen)) {
+        // Fullscreen is now stacked: <video> on top of the wrapper. One exitFullscreen() only
+        // pops the top layer and drops us back onto the wrapper (so the button seemed to do
+        // nothing) — keep exiting until fullscreen is fully closed. Playback is not touched,
+        // so the video keeps playing inline.
+        const exitAll = () => {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().then(exitAll).catch(() => {})
+          }
+        }
+        exitAll()
         return
       }
       if (document.fullscreenElement === videoEl) {
