@@ -420,6 +420,11 @@ function urlForView(view: View, href: string): string | null {
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
   const isMobileTest = useMobileTestView()
+  // Landing-page test: only for visits with ?testmode=<secret> (same secret as index.html).
+  const [isLandingTest] = useState<boolean>(
+    () => typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('testmode') === '7d2132eae669'
+  )
   // Mobile test view only: swipeable diet-plan cards + their position dots.
   const dietCarRef = useRef<HTMLDivElement>(null)
   const [dietSlide, setDietSlide] = useState(0)
@@ -664,6 +669,88 @@ function App() {
     jumpToTop()
   }
 
+  // ── Landing-page test (non-public) ────────────────────────────────────────
+  // Everything below that reads isLandingTest only shows for visits with
+  // ?testmode=7d2132eae669 in the address (the same secret index.html already uses).
+  // Normal visitors get exactly the old page.
+  const howItWorksBlock = (
+          <div className="how-it-works-section">
+            <h2 className="section-title">
+              How <span style={{ color: '#F0932B' }}>Fur</span><span style={{ color: 'var(--navy-mid)' }}>Tuner</span> Works?
+            </h2>
+            <div className="how-it-works-video-wrap" ref={howItWorksWrapRef}>
+              <video
+                ref={howItWorksVideoRef}
+                className="how-it-works-video"
+                controls
+                playsInline
+                onPlay={enterVideoFullscreen}
+                onEnded={onVideoEnded}
+                preload="metadata"
+                poster="/images/how-furtuner-works-poster.jpg"
+              >
+                <source src="/images/how-furtuner-works.mp4" type="video/mp4" />
+                <track
+                  src="/images/how-furtuner-works.vtt"
+                  kind="captions"
+                  srcLang="en"
+                  label="English"
+                  default
+                />
+                Your browser doesn't support embedded video. You can view it directly:{' '}
+                <a href="/images/how-furtuner-works.mp4">download the video</a>.
+              </video>
+              {currentCaption && (
+                <div className="how-it-works-caption-overlay">{currentCaption}</div>
+              )}
+            </div>
+          </div>
+  )
+
+  const expertBlock = (
+        <section className="expert-section">
+          <div className="expert-inner">
+            <img src="/images/professor.svg" alt={isLandingTest ? 'Professor AbuGhazaleh' : 'Professor Amer AbuGhazaleh'} className="expert-avatar" />
+            <p className="expert-text">
+              <strong>Expert-developed diets</strong> – Created by <strong>{isLandingTest ? '' : 'Amer '}AbuGhazaleh</strong>,
+              Professor and Director of the Canine and Feline Nutrition Program at Southern Illinois
+              University Carbondale, with over 20 years of expertise in pet nutrition, diet
+              formulation, product development, and professional consultation.
+            </p>
+          </div>
+        </section>
+  )
+
+  const heroCta = (
+    <div className="build-cta-wrap build-cta-wrap--hero">
+      <a
+        href="#calculator"
+        className="btn-build-diet"
+        onClick={(e) => {
+          e.preventDefault()
+          goCalculator()
+        }}
+      >
+        Build Your Diet
+      </a>
+    </div>
+  )
+
+  const buildCta = (
+    <div className="build-cta-wrap">
+      <a
+        href="#calculator"
+        className="btn-build-diet"
+        onClick={(e) => {
+          e.preventDefault()
+          goCalculator()
+        }}
+      >
+        Build Your Diet
+      </a>
+    </div>
+  )
+
   return (
     <>
       <Analytics />
@@ -736,23 +823,44 @@ function App() {
             <img src="/images/hero-pet.svg" alt="" className="hero-badge-icon" aria-hidden="true" />
           </div>
           <h1 className="hero-headline">
-            Homemade Pet Food. Balanced for Them. Built by You.
+            {isLandingTest
+              ? 'Dog & Cat Diet Formulation-Create Balanced Homemade Pet Food Recipes'
+              : 'Homemade Pet Food. Balanced for Them. Built by You.'}
           </h1>
           <div className="hero-subtitle-group">
-            <p className="hero-subtitle">
-              Choose the real-food ingredients you want to feed your dog or cat, and{' '}
-              <strong>FurTuner turns them into a personalized, complete and balanced recipe</strong>{' '}
-              with the right amount of each ingredient.
-            </p>
-            <p className="hero-subtitle hero-subtitle--accent">
-              <strong>Real foods you choose. No vitamin or
-              mineral premix required.</strong>
-            </p>
-            <p className="hero-subtitle">
-              Each recipe is formulated to meet the{' '}
-              <strong>minimum nutrient requirements established by AAFCO (Association of American Feed Control Officials).</strong>
-            </p>
+            {isLandingTest ? (
+              <>
+                <p className="hero-subtitle">
+                  Create personalized, complete, and balanced homemade dog food and cat food recipes with FurTuner.
+                  Our diet formulation platform lets you choose real-food ingredients and automatically creates a
+                  nutritionally balanced recipe tailored to your pet.
+                </p>
+                <p className="hero-subtitle hero-subtitle--accent">
+                  Choose from conventional, grain-free, or meat-based recipes and create a balanced diet formulated
+                  to meet AAFCO (Association of American Feed Control Officials) nutrient requirements&mdash;
+                  <strong>all without requiring a vitamin or mineral premix.</strong>
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="hero-subtitle">
+                  Choose the real-food ingredients you want to feed your dog or cat, and{' '}
+                  <strong>FurTuner turns them into a personalized, complete and balanced recipe</strong>{' '}
+                  with the right amount of each ingredient.
+                </p>
+                <p className="hero-subtitle hero-subtitle--accent">
+                  <strong>Real foods you choose. No vitamin or
+                  mineral premix required.</strong>
+                </p>
+                <p className="hero-subtitle">
+                  Each recipe is formulated to meet the{' '}
+                  <strong>minimum nutrient requirements established by AAFCO (Association of American Feed Control Officials).</strong>
+                </p>
+              </>
+            )}
           </div>
+          {/* Landing test: Build Your Diet button at the top */}
+          {isLandingTest && heroCta}
         </div>
         <div className="hero-right">
           <img src="/images/hero-image.png" alt="Happy dog and cat" className="hero-img" />
@@ -763,6 +871,16 @@ function App() {
       <section className="hero-bg-section">
         <img src="/images/hero-bg-section.svg" className="hero-bg-full" alt="" />
       </section>
+
+      {/* LANDING TEST: video right under the price box, then the profile */}
+      {isLandingTest && (
+        <>
+          <section className="landing-video-section">
+            {howItWorksBlock}
+          </section>
+          {expertBlock}
+        </>
+      )}
 
       {/* WHY CHOOSE FURTUNER */}
       <section className="why-section">
@@ -919,18 +1037,8 @@ function App() {
         )}
       </section>
 
-      {/* EXPERT SECTION */}
-      <section className="expert-section">
-        <div className="expert-inner">
-          <img src="/images/professor.svg" alt="Professor Amer AbuGhazaleh" className="expert-avatar" />
-          <p className="expert-text">
-            <strong>Expert-developed diets</strong> – Created by <strong>Amer AbuGhazaleh</strong>,
-            Professor and Director of the Canine and Feline Nutrition Program at Southern Illinois
-            University Carbondale, with over 20 years of expertise in pet nutrition, diet
-            formulation, product development, and professional consultation.
-          </p>
-        </div>
-      </section>
+      {/* EXPERT SECTION (in test mode it is shown under the video instead) */}
+      {!isLandingTest && expertBlock}
 
       {/* THREE TAILORED DIET PLANS */}
       <section id="plans" className="plans-section">
@@ -1064,51 +1172,10 @@ function App() {
         </>
         )}
 
-        {/* HOW FURTUNER WORKS — explainer video, shown after the diet comparison table, right before Build Your Diet */}
-        <div className="how-it-works-section">
-          <h2 className="section-title">
-            How <span style={{ color: '#F0932B' }}>Fur</span><span style={{ color: 'var(--navy-mid)' }}>Tuner</span> Works?
-          </h2>
-          <div className="how-it-works-video-wrap" ref={howItWorksWrapRef}>
-            <video
-              ref={howItWorksVideoRef}
-              className="how-it-works-video"
-              controls
-              playsInline
-              onPlay={enterVideoFullscreen}
-              onEnded={onVideoEnded}
-              preload="metadata"
-              poster="/images/how-furtuner-works-poster.jpg"
-            >
-              <source src="/images/how-furtuner-works.mp4" type="video/mp4" />
-              <track
-                src="/images/how-furtuner-works.vtt"
-                kind="captions"
-                srcLang="en"
-                label="English"
-                default
-              />
-              Your browser doesn't support embedded video. You can view it directly:{' '}
-              <a href="/images/how-furtuner-works.mp4">download the video</a>.
-            </video>
-            {currentCaption && (
-              <div className="how-it-works-caption-overlay">{currentCaption}</div>
-            )}
-          </div>
-        </div>
+        {/* HOW FURTUNER WORKS — video (in test mode it is shown under the price box instead) */}
+        {!isLandingTest && howItWorksBlock}
 
-        <div className="build-cta-wrap">
-          <a
-            href="#calculator"
-            className="btn-build-diet"
-            onClick={(e) => {
-              e.preventDefault()
-              goCalculator()
-            }}
-          >
-            Build Your Diet
-          </a>
-        </div>
+        {buildCta}
       </section>
         </>
       )}
@@ -1132,7 +1199,7 @@ function App() {
           </h2>
           <div style={{ maxWidth: '820px', margin: '0 auto', fontSize: '18px', lineHeight: 1.7, color: '#143C6F', textAlign: 'center' }}>
             <p style={{ marginBottom: '20px' }}>
-              <strong>FurTuner</strong> was developed by Dr. Amer AbuGhazaleh, Professor of Animal
+              <strong>FurTuner</strong> was developed by Dr. {isLandingTest ? '' : 'Amer '}AbuGhazaleh, Professor of Animal
               Science, Food and Nutrition at Southern Illinois University Carbondale (SIUC) and founder
               and Director of SIU&rsquo;s Canine &amp; Feline Nutrition Certificate Program. With more
               than two decades of experience in animal nutrition, research, teaching, and diet
