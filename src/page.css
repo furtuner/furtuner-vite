@@ -1001,15 +1001,13 @@ body {
   box-sizing: border-box;
 }
 .landing-video-section .how-it-works-section { padding: 40px 0 48px; }
-/* test layout: center the picture against the text column, and put the top Build Your Diet button on its own centered row */
-.hero--landing-test { align-items: stretch; }
-/* picture fills the full height of the text column: top lines up with the badge, bottom with the last line of text */
-.hero--landing-test .hero-right { align-self: stretch; }
-.hero--landing-test .hero-img { aspect-ratio: auto; height: 100%; min-height: 320px; object-fit: cover; }
+/* test layout: the top Build Your Diet button sits on its own row, centered across the whole page */
+/* picture keeps its normal square shape (nothing cropped) and lines up with the top of the text */
+.hero--landing-test { align-items: flex-start; }
+.hero--landing-test .hero-right { align-self: flex-start; }
 .landing-top-cta { max-width: 1280px; margin: 0 auto; padding: 0 0 40px; }
 .landing-top-cta .build-cta-wrap { margin-top: 0; }
 .ft-responsive .landing-video-section { padding: 0 24px; }
 .ft-responsive .hero--landing-test { align-items: flex-start; }
 .ft-responsive .hero--landing-test .hero-right { align-self: flex-start; }
-.ft-responsive .hero--landing-test .hero-img { aspect-ratio: 1 / 1; height: auto; min-height: 0; }
 .ft-responsive .landing-top-cta { padding: 0 0 24px; }
