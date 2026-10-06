@@ -16,6 +16,7 @@ import { createPortal } from "react-dom";
 //      updates it without needing a reload)
 // Real customers — including ones on an actual phone, without the secret —
 // always get the exact current desktop-fixed layout, completely unchanged.
+const MOBILE_TEST_SECRET = "7d2132eae669";
 const MOBILE_TEST_BREAKPOINT = 640;
 
 // Extra polish for the mobile Profile step only (never applied to real customers,
@@ -88,29 +89,29 @@ const MOBILE_NUTR_CSS = `
 `;
 
 function useMobileTestView(): boolean {
-  // Live for everyone: real phones get the mobile layout. Width-based on purpose, and kept
-  // in sync with index.html's viewport tag + .ft-responsive class: if a visitor picks
-  // "Request Desktop Site" the browser reports ~980px, so all three switch to the desktop
-  // layout together.
-  //  * Landscape phones are wider (up to ~930px) but short; the height cap catches them
-  //    without catching a normal desktop window.
-  const compute = () => {
-    if (typeof window === "undefined") return false;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    return w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930);
-  };
-  const [isMobile, setIsMobile] = useState<boolean>(compute);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(compute());
+    const hasSecret =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("testmode") === MOBILE_TEST_SECRET;
+    if (!hasSecret) return; // never even attaches a listener for real customers
+
+    const check = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // Portrait phones: narrow width, same as before. Landscape phones
+      // are wider (up to ~930px on the largest current devices) but much
+      // shorter, so a width-only check missed them entirely — rotating a
+      // phone sideways used to silently fall back to the desktop-scaled
+      // layout. The height cap catches landscape phones without also
+      // catching a plain desktop browser window resized to a similar
+      // width (those are almost never under ~500px tall).
+      setIsMobile(w <= MOBILE_TEST_BREAKPOINT || (h <= 500 && w <= 930));
+    };
     check();
     window.addEventListener("resize", check);
-    window.addEventListener("orientationchange", check);
-    return () => {
-      window.removeEventListener("resize", check);
-      window.removeEventListener("orientationchange", check);
-    };
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   return isMobile;
@@ -1982,7 +1983,6 @@ function ResultsPage({
   // Unified table sections
   // perKcal: "x1000" for all nutrient rows, null for no calc
   const aafco = (result as any).aafco_percent_of_minimum ?? {};
-  const VITAMIN_A_FACTOR = 0.75;
 
   const unifiedSections = [
     { cat: "Proximates", rows: [
@@ -2024,10 +2024,7 @@ function ResultsPage({
       { label: "Selenium (Se)",   unit: "mg/kg DM", val: r["se_mg_kg"] ?? null,   min: petType === "cat" ? 0.3  : 0.35, dec: 2, aafcoPct: aafco["Se"], perKcal: "x1000" as const },
     ]},
     { cat: "Vitamins", rows: [
-      // Vitamin A is reported at 75% of the backend value. The same factor is applied to
-      // the % of AAFCO minimum; the per-1000-kcal column and the status badge are both
-      // derived from these two values, so all four stay consistent.
-      { label: "Vitamin A",             unit: "IU/kg DM", val: r["vitamin_a_iu_kg"] != null ? Number(r["vitamin_a_iu_kg"]) * VITAMIN_A_FACTOR : null,        min: petType === "cat" ? 3332  : 5000,  dec: 0, aafcoPct: aafco["Vitamin_A"] != null ? Number(aafco["Vitamin_A"]) * VITAMIN_A_FACTOR : undefined, perKcal: "x1000" as const },
+      { label: "Vitamin A",             unit: "IU/kg DM", val: r["vitamin_a_iu_kg"] ?? null,        min: petType === "cat" ? 3332  : 5000,  dec: 0, aafcoPct: aafco["Vitamin_A"], perKcal: "x1000" as const },
       { label: "Vitamin D",             unit: "IU/kg DM", val: r["vitamin_d_iu_kg"] ?? null,        min: petType === "cat" ? 280   : 500,   dec: 0, aafcoPct: aafco["Vitamin_D"], perKcal: "x1000" as const },
       { label: "Vitamin E",             unit: "mg/kg DM", val: r["vitamin_e_iu_kg"] ?? null,        min: petType === "cat" ? 28    : 45,    dec: 1, aafcoPct: aafco["Vitamin_E"], perKcal: "x1000" as const },
       { label: "Thiamine (B1)",         unit: "mg/kg DM", val: r["thiamin_mg_kg"] ?? null,          min: petType === "cat" ? 4.6   : 2.25,  dec: 2, aafcoPct: aafco["Thiamin"], perKcal: "x1000" as const },
@@ -2175,9 +2172,9 @@ function ResultsPage({
                   if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                     ingFresh = ingFresh * (10.0 / 14.9);
                   }
-                  // EXCEPTION: Liver ingredients are shown at 77% — same as the on-screen table.
+                  // EXCEPTION: Liver ingredients are shown at 80% — same as the on-screen table.
                   if (r.ingredient.trim().toLowerCase().includes("liver")) {
-                    ingFresh = ingFresh * 0.77;
+                    ingFresh = ingFresh * 0.8;
                   }
                   return (
                     <tr key={i} style={{ background: i % 2 ? "#fff" : "#E0F2FF", borderBottom: "1px solid #A6CCE8" }}>
@@ -2203,7 +2200,7 @@ function ResultsPage({
                         ingFresh = ingFresh * (10.0 / 14.9);
                       }
                       if (r.ingredient.trim().toLowerCase().includes("liver")) {
-                        ingFresh = ingFresh * 0.77;
+                        ingFresh = ingFresh * 0.8;
                       }
                       return s + ingFresh * d;
                     }, 0);
@@ -2738,11 +2735,11 @@ function ResultsPage({
                         if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                           ingFresh = ingFresh * (10.0 / 14.9);
                         }
-                        // EXCEPTION: Liver ingredients are shown at 77% of the
+                        // EXCEPTION: Liver ingredients are shown at 80% of the
                         // computed fresh-weight value in this final report table.
                         const ingLower = r.ingredient.trim().toLowerCase();
                         if (ingLower.includes("liver")) {
-                          ingFresh = ingFresh * 0.77;
+                          ingFresh = ingFresh * 0.8;
                         }
                         return (
                           <tr key={i} style={{ background: "#E0F2FF", borderBottom: "2px solid #3C6293" }}>
@@ -2768,11 +2765,11 @@ function ResultsPage({
                             if (r.ingredient.trim().toLowerCase() === "oyster canned") {
                               ingFresh = ingFresh * (10.0 / 14.9);
                             }
-                            // EXCEPTION: Liver ingredients are shown at 77% of the
+                            // EXCEPTION: Liver ingredients are shown at 80% of the
                             // computed fresh-weight value in this final report table.
                             const ingLowerTot = r.ingredient.trim().toLowerCase();
                             if (ingLowerTot.includes("liver")) {
-                              ingFresh = ingFresh * 0.77;
+                              ingFresh = ingFresh * 0.8;
                             }
                             return s + ingFresh * d;
                           }, 0);
