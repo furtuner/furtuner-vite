@@ -652,12 +652,13 @@ function App() {
   }
 
   const goCalculator = () => {
-    // Mobile test view: opening "Build Your Diet" always starts a brand-new calculator.
-    // Without this, the calculator's "resume where you left off" snapshot (kept for forced
-    // page reloads) brought people straight back to their old Overview & AAFCO results.
-    if (isMobileTest) {
-      try { sessionStorage.removeItem('furtunerWizardState') } catch { /* ignore */ }
-    }
+    // Clicking "Build Your Diet" always starts a brand-new calculator, on every device.
+    // Without this, the calculator's "resume where you left off" snapshot (kept only so a
+    // forced page reload, e.g. "Request Desktop Site", can resume) brought people straight
+    // back to the old Profile / Ingredients / Results page they had abandoned.
+    // The Stripe return (?furtuner_payment=success) does not go through this function,
+    // so payment restore is unaffected.
+    try { sessionStorage.removeItem('furtunerWizardState') } catch { /* ignore */ }
     setCalculatorInstance(n => n + 1)
     setView('calculator')
     setMobileMenuOpen(false)
