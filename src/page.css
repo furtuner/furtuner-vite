@@ -1008,7 +1008,9 @@ body {
 /* slightly tighter text (desktop only) so the text column ends about where the picture ends */
 html:not(.ft-responsive) .hero--landing-test .hero-headline { font-size: 38px; line-height: 1.4; }
 html:not(.ft-responsive) .hero--landing-test .hero-subtitle { font-size: 21px; line-height: 1.5; }
-html:not(.ft-responsive) .hero--landing-test .hero-left { gap: 20px; }
+html:not(.ft-responsive) .hero--landing-test .hero-left { gap: 20px; align-self: stretch; justify-content: space-between; }
+/* ^ the text column is stretched to the picture's height and spread top-to-bottom, so the badge lines up with the
+     top of the picture and the last line of text lines up with the bottom of the picture */
 .landing-top-cta { max-width: 1280px; margin: 0 auto; padding: 0 0 40px; }
 .landing-top-cta .build-cta-wrap { margin-top: 0; }
 .ft-responsive .landing-video-section { padding: 0 24px; }
