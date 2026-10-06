@@ -548,10 +548,10 @@ interface ProfileData {
 
 // Activity level multipliers
 const ACTIVITY_MULTIPLIER: Record<string, number> = {
-  "Active":             0.10,
-  "Moderately Active":  0.05,
-  "Very Active":        0.20,
   "Indoor Sedentary":   0.00,
+  "Moderately Active":  0.05,
+  "Active":             0.10,
+  "Very Active":        0.20,
 };
 
 function ProfilePage({
@@ -725,10 +725,10 @@ function ProfilePage({
                 style={{ fontWeight: 700, fontSize: "21px" }}
               >
                 <option value="" style={{ fontWeight: 700, fontSize: "21px", color: "#3C6293" }}>— Select activity level —</option>
-                <option value="Active" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Active</option>
-                <option value="Moderately Active" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Moderately Active</option>
-                <option value="Very Active" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Very Active</option>
                 <option value="Indoor Sedentary" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Indoor Sedentary</option>
+                <option value="Moderately Active" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Moderately Active</option>
+                <option value="Active" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Active</option>
+                <option value="Very Active" style={{ fontWeight: 700, fontSize: "21px", color: "#211915" }}>Very Active</option>
               </select>
             </Field>
           </div>

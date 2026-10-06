@@ -1,3 +1,4 @@
+// LANDING-TEST LAYOUT v6: Build Your Diet on its own centered row (class landing-top-cta)
 import { useState, useRef, useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import DogDietCalculator from './components/DogDietCalculator'
