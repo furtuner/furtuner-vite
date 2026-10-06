@@ -816,7 +816,7 @@ function App() {
 
       {view === 'home' && (
         <>
-        <section className="hero">
+        <section className={`hero${isLandingTest ? ' hero--landing-test' : ''}`}>
         <div className="hero-left">
           <div className="hero-badge-row">
             <span className="hero-badge">SCIENCE-BASED PET NUTRITION</span>
@@ -837,7 +837,7 @@ function App() {
                 </p>
                 <p className="hero-subtitle hero-subtitle--accent">
                   Choose from conventional, grain-free, or meat-based recipes and create a balanced diet formulated
-                  to meet AAFCO (Association of American Feed Control Officials) nutrient requirements&mdash;
+                  to meet AAFCO (Association of American Feed Control Officials) nutrient requirements{' '}
                   <strong>all without requiring a vitamin or mineral premix.</strong>
                 </p>
               </>

@@ -1001,6 +1001,9 @@ body {
   box-sizing: border-box;
 }
 .landing-video-section .how-it-works-section { padding: 40px 0 48px; }
-.build-cta-wrap--hero { justify-content: flex-start; margin-top: 8px; }
+/* test layout: center the button under the text, and center the picture against the (now taller) text column */
+.build-cta-wrap--hero { justify-content: center; margin-top: 8px; }
+.hero--landing-test { align-items: center; }
 .ft-responsive .landing-video-section { padding: 0 24px; }
 .ft-responsive .build-cta-wrap--hero { justify-content: center; padding: 0; margin-top: 4px; }
+.ft-responsive .hero--landing-test { align-items: flex-start; }
