@@ -1001,9 +1001,12 @@ body {
   box-sizing: border-box;
 }
 .landing-video-section .how-it-works-section { padding: 40px 0 48px; }
-/* test layout: center the button under the text, and center the picture against the (now taller) text column */
-.build-cta-wrap--hero { justify-content: center; margin-top: 8px; }
+/* test layout: center the picture against the text column, and put the top Build Your Diet button on its own centered row */
 .hero--landing-test { align-items: center; }
+.hero--landing-test .hero-right { align-self: center; }
+.landing-top-cta { max-width: 1280px; margin: 0 auto; padding: 0 0 40px; }
+.landing-top-cta .build-cta-wrap { margin-top: 0; }
 .ft-responsive .landing-video-section { padding: 0 24px; }
-.ft-responsive .build-cta-wrap--hero { justify-content: center; padding: 0; margin-top: 4px; }
 .ft-responsive .hero--landing-test { align-items: flex-start; }
+.ft-responsive .hero--landing-test .hero-right { align-self: flex-start; }
+.ft-responsive .landing-top-cta { padding: 0 0 24px; }

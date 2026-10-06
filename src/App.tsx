@@ -721,21 +721,6 @@ function App() {
         </section>
   )
 
-  const heroCta = (
-    <div className="build-cta-wrap build-cta-wrap--hero">
-      <a
-        href="#calculator"
-        className="btn-build-diet"
-        onClick={(e) => {
-          e.preventDefault()
-          goCalculator()
-        }}
-      >
-        Build Your Diet
-      </a>
-    </div>
-  )
-
   const buildCta = (
     <div className="build-cta-wrap">
       <a
@@ -859,13 +844,14 @@ function App() {
               </>
             )}
           </div>
-          {/* Landing test: Build Your Diet button at the top */}
-          {isLandingTest && heroCta}
         </div>
         <div className="hero-right">
           <img src="/images/hero-image.png" alt="Happy dog and cat" className="hero-img" />
         </div>
       </section>
+
+      {/* LANDING TEST: Build Your Diet button on its own row, centered across the whole page */}
+      {isLandingTest && <div className="landing-top-cta">{buildCta}</div>}
 
       {/* BACKGROUND / PRICE SCROLL SECTION */}
       <section className="hero-bg-section">
