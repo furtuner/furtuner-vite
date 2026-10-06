@@ -991,7 +991,7 @@ body {
 }
 
 /* ══════════════════════════════════════════════
-   LANDING-PAGE TEST (only used when the page is opened with ?testmode=...)
+   LANDING PAGE LAYOUT
    Video moved under the price box + Build Your Diet button in the hero.
 ══════════════════════════════════════════════ */
 .landing-video-section {
@@ -1001,19 +1001,19 @@ body {
   box-sizing: border-box;
 }
 .landing-video-section .how-it-works-section { padding: 40px 0 48px; }
-/* test layout: the top Build Your Diet button sits on its own row, centered across the whole page */
+/* the top Build Your Diet button sits on its own row, centered across the whole page */
 /* picture keeps its normal square shape (nothing cropped) and lines up with the top of the text */
-.hero--landing-test { align-items: flex-start; }
-.hero--landing-test .hero-right { align-self: flex-start; }
+.hero--landing { align-items: flex-start; }
+.hero--landing .hero-right { align-self: flex-start; }
 /* slightly tighter text (desktop only) so the text column ends about where the picture ends */
-html:not(.ft-responsive) .hero--landing-test .hero-headline { font-size: 38px; line-height: 1.4; }
-html:not(.ft-responsive) .hero--landing-test .hero-subtitle { font-size: 21px; line-height: 1.5; }
-html:not(.ft-responsive) .hero--landing-test .hero-left { gap: 20px; align-self: stretch; justify-content: space-between; }
+html:not(.ft-responsive) .hero--landing .hero-headline { font-size: 38px; line-height: 1.4; }
+html:not(.ft-responsive) .hero--landing .hero-subtitle { font-size: 21px; line-height: 1.5; }
+html:not(.ft-responsive) .hero--landing .hero-left { gap: 20px; align-self: stretch; justify-content: space-between; }
 /* ^ the text column is stretched to the picture's height and spread top-to-bottom, so the badge lines up with the
      top of the picture and the last line of text lines up with the bottom of the picture */
 .landing-top-cta { max-width: 1280px; margin: 0 auto; padding: 0 0 40px; }
 .landing-top-cta .build-cta-wrap { margin-top: 0; }
 .ft-responsive .landing-video-section { padding: 0 24px; }
-.ft-responsive .hero--landing-test { align-items: flex-start; }
-.ft-responsive .hero--landing-test .hero-right { align-self: flex-start; }
+.ft-responsive .hero--landing { align-items: flex-start; }
+.ft-responsive .hero--landing .hero-right { align-self: flex-start; }
 .ft-responsive .landing-top-cta { padding: 0 0 24px; }

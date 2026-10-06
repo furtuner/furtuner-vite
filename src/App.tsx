@@ -1,4 +1,3 @@
-// LANDING-TEST LAYOUT v6: Build Your Diet on its own centered row (class landing-top-cta)
 import { useState, useRef, useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import DogDietCalculator from './components/DogDietCalculator'
@@ -421,11 +420,6 @@ function urlForView(view: View, href: string): string | null {
 function App() {
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
   const isMobileTest = useMobileTestView()
-  // Landing-page test: only for visits with ?testmode=<secret> (same secret as index.html).
-  const [isLandingTest] = useState<boolean>(
-    () => typeof window !== 'undefined' &&
-      new URLSearchParams(window.location.search).get('testmode') === '7d2132eae669'
-  )
   // Mobile test view only: swipeable diet-plan cards + their position dots.
   const dietCarRef = useRef<HTMLDivElement>(null)
   const [dietSlide, setDietSlide] = useState(0)
@@ -670,10 +664,9 @@ function App() {
     jumpToTop()
   }
 
-  // ── Landing-page test (non-public) ────────────────────────────────────────
-  // Everything below that reads isLandingTest only shows for visits with
-  // ?testmode=7d2132eae669 in the address (the same secret index.html already uses).
-  // Normal visitors get exactly the old page.
+  // ── Landing-page sections ─────────────────────────────────────────────────
+  // Order on the home page: hero -> Build Your Diet button -> price box -> video ->
+  // professor profile -> Why Choose ... -> plans -> Build Your Diet button.
   const howItWorksBlock = (
           <div className="how-it-works-section">
             <h2 className="section-title">
@@ -711,9 +704,9 @@ function App() {
   const expertBlock = (
         <section className="expert-section">
           <div className="expert-inner">
-            <img src="/images/professor.svg" alt={isLandingTest ? 'Professor AbuGhazaleh' : 'Professor Amer AbuGhazaleh'} className="expert-avatar" />
+            <img src="/images/professor.svg" alt="Professor AbuGhazaleh" className="expert-avatar" />
             <p className="expert-text">
-              <strong>Expert-developed diets</strong> – Created by <strong>{isLandingTest ? '' : 'Amer '}AbuGhazaleh</strong>,
+              <strong>Expert-developed diets</strong> – Created by <strong>AbuGhazaleh</strong>,
               Professor and Director of the Canine and Feline Nutrition Program at Southern Illinois
               University Carbondale, with over 20 years of expertise in pet nutrition, diet
               formulation, product development, and professional consultation.
@@ -802,48 +795,26 @@ function App() {
 
       {view === 'home' && (
         <>
-        <section className={`hero${isLandingTest ? ' hero--landing-test' : ''}`}>
+        <section className="hero hero--landing">
         <div className="hero-left">
           <div className="hero-badge-row">
             <span className="hero-badge">SCIENCE-BASED PET NUTRITION</span>
             <img src="/images/hero-pet.svg" alt="" className="hero-badge-icon" aria-hidden="true" />
           </div>
           <h1 className="hero-headline">
-            {isLandingTest
-              ? 'Dog & Cat Diet Formulation-Create Balanced Homemade Pet Food Recipes'
-              : 'Homemade Pet Food. Balanced for Them. Built by You.'}
+            Dog &amp; Cat Diet Formulation-Create Balanced Homemade Pet Food Recipes
           </h1>
           <div className="hero-subtitle-group">
-            {isLandingTest ? (
-              <>
-                <p className="hero-subtitle">
-                  Create personalized, complete, and balanced homemade dog food and cat food recipes with FurTuner.
-                  Our diet formulation platform lets you choose real-food ingredients and automatically creates a
-                  nutritionally balanced recipe tailored to your pet.
-                </p>
-                <p className="hero-subtitle hero-subtitle--accent">
-                  Choose from conventional, grain-free, or meat-based recipes and create a balanced diet formulated
-                  to meet AAFCO (Association of American Feed Control Officials) nutrient requirements{' '}
-                  <strong>all without requiring a vitamin or mineral premix.</strong>
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="hero-subtitle">
-                  Choose the real-food ingredients you want to feed your dog or cat, and{' '}
-                  <strong>FurTuner turns them into a personalized, complete and balanced recipe</strong>{' '}
-                  with the right amount of each ingredient.
-                </p>
-                <p className="hero-subtitle hero-subtitle--accent">
-                  <strong>Real foods you choose. No vitamin or
-                  mineral premix required.</strong>
-                </p>
-                <p className="hero-subtitle">
-                  Each recipe is formulated to meet the{' '}
-                  <strong>minimum nutrient requirements established by AAFCO (Association of American Feed Control Officials).</strong>
-                </p>
-              </>
-            )}
+            <p className="hero-subtitle">
+              Create personalized, complete, and balanced homemade dog food and cat food recipes with FurTuner.
+              Our diet formulation platform lets you choose real-food ingredients and automatically creates a
+              nutritionally balanced recipe tailored to your pet.
+            </p>
+            <p className="hero-subtitle hero-subtitle--accent">
+              Choose from conventional, grain-free, or meat-based recipes and create a balanced diet formulated
+              to meet AAFCO (Association of American Feed Control Officials) nutrient requirements{' '}
+              <strong>all without requiring a vitamin or mineral premix.</strong>
+            </p>
           </div>
         </div>
         <div className="hero-right">
@@ -851,23 +822,19 @@ function App() {
         </div>
       </section>
 
-      {/* LANDING TEST: Build Your Diet button on its own row, centered across the whole page */}
-      {isLandingTest && <div className="landing-top-cta">{buildCta}</div>}
+      {/* Build Your Diet button on its own row, centered across the whole page */}
+      <div className="landing-top-cta">{buildCta}</div>
 
       {/* BACKGROUND / PRICE SCROLL SECTION */}
       <section className="hero-bg-section">
         <img src="/images/hero-bg-section.svg" className="hero-bg-full" alt="" />
       </section>
 
-      {/* LANDING TEST: video right under the price box, then the profile */}
-      {isLandingTest && (
-        <>
-          <section className="landing-video-section">
-            {howItWorksBlock}
-          </section>
-          {expertBlock}
-        </>
-      )}
+      {/* How FurTuner Works video, then the professor profile */}
+      <section className="landing-video-section">
+        {howItWorksBlock}
+      </section>
+      {expertBlock}
 
       {/* WHY CHOOSE FURTUNER */}
       <section className="why-section">
@@ -1024,9 +991,6 @@ function App() {
         )}
       </section>
 
-      {/* EXPERT SECTION (in test mode it is shown under the video instead) */}
-      {!isLandingTest && expertBlock}
-
       {/* THREE TAILORED DIET PLANS */}
       <section id="plans" className="plans-section">
         <h2 className="section-title">Three Tailored Diet Plans for Dogs &amp; Cats</h2>
@@ -1159,9 +1123,6 @@ function App() {
         </>
         )}
 
-        {/* HOW FURTUNER WORKS — video (in test mode it is shown under the price box instead) */}
-        {!isLandingTest && howItWorksBlock}
-
         {buildCta}
       </section>
         </>
@@ -1186,7 +1147,7 @@ function App() {
           </h2>
           <div style={{ maxWidth: '820px', margin: '0 auto', fontSize: '18px', lineHeight: 1.7, color: '#143C6F', textAlign: 'center' }}>
             <p style={{ marginBottom: '20px' }}>
-              <strong>FurTuner</strong> was developed by Dr. {isLandingTest ? '' : 'Amer '}AbuGhazaleh, Professor of Animal
+              <strong>FurTuner</strong> was developed by Dr. AbuGhazaleh, Professor of Animal
               Science, Food and Nutrition at Southern Illinois University Carbondale (SIUC) and founder
               and Director of SIU&rsquo;s Canine &amp; Feline Nutrition Certificate Program. With more
               than two decades of experience in animal nutrition, research, teaching, and diet
