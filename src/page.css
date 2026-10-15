@@ -1017,3 +1017,6 @@ html:not(.ft-responsive) .hero--landing .hero-left { gap: 20px; align-self: stre
 .ft-responsive .hero--landing { align-items: flex-start; }
 .ft-responsive .hero--landing .hero-right { align-self: flex-start; }
 .ft-responsive .landing-top-cta { padding: 0 0 24px; }
+/* bottom Build Your Diet button (after the price banner) */
+.landing-bottom-cta { max-width: 1280px; margin: 0 auto; padding: 0 0 60px; }
+.ft-responsive .landing-bottom-cta { padding: 0 0 40px; }

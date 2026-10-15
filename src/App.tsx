@@ -826,11 +826,6 @@ function App() {
       {/* Build Your Diet button on its own row, centered across the whole page */}
       <div className="landing-top-cta">{buildCta}</div>
 
-      {/* BACKGROUND / PRICE SCROLL SECTION */}
-      <section className="hero-bg-section">
-        <img src="/images/hero-bg-section.svg" className="hero-bg-full" alt="" />
-      </section>
-
       {/* How FurTuner Works video, then the professor profile */}
       <section className="landing-video-section">
         {howItWorksBlock}
@@ -1124,8 +1119,15 @@ function App() {
         </>
         )}
 
-        {buildCta}
       </section>
+
+      {/* PRICE BANNER — shown right after the three diet plans / comparison table */}
+      <section className="hero-bg-section">
+        <img src="/images/hero-bg-section.svg" className="hero-bg-full" alt="" />
+      </section>
+
+      {/* Bottom Build Your Diet button */}
+      <div className="landing-bottom-cta">{buildCta}</div>
         </>
       )}
 

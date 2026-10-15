@@ -3130,7 +3130,7 @@ interface CustomerInfo {
   confirmEmail: string;
 }
 
-const PLAN_PRICE_LABEL = "$14.49";
+const PLAN_PRICE_LABEL = "$14.95";
 
 function CustomerProfileForm({
   onNext,
@@ -3355,7 +3355,8 @@ function StripeCheckoutPanel({
     <div className="border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ marginTop: "16px" }}>
       <div className="bg-[#143C6F]" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px" }}>
         <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Payment</p>
-        <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>Daily Feeding Plan — {PLAN_PRICE_LABEL}</p>
+        <p className="text-[#FFC588] font-semibold" style={{ fontSize: isMobileTest ? "15px" : "17px", marginTop: "4px" }}>Daily Feeding Plan</p>
+        <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: isMobileTest ? "38px" : "52px", lineHeight: 1.1, marginTop: "6px" }}>{PLAN_PRICE_LABEL}</p>
       </div>
       <div className="bg-white" style={{ padding: isMobileTest ? "14px" : "28px" }}>
         <div className="rounded-[10px] bg-[#F4F4F4]" style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -3367,9 +3368,9 @@ function StripeCheckoutPanel({
             <span className="text-[#211915]">Email</span>
             <span className="font-semibold text-[#143C6F]">{customer.email}</span>
           </div>
-          <div className="flex justify-between" style={{ fontSize: "15px" }}>
-            <span className="text-[#211915]">Total</span>
-            <span className="font-semibold text-[#143C6F]">{PLAN_PRICE_LABEL}</span>
+          <div className="flex justify-between items-baseline" style={{ fontSize: "18px", marginTop: "4px" }}>
+            <span className="text-[#211915] font-bold">Total</span>
+            <span className="font-bold text-[#143C6F]" style={{ fontSize: isMobileTest ? "28px" : "34px", lineHeight: 1.1 }}>{PLAN_PRICE_LABEL}</span>
           </div>
         </div>
         <p style={{ display: "flex", alignItems: "flex-start", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#AD0B39", marginTop: "16px", lineHeight: 1.5 }}>
