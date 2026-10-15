@@ -3165,9 +3165,12 @@ function CustomerProfileForm({
   return (
     <div className={`border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden${isMobileTest ? " dd-m-profile" : ""}`} style={{ marginTop: "16px" }}>
       {isMobileTest && <style>{MOBILE_PROFILE_CSS}</style>}
-      <div className="bg-[#143C6F]" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px" }}>
-        <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Customer Profile</p>
-        <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>Tell us who's unlocking this feeding plan.</p>
+      <div className="bg-[#143C6F] flex items-center justify-between" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px", gap: "16px" }}>
+        <div>
+          <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Customer Profile</p>
+          <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>Tell us who's unlocking this feeding plan.</p>
+        </div>
+        <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: isMobileTest ? "32px" : "46px", lineHeight: 1.1, whiteSpace: "nowrap" }}>{PLAN_PRICE_LABEL}</p>
       </div>
       <div className="bg-white" style={{ padding: isMobileTest ? "14px" : "28px" }}>
         <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -3221,11 +3224,14 @@ function DisclaimerAccept({
 
   return (
     <div className="border-[1.5px] border-[#3C6293] rounded-[12px] overflow-hidden" style={{ marginTop: "16px" }}>
-      <div className="bg-[#143C6F]" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px" }}>
-        <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Liability Disclaimer</p>
-        <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>
-          {scrolledToEnd ? "You've reached the end — please review and accept below." : "Please scroll to the bottom to continue."}
-        </p>
+      <div className="bg-[#143C6F] flex items-center justify-between" style={{ padding: isMobileTest ? "14px 16px" : "22px 28px", gap: "16px" }}>
+        <div>
+          <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: "20px" }}>Liability Disclaimer</p>
+          <p className="text-[#FFC588] font-semibold" style={{ fontSize: "14px", marginTop: "4px" }}>
+            {scrolledToEnd ? "You've reached the end — please review and accept below." : "Please scroll to the bottom to continue."}
+          </p>
+        </div>
+        <p className="text-white font-bold" style={{ fontFamily: "'Parastoo', sans-serif", fontSize: isMobileTest ? "32px" : "46px", lineHeight: 1.1, whiteSpace: "nowrap" }}>{PLAN_PRICE_LABEL}</p>
       </div>
       <div className="bg-white" style={{ padding: isMobileTest ? "14px" : "28px" }}>
         <div
@@ -3493,7 +3499,7 @@ function CheckoutFlow({
           className="bg-[#143C6F] hover:bg-[#FF9D36] text-white transition whitespace-nowrap shrink-0"
           style={{ fontFamily: "'Parastoo', sans-serif", fontWeight: 700, fontSize: isMobileTest ? "17px" : "28px", padding: isMobileTest ? "0 24px" : "18px 44px", borderRadius: "12px", width: isMobileTest ? "100%" : undefined, height: isMobileTest ? "52px" : undefined }}
         >
-          PAY
+          PAY {PLAN_PRICE_LABEL}
         </button>
       </div>
     );
