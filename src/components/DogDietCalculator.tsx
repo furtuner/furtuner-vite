@@ -3130,7 +3130,7 @@ interface CustomerInfo {
   confirmEmail: string;
 }
 
-const PLAN_PRICE_LABEL = "$14.95";
+const PLAN_PRICE_LABEL = "$6.99";
 
 function CustomerProfileForm({
   onNext,
