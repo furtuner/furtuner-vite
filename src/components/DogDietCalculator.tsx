@@ -233,7 +233,7 @@ function getEmailWatermarkUrl(): string {
 // real money moves). Set back to false before real customers use the site.
 const STRIPE_TEST_MODE = false;
 const STRIPE_PAYMENT_LINK_LIVE = "https://buy.stripe.com/8x26oz0ZfftxaQ957E7Re01";
-const STRIPE_PAYMENT_LINK_TEST = "https://buy.stripe.com/test_cNidR1gYd815e2l8jQ7Re00";
+const STRIPE_PAYMENT_LINK_TEST = "https://buy.stripe.com/test_8x26oz0ZfftxaQ957E7Re01";
 const STRIPE_PAYMENT_LINK = STRIPE_TEST_MODE ? STRIPE_PAYMENT_LINK_TEST : STRIPE_PAYMENT_LINK_LIVE;
 // Query param Stripe's "after payment" redirect appends back to this app so
 // we know to unlock the feeding plan when the user returns.
