@@ -1827,10 +1827,37 @@ function ResultsPage({
     sheetLoggedRef.current = true;
 
     (async () => {
-      const reportHtml = buildReportHtmlForExport();
+      // The report markup can take a moment to appear after the page
+      // switches to Results, so retry briefly instead of giving up at once.
+      let reportHtml = buildReportHtmlForExport();
+      for (let i = 0; !reportHtml && i < 10; i++) {
+        await new Promise(r => setTimeout(r, 500));
+        reportHtml = buildReportHtmlForExport();
+      }
       const patientName = profile.dogName || (profile as any).catName || "Your Pet";
       const link = reportHtml ? await uploadReportAndGetLink(reportHtml, patientName) : null;
       logPaidCustomerToSheet(restoredCustomer, petType, dietType, link ?? undefined);
+
+      // Automatically email the customer a copy of their recipe the moment
+      // they land back after paying (same endpoint as the "email me a copy"
+      // button). Runs after the Sheet logging, and never throws, so a
+      // failed email can never block the report or the logging.
+      if (reportHtml && restoredCustomer.email) {
+        try {
+          await fetch(`${emailApiBase}/report/email`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              recipient_email: restoredCustomer.email,
+              patient_name: patientName,
+              report_html: reportHtml,
+              site_url: typeof window !== "undefined" ? window.location.origin : undefined,
+            }),
+          });
+        } catch {
+          // Customer can still use the "email me a copy" button manually.
+        }
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
